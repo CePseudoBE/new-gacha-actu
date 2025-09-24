@@ -24,9 +24,6 @@ export interface GameCreateData {
 export interface GameUpdateData extends Partial<GameCreateData> {}
 
 export default class GameRepository {
-  /**
-   * Récupère tous les jeux avec pagination et filtres
-   */
   async findMany(
     filters: GameFilters = {},
     page: number = 1,
@@ -34,7 +31,6 @@ export default class GameRepository {
   ): Promise<ModelPaginatorContract<Game>> {
     const query = Game.query()
 
-    // Recherche par nom
     if (filters.search) {
       query.where((builder) => {
         builder
@@ -43,37 +39,30 @@ export default class GameRepository {
       })
     }
 
-    // Filtrer par popularité
     if (filters.isPopular !== undefined) {
       query.where('isPopular', filters.isPopular)
     }
 
-    // Filtrer par genres
     if (filters.genreIds && filters.genreIds.length > 0) {
       query.whereHas('genres', (genreQuery) => {
         genreQuery.whereIn('id', filters.genreIds!)
       })
     }
 
-    // Filtrer par plateformes
     if (filters.platformIds && filters.platformIds.length > 0) {
       query.whereHas('platforms', (platformQuery) => {
         platformQuery.whereIn('id', filters.platformIds!)
       })
     }
 
-    // Tri : populaires d'abord, puis par nom
     query.orderBy([
-      { column: 'isPopular', order: 'desc' },
+      { column: 'is_popular', order: 'desc' },
       { column: 'name', order: 'asc' },
     ])
 
     return query.paginate(page, perPage)
   }
 
-  /**
-   * Récupère un jeu par son ID avec toutes les relations
-   */
   async findById(id: number): Promise<Game | null> {
     return Game.query()
       .where('id', id)
@@ -95,9 +84,18 @@ export default class GameRepository {
       .first()
   }
 
-  /**
-   * Récupère un jeu par son slug
-   */
+  async hasContent(id: number): Promise<boolean | null> {
+    const result = await Game.query()
+      .where('id', id)
+      .withCount('articles')
+      .withCount('guides')
+      .first()
+
+    if (!result) return null
+
+    return result.$extras.articles_count > 0 || result.$extras.guides_count > 0
+  }
+
   async findBySlug(slug: string): Promise<Game | null> {
     return Game.query()
       .where('slug', slug)
@@ -119,9 +117,6 @@ export default class GameRepository {
       .first()
   }
 
-  /**
-   * Vérifie si un slug existe déjà
-   */
   async slugExists(slug: string, excludeId?: number): Promise<boolean> {
     const query = Game.query().where('slug', slug)
 
@@ -133,9 +128,6 @@ export default class GameRepository {
     return !!game
   }
 
-  /**
-   * Crée un nouveau jeu
-   */
   async create(data: GameCreateData): Promise<Game> {
     const game = await Game.create({
       name: data.name,
@@ -146,22 +138,18 @@ export default class GameRepository {
       wiki: data.wiki,
     })
 
-    // Attacher les genres
     if (data.genreIds && data.genreIds.length > 0) {
       await game.related('genres').attach(data.genreIds)
     }
 
-    // Attacher les plateformes
     if (data.platformIds && data.platformIds.length > 0) {
       await game.related('platforms').attach(data.platformIds)
     }
 
-    // Attacher les tags
     if (data.tagIds && data.tagIds.length > 0) {
       await game.related('tags').attach(data.tagIds)
     }
 
-    // Recharger avec les relations
     await game.load('genres')
     await game.load('platforms')
     await game.load('tags')
@@ -169,40 +157,36 @@ export default class GameRepository {
     return game
   }
 
-  /**
-   * Met à jour un jeu
-   */
   async update(id: number, data: GameUpdateData): Promise<Game | null> {
     const game = await Game.find(id)
     if (!game) return null
 
-    game.merge({
-      name: data.name,
-      description: data.description,
-      releaseDate: data.releaseDate,
-      isPopular: data.isPopular,
-      officialSite: data.officialSite,
-      wiki: data.wiki,
-    })
+    const updateData = Object.fromEntries(
+      Object.entries({
+        name: data.name,
+        description: data.description,
+        releaseDate: data.releaseDate,
+        isPopular: data.isPopular,
+        officialSite: data.officialSite,
+        wiki: data.wiki,
+      }).filter(([, value]) => value !== undefined)
+    )
 
+    game.merge(updateData)
     await game.save()
 
-    // Mettre à jour les genres
     if (data.genreIds !== undefined) {
       await game.related('genres').sync(data.genreIds)
     }
 
-    // Mettre à jour les plateformes
     if (data.platformIds !== undefined) {
       await game.related('platforms').sync(data.platformIds)
     }
 
-    // Mettre à jour les tags
     if (data.tagIds !== undefined) {
       await game.related('tags').sync(data.tagIds)
     }
 
-    // Recharger avec les relations
     await game.load('genres')
     await game.load('platforms')
     await game.load('tags')
@@ -210,22 +194,14 @@ export default class GameRepository {
     return game
   }
 
-  /**
-   * Supprime un jeu
-   */
   async delete(id: number): Promise<boolean> {
     const game = await Game.find(id)
     if (!game) return false
 
-    // Les relations many-to-many seront automatiquement supprimées
-    // grâce aux contraintes de clé étrangère
     await game.delete()
     return true
   }
 
-  /**
-   * Récupère les jeux populaires
-   */
   async findPopular(limit: number = 10): Promise<Game[]> {
     return Game.query()
       .where('isPopular', true)
@@ -235,17 +211,11 @@ export default class GameRepository {
       .limit(limit)
   }
 
-  /**
-   * Compte le nombre total de jeux
-   */
   async count(): Promise<number> {
     const result = await Game.query().count('* as total')
     return Number(result[0].$extras.total)
   }
 
-  /**
-   * Récupère les statistiques des jeux
-   */
   async getStats(): Promise<{
     total: number
     popular: number

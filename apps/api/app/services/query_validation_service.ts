@@ -1,7 +1,21 @@
 import vine from '@vinejs/vine'
 import type { HttpContext } from '@adonisjs/core/http'
+import { Exception } from '@adonisjs/core/exceptions'
 
 export default class QueryValidationService {
+
+  /**
+   * Valide un ID depuis les paramètres de route
+   */
+  static validateId(params: Record<string, any>, paramName: string = 'id'): number {
+    const id = Number(params[paramName])
+
+    if (isNaN(id) || id <= 0) {
+      throw new Exception(`${paramName} invalide`, { status: 400 })
+    }
+
+    return id
+  }
 
   /**
    * Valide les paramètres de pagination
@@ -62,6 +76,37 @@ export default class QueryValidationService {
     return {
       limit: validatedParams.limit || 10,
     }
+  }
+
+  /**
+   * Valide les filtres simples (search + pagination) - pour Genre, Tag, Platform
+   */
+  static async validateSimpleFilters(ctx: HttpContext) {
+    const validator = vine.compile(
+      vine.object({
+        page: vine.number().min(1).optional(),
+        perPage: vine.number().min(1).max(100).optional(),
+        search: vine.string().trim().minLength(1).optional(),
+      })
+    )
+
+    const queryParams = ctx.request.qs()
+    const validatedParams = await validator.validate(queryParams)
+
+    return {
+      page: validatedParams.page || 1,
+      perPage: validatedParams.perPage || 20,
+      filters: {
+        search: validatedParams.search,
+      }
+    }
+  }
+
+  /**
+   * Alias pour les genres
+   */
+  static async validateGenreFilters(ctx: HttpContext) {
+    return this.validateSimpleFilters(ctx)
   }
 
   /**

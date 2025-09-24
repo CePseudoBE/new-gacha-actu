@@ -4,27 +4,22 @@ import GameRepository, {
   GameFilters,
   GameUpdateData,
 } from '#repositories/game_repository'
-import Game from '#models/game'
-import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
-import { NotFoundException, ConflictException } from '#exceptions/http_exceptions'
+import { ConflictException } from '#exceptions/http_exceptions'
+import GameDto from '#dtos/game'
+import type { SimplePaginatorMetaKeys } from '@adonisjs/lucid/types/querybuilder'
 
 @inject()
 export default class GameService {
   constructor(private gameRepository: GameRepository) {}
 
-  /**
-   * Récupère la liste des jeux avec pagination et filtres
-   */
   async getGames(
     filters: GameFilters = {},
     page: number = 1,
     perPage: number = 20
-  ): Promise<ModelPaginatorContract<Game>> {
-    // Validation des paramètres de pagination
+  ): Promise<{ data: GameDto[]; meta: SimplePaginatorMetaKeys }> {
     if (page < 1) page = 1
     if (perPage < 1 || perPage > 100) perPage = 20
 
-    // Nettoyage des filtres
     const sanitizedFilters: GameFilters = {
       search: filters.search?.trim() || undefined,
       isPopular: filters.isPopular,
@@ -32,84 +27,51 @@ export default class GameService {
       platformIds: filters.platformIds?.filter((id) => id > 0) || undefined,
     }
 
-    return this.gameRepository.findMany(sanitizedFilters, page, perPage)
+    const games = await this.gameRepository.findMany(sanitizedFilters, page, perPage)
+
+    return {
+      data: GameDto.fromArray(games.all()),
+      meta: games.getMeta(),
+    }
   }
 
-  /**
-   * Récupère un jeu par son ID
-   */
-  async getGameById(id: number): Promise<Game | null> {
-    return this.gameRepository.findById(id)
+  async getGameById(id: number): Promise<GameDto | null> {
+    const game = await this.gameRepository.findById(id)
+    return game ? new GameDto(game) : null
   }
 
-  /**
-   * Récupère un jeu par son slug
-   */
-  async getGameBySlug(slug: string): Promise<Game | null> {
-    return this.gameRepository.findBySlug(slug)
+  async getGameBySlug(slug: string): Promise<GameDto | null> {
+    const game = await this.gameRepository.findBySlug(slug)
+    return game ? new GameDto(game) : null
   }
 
-  /**
-   * Récupère les jeux populaires
-   */
-  async getPopularGames(limit: number = 10): Promise<Game[]> {
+  async getPopularGames(limit: number = 10): Promise<GameDto[]> {
     if (limit < 1 || limit > 50) limit = 10
-    return this.gameRepository.findPopular(limit)
+    const games = await this.gameRepository.findPopular(limit)
+    return GameDto.fromArray(games)
   }
 
-  /**
-   * Crée un nouveau jeu
-   */
-  async createGame(data: GameCreateData): Promise<Game> {
-    return this.gameRepository.create(data)
+  async createGame(data: GameCreateData): Promise<GameDto> {
+    const game = await this.gameRepository.create(data)
+    return new GameDto(game)
   }
 
-  /**
-   * Met à jour un jeu
-   */
-  async updateGame(id: number, data: GameUpdateData): Promise<Game> {
-    // Vérifier que le jeu existe
-    const existingGame = await this.gameRepository.findById(id)
-    if (!existingGame) {
-      throw new NotFoundException('Jeu non trouvé')
-    }
-
-    const updatedGame = await this.gameRepository.update(id, data)
-    if (!updatedGame) {
-      throw new ConflictException('Erreur lors de la mise à jour du jeu')
-    }
-
-    return updatedGame
+  async updateGame(id: number, data: GameUpdateData): Promise<GameDto> {
+    const updatedGame = await this.gameRepository.update(id, data)!
+    return new GameDto(updatedGame)
   }
 
-  /**
-   * Supprime un jeu
-   */
   async deleteGame(id: number): Promise<void> {
-    // Vérifier que le jeu existe
-    const existingGame = await this.gameRepository.findById(id)
-    if (!existingGame) {
-      throw new NotFoundException('Jeu non trouvé')
+    const hasContent = await this.gameRepository.hasContent(id)
+    if (hasContent) {
+      throw new ConflictException(
+        'Impossible de supprimer un jeu qui contient des articles ou des guides'
+      )
     }
 
-    // Règle métier : ne pas supprimer un jeu avec du contenu
-    if (existingGame.articles && existingGame.articles.length > 0) {
-      throw new ConflictException('Impossible de supprimer un jeu qui contient des articles')
-    }
-
-    if (existingGame.guides && existingGame.guides.length > 0) {
-      throw new ConflictException('Impossible de supprimer un jeu qui contient des guides')
-    }
-
-    const deleted = await this.gameRepository.delete(id)
-    if (!deleted) {
-      throw new ConflictException('Erreur lors de la suppression du jeu')
-    }
+    await this.gameRepository.delete(id)
   }
 
-  /**
-   * Récupère les statistiques des jeux
-   */
   async getGameStats(): Promise<{
     total: number
     popular: number

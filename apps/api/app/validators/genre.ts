@@ -1,16 +1,47 @@
 import vine from '@vinejs/vine'
-import Genre from '#models/genre'
-import { DateTime } from 'luxon'
-import GameDto from '#dtos/game'
+import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-export const genreValidator = vine.compile(
+export const createGenreValidator = vine.compile(
   vine.object({
-    id: vine.number(),
-    name: vine.string().trim(),
-    slug: vine.string().trim(),
-    description: vine.string().trim(),
-    createdAt: vine.date({ formats: { utc: true } }),
-    updatedAt: vine.date({ formats: { utc: true } }),
-    games: vine.array(vine.object({})),
+    name: vine
+      .string()
+      .trim()
+      .minLength(2)
+      .maxLength(100)
+      .unique({ table: 'genres', column: 'name' }),
+
+    description: vine.string().trim().minLength(10).maxLength(500),
   })
 )
+
+const updateGenreValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'genres', column: 'id' }),
+    }),
+
+    name: vine
+      .string()
+      .trim()
+      .minLength(2)
+      .maxLength(100)
+      .unique({ table: 'genres', column: 'name' })
+      .optional(),
+
+    description: vine.string().trim().minLength(10).maxLength(500).optional(),
+  })
+)
+
+updateGenreValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const updateGenreValidator = updateGenreValidatorBase
+
+const genreParamsValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'genres', column: 'id' }),
+    }),
+  })
+)
+
+genreParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const genreParamsValidator = genreParamsValidatorBase

@@ -39,11 +39,13 @@ export default class GameDto extends BaseModelDto {
     this.wiki = game.wiki
     this.createdAt = game.createdAt.toISO()!
     this.updatedAt = game.updatedAt.toISO()!
-    this.articles = ArticleDto.fromArray(game.articles)
-    this.guides = GuideDto.fromArray(game.guides)
-    this.youtubeVideos = YoutubeVideoDto.fromArray(game.youtubeVideos)
-    this.genres = GenreDto.fromArray(game.genres)
-    this.tags = TagDto.fromArray(game.tags)
-    this.platforms = PlatformDto.fromArray(game.platforms)
+
+    // Relations (seulement si chargées)
+    this.articles = game.articles ? ArticleDto.fromArray(game.articles) : []
+    this.guides = game.guides ? GuideDto.fromArray(game.guides) : []
+    this.youtubeVideos = game.youtubeVideos ? YoutubeVideoDto.fromArray(game.youtubeVideos) : []
+    this.genres = game.genres ? GenreDto.fromArray(game.genres) : []
+    this.tags = game.tags ? TagDto.fromArray(game.tags) : []
+    this.platforms = game.platforms ? PlatformDto.fromArray(game.platforms) : []
   }
 }

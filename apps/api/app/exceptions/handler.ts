@@ -13,6 +13,19 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    if (
+      error instanceof Error &&
+      (error as any).code === 'E_NOT_FOUND' &&
+      (error as any).status === 404
+    ) {
+      return ctx.response.notFound({
+        success: false,
+        error: 'Resource not found',
+        code: 'E_NOT_FOUND',
+        messages: (error as any).messages || []
+      })
+    }
+
     return super.handle(error, ctx)
   }
 
@@ -23,6 +36,14 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * @note You should not attempt to send a response from this method.
    */
   async report(error: unknown, ctx: HttpContext) {
+    if (
+      app.inTest &&
+      error instanceof Error &&
+      ((error as any).code === 'E_VALIDATION_ERROR' || (error as any).code === 'E_NOT_FOUND')
+    ) {
+      return
+    }
+
     return super.report(error, ctx)
   }
 }

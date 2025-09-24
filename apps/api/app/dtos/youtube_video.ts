@@ -41,4 +41,8 @@ export default class YoutubeVideoDto extends BaseModelDto {
     this.updatedAt = youtubeVideo.updatedAt.toISO()!
     this.game = youtubeVideo.game && new GameDto(youtubeVideo.game)
   }
+
+  static fromArray(youtubeVideos: YoutubeVideo[]): YoutubeVideoDto[] {
+    return youtubeVideos.map(video => new YoutubeVideoDto(video))
+  }
 }

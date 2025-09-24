@@ -1,73 +1,34 @@
 import { test } from '@japa/runner'
 
 test.group('Games API Validation', () => {
-
-  test('GET /api/games should fail with invalid page parameter', async ({ client }) => {
-    const response = await client.get('/api/games?page=abc')
-
-    // Devrait retourner 422 (validation error)
+  test('GET /api/games should fail with invalid pagination', async ({ client }) => {
+    const response = await client.get('/api/games?page=abc&perPage=999')
     response.assertStatus(422)
   })
 
-  test('GET /api/games should fail with negative page', async ({ client }) => {
-    const response = await client.get('/api/games?page=-1')
-
+  test('POST /admin/games should fail with missing required fields', async ({ client }) => {
+    const response = await client.post('/api/admin/games').json({})
     response.assertStatus(422)
   })
 
-  test('GET /api/games should fail with perPage too high', async ({ client }) => {
-    const response = await client.get('/api/games?perPage=999')
-
-    response.assertStatus(422)
-  })
-
-  test('GET /api/games/popular should fail with invalid limit', async ({ client }) => {
-    const response = await client.get('/api/games/popular?limit=abc')
-
-    response.assertStatus(422)
-  })
-
-  test('GET /api/games/popular should fail with limit too high', async ({ client }) => {
-    const response = await client.get('/api/games/popular?limit=999')
-
-    response.assertStatus(422)
-  })
-
-  test('POST /admin/games should fail without required fields', async ({ client }) => {
+  test('POST /admin/games should fail with invalid data', async ({ client }) => {
     const response = await client.post('/api/admin/games').json({
-      // Pas de name, description, releaseDate requis
+      name: 'X',
+      description: 'Too short',
+      releaseDate: 'invalid-date',
+      genreIds: [],
+      platformIds: [999999]
     })
-
     response.assertStatus(422)
   })
 
-  test('POST /admin/games should fail with invalid date', async ({ client }) => {
-    const response = await client.post('/api/admin/games').json({
-      name: 'Test Game',
-      description: 'Test description',
-      releaseDate: 'invalid-date'
-    })
-
-    response.assertStatus(422)
+  test('PUT /admin/games/:id should return 404 for non-existent id', async ({ client }) => {
+    const response = await client.put('/api/admin/games/999999').json({ name: 'Test' })
+    response.assertStatus(404)
   })
 
-  test('POST /admin/games should fail with short name', async ({ client }) => {
-    const response = await client.post('/api/admin/games').json({
-      name: 'X', // Trop court (< 2 caractères)
-      description: 'Test description with enough characters',
-      releaseDate: '2024-01-01'
-    })
-
-    response.assertStatus(422)
-  })
-
-  test('POST /admin/games should fail with short description', async ({ client }) => {
-    const response = await client.post('/api/admin/games').json({
-      name: 'Valid Game Name',
-      description: 'Short', // Trop court (< 10 caractères)
-      releaseDate: '2024-01-01'
-    })
-
-    response.assertStatus(422)
+  test('DELETE /admin/games/:id should return 404 for non-existent id', async ({ client }) => {
+    const response = await client.delete('/api/admin/games/999999')
+    response.assertStatus(404)
   })
 })

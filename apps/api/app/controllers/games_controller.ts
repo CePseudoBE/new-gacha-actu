@@ -3,34 +3,30 @@ import { inject } from '@adonisjs/core'
 import { DateTime } from 'luxon'
 import GameService from '#services/game_service'
 import QueryValidationService from '#services/query_validation_service'
-import { createGameValidator, updateGameValidator } from '#validators/game'
+import {
+  createGameValidator,
+  updateGameValidator,
+  gameParamsValidator,
+  gameSlugParamsValidator
+} from '#validators/game'
 
 @inject()
 export default class GamesController {
   constructor(private gameService: GameService) {}
 
-  /**
-   * GET /games
-   * Liste des jeux avec pagination et filtres
-   */
   async index(ctx: HttpContext) {
     const { page, perPage, filters } = await QueryValidationService.validateGameFilters(ctx)
-
-    const games = await this.gameService.getGames(filters, page, perPage)
+    const result = await this.gameService.getGames(filters, page, perPage)
 
     return ctx.response.ok({
       success: true,
-      data: games.serialize(),
+      data: result.data,
       meta: {
-        pagination: games.getMeta(),
+        pagination: result.meta,
       },
     })
   }
 
-  /**
-   * GET /games/popular
-   * Jeux populaires
-   */
   async popular(ctx: HttpContext) {
     const { limit } = await QueryValidationService.validateLimit(ctx)
     const games = await this.gameService.getPopularGames(limit)
@@ -41,12 +37,9 @@ export default class GamesController {
     })
   }
 
-  /**
-   * GET /games/:slug
-   * Affichage d'un jeu par son slug
-   */
-  async show({ params, response }: HttpContext) {
-    const game = await this.gameService.getGameBySlug(params.slug)
+  async show({ request, response }: HttpContext) {
+    const { params: validatedParams } = await request.validateUsing(gameSlugParamsValidator)
+    const game = await this.gameService.getGameBySlug(validatedParams.slug)
 
     if (!game) {
       return response.notFound({
@@ -61,17 +54,28 @@ export default class GamesController {
     })
   }
 
-  /**
-   * POST /admin/games
-   * Création d'un jeu (admin uniquement)
-   */
   async store({ request, response }: HttpContext) {
     const payload = await request.validateUsing(createGameValidator)
 
-    // Convertir Date en DateTime pour Luxon
+    // Convert Date to DateTime for Luxon compatibility and handle relations
+    const {
+      genreId,
+      platformId,
+      tagId,
+      genreIds,
+      platformIds,
+      tagIds,
+      releaseDate,
+      ...restPayload
+    } = payload
+
     const gameData = {
-      ...payload,
-      releaseDate: DateTime.fromJSDate(payload.releaseDate),
+      ...restPayload,
+      releaseDate: DateTime.fromJSDate(releaseDate),
+      // Ensure we use the arrays from the validator (which already transformed single to array)
+      genreIds: genreId || genreIds || undefined,
+      platformIds: platformId || platformIds || undefined,
+      tagIds: tagId || tagIds || undefined,
     }
 
     const game = await this.gameService.createGame(gameData)
@@ -83,22 +87,34 @@ export default class GamesController {
     })
   }
 
-  /**
-   * PUT /admin/games/:id
-   * Mise à jour d'un jeu (admin uniquement)
-   */
-  async update({ params, request, response }: HttpContext) {
-    const payload = await request.validateUsing(updateGameValidator)
+  async update({ request, response }: HttpContext) {
+    const { params: validatedParams, ...payload } = await request.validateUsing(updateGameValidator)
 
-    // Convertir Date en DateTime et gérer les null
+    const {
+      genreId,
+      platformId,
+      tagId,
+      genreIds,
+      platformIds,
+      tagIds,
+      releaseDate,
+      officialSite,
+      wiki,
+      ...restPayload
+    } = payload
+
     const gameData = {
-      ...payload,
-      releaseDate: payload.releaseDate ? DateTime.fromJSDate(payload.releaseDate) : undefined,
-      officialSite: payload.officialSite === null ? undefined : payload.officialSite,
-      wiki: payload.wiki === null ? undefined : payload.wiki,
+      ...restPayload,
+      releaseDate: releaseDate ? DateTime.fromJSDate(releaseDate) : undefined,
+      officialSite: officialSite === null ? undefined : officialSite,
+      wiki: wiki === null ? undefined : wiki,
+      // Handle relations
+      genreIds: genreId || genreIds || undefined,
+      platformIds: platformId || platformIds || undefined,
+      tagIds: tagId || tagIds || undefined,
     }
 
-    const game = await this.gameService.updateGame(params.id, gameData)
+    const game = await this.gameService.updateGame(validatedParams.id, gameData)
 
     return response.ok({
       success: true,
@@ -107,12 +123,9 @@ export default class GamesController {
     })
   }
 
-  /**
-   * DELETE /admin/games/:id
-   * Suppression d'un jeu (admin uniquement)
-   */
-  async destroy({ params, response }: HttpContext) {
-    await this.gameService.deleteGame(params.id)
+  async destroy({ request, response }: HttpContext) {
+    const { params: validatedParams } = await request.validateUsing(gameParamsValidator)
+    await this.gameService.deleteGame(validatedParams.id)
 
     return response.ok({
       success: true,
@@ -120,10 +133,6 @@ export default class GamesController {
     })
   }
 
-  /**
-   * GET /admin/games/stats
-   * Statistiques des jeux (admin uniquement)
-   */
   async stats({ response }: HttpContext) {
     const stats = await this.gameService.getGameStats()
 

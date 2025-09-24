@@ -3,7 +3,7 @@ import { BaseModel, column } from '@adonisjs/lucid/orm'
 
 export default class MaintenanceSetting extends BaseModel {
   @column({ isPrimary: true })
-  declare id: string
+  declare id: number
 
   @column()
   declare isEnabled: boolean
@@ -16,12 +16,6 @@ export default class MaintenanceSetting extends BaseModel {
 
   @column()
   declare allowAdminAccess: boolean
-
-  @column()
-  declare enabledBy: string | null
-
-  @column()
-  declare disabledBy: string | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

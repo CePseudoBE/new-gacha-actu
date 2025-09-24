@@ -9,7 +9,7 @@ export default class DifficultyLevelDto extends BaseModelDto {
   declare description: string | null
   declare createdAt: string
   declare updatedAt: string
-  declare guides: GuideDto[]
+  declare guides?: GuideDto[]
 
   constructor(difficultyLevel?: DifficultyLevel) {
     super()
@@ -21,6 +21,9 @@ export default class DifficultyLevelDto extends BaseModelDto {
     this.description = difficultyLevel.description
     this.createdAt = difficultyLevel.createdAt.toISO()!
     this.updatedAt = difficultyLevel.updatedAt.toISO()!
-    this.guides = GuideDto.fromArray(difficultyLevel.guides)
+
+    if (difficultyLevel.guides) {
+      this.guides = GuideDto.fromArray(difficultyLevel.guides)
+    }
   }
 }

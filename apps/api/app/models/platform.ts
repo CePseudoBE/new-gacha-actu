@@ -18,8 +18,6 @@ export default class Platform extends BaseModel {
   })
   declare slug: string
 
-  @column()
-  declare color: string | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

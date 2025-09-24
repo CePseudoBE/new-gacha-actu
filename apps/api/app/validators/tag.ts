@@ -1,19 +1,43 @@
 import vine from '@vinejs/vine'
-import Tag from '#models/tag'
-import { DateTime } from 'luxon'
-import ArticleDto from '#dtos/article'
-import GuideDto from '#dtos/guide'
-import GameDto from '#dtos/game'
+import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-export const tagValidator = vine.compile(
+export const createTagValidator = vine.compile(
   vine.object({
-    id: vine.number(),
-    name: vine.string().trim(),
-    slug: vine.string().trim(),
-    createdAt: vine.date({ formats: { utc: true } }),
-    updatedAt: vine.date({ formats: { utc: true } }),
-    articles: vine.array(vine.object({})),
-    guides: vine.array(vine.object({})),
-    games: vine.array(vine.object({})),
+    name: vine
+      .string()
+      .trim()
+      .minLength(2)
+      .maxLength(100)
+      .unique({ table: 'tags', column: 'name' }),
   })
 )
+
+const updateTagValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'tags', column: 'id' }),
+    }),
+
+    name: vine
+      .string()
+      .trim()
+      .minLength(2)
+      .maxLength(100)
+      .unique({ table: 'tags', column: 'name' })
+      .optional(),
+  })
+)
+
+updateTagValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const updateTagValidator = updateTagValidatorBase
+
+const tagParamsValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'tags', column: 'id' }),
+    }),
+  })
+)
+
+tagParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const tagParamsValidator = tagParamsValidatorBase

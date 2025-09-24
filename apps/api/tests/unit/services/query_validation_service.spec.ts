@@ -74,8 +74,8 @@ test.group('QueryValidationService', () => {
     const mockContext = {
       request: {
         qs: () => ({
-          page: 'abc', // Invalid
-          perPage: '999', // Too high
+          page: 'abc',
+          perPage: '999',
         })
       },
     } as any

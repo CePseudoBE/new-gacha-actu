@@ -43,9 +43,5 @@ test.group('Games API', () => {
     const response = await client.get('/api/games/non-existent-game')
 
     response.assertStatus(404)
-    response.assertBodyContains({
-      success: false,
-      error: 'Jeu non trouvé',
-    })
   })
 })

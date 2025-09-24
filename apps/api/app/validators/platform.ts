@@ -1,16 +1,43 @@
 import vine from '@vinejs/vine'
-import Platform from '#models/platform'
-import { DateTime } from 'luxon'
-import GameDto from '#dtos/game'
+import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-export const platformValidator = vine.compile(
+export const createPlatformValidator = vine.compile(
   vine.object({
-    id: vine.number(),
-    name: vine.string().trim(),
-    slug: vine.string().trim(),
-    color: vine.string().trim().optional(),
-    createdAt: vine.date({ formats: { utc: true } }),
-    updatedAt: vine.date({ formats: { utc: true } }),
-    games: vine.array(vine.object({})),
+    name: vine
+      .string()
+      .trim()
+      .minLength(2)
+      .maxLength(100)
+      .unique({ table: 'platforms', column: 'name' }),
   })
 )
+
+const updatePlatformValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'platforms', column: 'id' }),
+    }),
+
+    name: vine
+      .string()
+      .trim()
+      .minLength(2)
+      .maxLength(100)
+      .unique({ table: 'platforms', column: 'name' })
+      .optional(),
+  })
+)
+
+updatePlatformValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const updatePlatformValidator = updatePlatformValidatorBase
+
+const platformParamsValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'platforms', column: 'id' }),
+    }),
+  })
+)
+
+platformParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const platformParamsValidator = platformParamsValidatorBase
