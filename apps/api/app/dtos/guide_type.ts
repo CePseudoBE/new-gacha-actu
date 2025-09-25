@@ -9,7 +9,7 @@ export default class GuideTypeDto extends BaseModelDto {
   declare description: string | null
   declare createdAt: string
   declare updatedAt: string
-  declare guides: GuideDto[]
+  declare guides?: GuideDto[]
 
   constructor(guideType?: GuideType) {
     super()
@@ -21,6 +21,8 @@ export default class GuideTypeDto extends BaseModelDto {
     this.description = guideType.description
     this.createdAt = guideType.createdAt.toISO()!
     this.updatedAt = guideType.updatedAt.toISO()!
-    this.guides = GuideDto.fromArray(guideType.guides)
+    if (guideType.guides) {
+      this.guides = GuideDto.fromArray(guideType.guides)
+    }
   }
 }

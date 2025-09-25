@@ -7,7 +7,7 @@ import {
   createGameValidator,
   updateGameValidator,
   gameParamsValidator,
-  gameSlugParamsValidator
+  gameSlugParamsValidator,
 } from '#validators/game'
 
 @inject()

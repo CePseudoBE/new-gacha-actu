@@ -8,7 +8,9 @@ test.group('Maintenance Settings Validation', () => {
     response.assertStatus(200)
   })
 
-  test('PUT /api/admin/maintenance should fail with invalid estimatedEndTime', async ({ client }) => {
+  test('PUT /api/admin/maintenance should fail with invalid estimatedEndTime', async ({
+    client,
+  }) => {
     const response = await client.put('/api/admin/maintenance').json({
       isEnabled: true,
       estimatedEndTime: 'invalid-date',

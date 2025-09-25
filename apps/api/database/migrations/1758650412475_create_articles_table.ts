@@ -15,7 +15,12 @@ export default class extends BaseSchema {
       table.text('content').notNullable()
       table.text('meta_description').nullable()
       table.integer('reading_time').nullable()
-      table.integer('category_id').unsigned().nullable().references('id').inTable('article_categories')
+      table
+        .integer('category_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('article_categories')
       table.boolean('is_popular').notNullable().defaultTo(false)
       table.integer('game_id').unsigned().notNullable().references('id').inTable('games')
 

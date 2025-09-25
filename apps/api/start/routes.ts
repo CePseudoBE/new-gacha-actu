@@ -26,6 +26,11 @@ const GenresController = () => import('#controllers/genres_controller')
 const PlatformsController = () => import('#controllers/platforms_controller')
 const TagsController = () => import('#controllers/tags_controller')
 const DifficultyLevelsController = () => import('#controllers/difficulty_levels_controller')
+const SeoKeywordsController = () => import('#controllers/seo_keywords_controller')
+const GuideTypesController = () => import('#controllers/guide_types_controller')
+const GuidesController = () => import('#controllers/guides_controller')
+const ArticleCategoriesController = () => import('#controllers/article_categories_controller')
+const ArticlesController = () => import('#controllers/articles_controller')
 const MaintenanceSettingsController = () => import('#controllers/maintenance_settings_controller')
 
 /*
@@ -77,6 +82,59 @@ router
       })
       .prefix('tags')
 
+    // Difficulty Levels
+    router
+      .group(() => {
+        router.get('/', [DifficultyLevelsController, 'index'])
+        router.get('/:id', [DifficultyLevelsController, 'show'])
+      })
+      .prefix('difficulty-levels')
+
+    // SEO Keywords
+    router
+      .group(() => {
+        router.get('/', [SeoKeywordsController, 'index'])
+        router.get('/:id', [SeoKeywordsController, 'show'])
+      })
+      .prefix('seo-keywords')
+
+    // Guide Types
+    router
+      .group(() => {
+        router.get('/', [GuideTypesController, 'index'])
+        router.get('/:id', [GuideTypesController, 'show'])
+      })
+      .prefix('guide-types')
+
+    // Guides
+    router
+      .group(() => {
+        router.get('/', [GuidesController, 'index'])
+        router.get('/popular', [GuidesController, 'popular'])
+        router.get('/slug/:slug', [GuidesController, 'showBySlug'])
+        router.get('/game/:gameId', [GuidesController, 'byGame'])
+        router.get('/:id', [GuidesController, 'show'])
+      })
+      .prefix('guides')
+
+    // Article Categories
+    router
+      .group(() => {
+        router.get('/', [ArticleCategoriesController, 'index'])
+        router.get('/:id', [ArticleCategoriesController, 'show'])
+      })
+      .prefix('article-categories')
+
+    // Articles
+    router
+      .group(() => {
+        router.get('/', [ArticlesController, 'index'])
+        router.get('/popular', [ArticlesController, 'popular'])
+        router.get('/slug/:slug', [ArticlesController, 'showBySlug'])
+        router.get('/:id', [ArticlesController, 'show'])
+      })
+      .prefix('articles')
+
     // Maintenance
     router.get('/maintenance/status', [MaintenanceSettingsController, 'status'])
   })
@@ -111,7 +169,6 @@ router
     // Genres
     router
       .group(() => {
-        router.get('/all', [GenresController, 'all'])
         router.post('/', [GenresController, 'store'])
         router.put('/:id', [GenresController, 'update'])
         router.delete('/:id', [GenresController, 'destroy'])
@@ -135,6 +192,60 @@ router
         router.delete('/:id', [TagsController, 'destroy'])
       })
       .prefix('tags')
+
+    // Difficulty Levels
+    router
+      .group(() => {
+        router.post('/', [DifficultyLevelsController, 'store'])
+        router.put('/:id', [DifficultyLevelsController, 'update'])
+        router.delete('/:id', [DifficultyLevelsController, 'destroy'])
+      })
+      .prefix('difficulty-levels')
+
+    // SEO Keywords
+    router
+      .group(() => {
+        router.post('/', [SeoKeywordsController, 'store'])
+        router.put('/:id', [SeoKeywordsController, 'update'])
+        router.delete('/:id', [SeoKeywordsController, 'destroy'])
+      })
+      .prefix('seo-keywords')
+
+    // Guide Types
+    router
+      .group(() => {
+        router.post('/', [GuideTypesController, 'store'])
+        router.put('/:id', [GuideTypesController, 'update'])
+        router.delete('/:id', [GuideTypesController, 'destroy'])
+      })
+      .prefix('guide-types')
+
+    // Guides
+    router
+      .group(() => {
+        router.post('/', [GuidesController, 'store'])
+        router.put('/:id', [GuidesController, 'update'])
+        router.delete('/:id', [GuidesController, 'destroy'])
+      })
+      .prefix('guides')
+
+    // Article Categories
+    router
+      .group(() => {
+        router.post('/', [ArticleCategoriesController, 'store'])
+        router.put('/:id', [ArticleCategoriesController, 'update'])
+        router.delete('/:id', [ArticleCategoriesController, 'destroy'])
+      })
+      .prefix('article-categories')
+
+    // Articles
+    router
+      .group(() => {
+        router.post('/', [ArticlesController, 'store'])
+        router.put('/:id', [ArticlesController, 'update'])
+        router.delete('/:id', [ArticlesController, 'destroy'])
+      })
+      .prefix('articles')
 
     // Maintenance
     router

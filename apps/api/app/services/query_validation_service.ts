@@ -3,14 +3,13 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { Exception } from '@adonisjs/core/exceptions'
 
 export default class QueryValidationService {
-
   /**
    * Valide un ID depuis les paramètres de route
    */
   static validateId(params: Record<string, any>, paramName: string = 'id'): number {
     const id = Number(params[paramName])
 
-    if (isNaN(id) || id <= 0) {
+    if (Number.isNaN(id) || id <= 0) {
       throw new Exception(`${paramName} invalide`, { status: 400 })
     }
 
@@ -98,7 +97,7 @@ export default class QueryValidationService {
       perPage: validatedParams.perPage || 20,
       filters: {
         search: validatedParams.search,
-      }
+      },
     }
   }
 
@@ -135,7 +134,7 @@ export default class QueryValidationService {
         isPopular: validatedParams.isPopular,
         genreIds: validatedParams.genreIds,
         platformIds: validatedParams.platformIds,
-      }
+      },
     }
   }
 }

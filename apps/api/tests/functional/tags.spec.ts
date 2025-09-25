@@ -34,7 +34,7 @@ test.group('Tags CRUD', () => {
     assert.equal(response.body().data.name, 'Action RPG')
   })
 
-  test('should update tag', async ({ client, assert }) => {
+  test('should update tag', async ({ client }) => {
     const updateData = {
       name: 'Action RPG Updated',
     }
@@ -48,8 +48,8 @@ test.group('Tags CRUD', () => {
       data: {
         id: createdTagId,
         name: updateData.name,
-        slug: 'action-rpg', 
-      }
+        slug: 'action-rpg',
+      },
     })
   })
 
@@ -68,35 +68,53 @@ test.group('Tags CRUD', () => {
     response.assertStatus(404)
   })
 
-  test('should get paginated tags', async ({ client, assert }) => {
-    
+  test('should get all tags', async ({ client, assert }) => {
     await client.post('/api/admin/tags').json({ name: 'Gacha' })
     await client.post('/api/admin/tags').json({ name: 'Anime' })
 
-    const response = await client.get('/api/tags?page=1&perPage=2')
+    const response = await client.get('/api/tags')
 
     response.assertStatus(200)
     response.assertBodyContains({
       success: true,
     })
 
-    assert.lengthOf(response.body().data, 2)
-    assert.exists(response.body().meta.pagination)
+    assert.isArray(response.body().data)
+    assert.isAtLeast(response.body().data.length, 2)
+
+    const tagNames = response.body().data.map((t: any) => t.name)
+    assert.include(tagNames, 'Gacha')
+    assert.include(tagNames, 'Anime')
   })
 
-  test('should search tags', async ({ client, assert }) => {
-    
-    await client.post('/api/admin/tags').json({ name: 'Action' })
-    await client.post('/api/admin/tags').json({ name: 'Adventure' })
+  test('should fail to create tag with invalid data', async ({ client }) => {
+    const response = await client.post('/api/admin/tags').json({})
 
-    const response = await client.get('/api/tags?search=action')
+    response.assertStatus(422)
+    response.assertBodyContains({
+      errors: [
+        {
+          field: 'name',
+          rule: 'required',
+        },
+      ],
+    })
+  })
 
-    response.assertStatus(200)
-    const data = response.body().data
+  test('should fail to update tag with invalid data', async ({ client }) => {
+    const tagResponse = await client.post('/api/admin/tags').json({ name: 'TestTag' })
+    const tagId = tagResponse.body().data.id
 
-    assert.isArray(data)
-    
-    const foundTag = data.find((tag: any) => tag.name.toLowerCase().includes('action'))
-    assert.exists(foundTag)
+    const response = await client.put(`/api/admin/tags/${tagId}`).json({ name: 'x' })
+
+    response.assertStatus(422)
+    response.assertBodyContains({
+      errors: [
+        {
+          field: 'name',
+          rule: 'minLength',
+        },
+      ],
+    })
   })
 })

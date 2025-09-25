@@ -1,39 +1,25 @@
 import { inject } from '@adonisjs/core'
 import PlatformRepository, {
   PlatformCreateData,
-  PlatformFilters,
   PlatformUpdateData,
 } from '#repositories/platform_repository'
 import PlatformDto from '#dtos/platform'
-import type { SimplePaginatorMetaKeys } from '@adonisjs/lucid/types/querybuilder'
+import CacheService from '#services/cache_service'
+import cache from '@adonisjs/cache/services/main'
 
 @inject()
 export default class PlatformService {
   constructor(private platformRepository: PlatformRepository) {}
 
-  async getPlatforms(
-    filters: PlatformFilters = {},
-    page: number = 1,
-    perPage: number = 20
-  ): Promise<{ data: PlatformDto[]; meta: SimplePaginatorMetaKeys }> {
-    if (page < 1) page = 1
-    if (perPage < 1 || perPage > 100) perPage = 20
-
-    const sanitizedFilters: PlatformFilters = {
-      search: filters.search?.trim() || undefined,
-    }
-
-    const platforms = await this.platformRepository.findMany(sanitizedFilters, page, perPage)
-
-    return {
-      data: PlatformDto.fromArray(platforms.all()),
-      meta: platforms.getMeta(),
-    }
-  }
-
   async getAllPlatforms(): Promise<PlatformDto[]> {
-    const platforms = await this.platformRepository.findAll()
-    return PlatformDto.fromArray(platforms)
+    return cache.getOrSet({
+      key: CacheService.KEYS.PLATFORMS_ALL,
+      ttl: CacheService.TTL.LONG,
+      factory: async () => {
+        const platforms = await this.platformRepository.findAll()
+        return PlatformDto.fromArray(platforms)
+      },
+    })
   }
 
   async getPlatformById(id: number): Promise<PlatformDto | null> {
@@ -48,15 +34,26 @@ export default class PlatformService {
 
   async createPlatform(data: PlatformCreateData): Promise<PlatformDto> {
     const platform = await this.platformRepository.create(data)
+
+    // Invalidation des caches liés
+    await cache.delete({ key: CacheService.KEYS.PLATFORMS_ALL })
+
     return new PlatformDto(platform)
   }
 
   async updatePlatform(id: number, data: PlatformUpdateData): Promise<PlatformDto> {
     const updatedPlatform = await this.platformRepository.update(id, data)
+
+    // Invalidation des caches liés
+    await cache.delete({ key: CacheService.KEYS.PLATFORMS_ALL })
+
     return new PlatformDto(updatedPlatform)
   }
 
   async deletePlatform(id: number): Promise<void> {
     await this.platformRepository.delete(id)
+
+    // Invalidation des caches liés
+    await cache.delete({ key: CacheService.KEYS.PLATFORMS_ALL })
   }
 }

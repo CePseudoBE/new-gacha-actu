@@ -22,7 +22,9 @@ export default class DifficultyLevelsController {
 
   async show({ request, response }: HttpContext) {
     const { params: validatedParams } = await request.validateUsing(difficultyLevelParamsValidator)
-    const difficultyLevel = await this.difficultyLevelService.getDifficultyLevelById(validatedParams.id)
+    const difficultyLevel = await this.difficultyLevelService.getDifficultyLevelById(
+      validatedParams.id
+    )
 
     if (!difficultyLevel) {
       return response.notFound({
@@ -49,8 +51,13 @@ export default class DifficultyLevelsController {
   }
 
   async update({ request, response }: HttpContext) {
-    const { params: validatedParams, ...payload } = await request.validateUsing(updateDifficultyLevelValidator)
-    const difficultyLevel = await this.difficultyLevelService.updateDifficultyLevel(validatedParams.id, payload)
+    const { params: validatedParams, ...payload } = await request.validateUsing(
+      updateDifficultyLevelValidator
+    )
+    const difficultyLevel = await this.difficultyLevelService.updateDifficultyLevel(
+      validatedParams.id,
+      payload
+    )
 
     return response.ok({
       success: true,

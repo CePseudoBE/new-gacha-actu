@@ -18,7 +18,7 @@ test.group('Validator Integration with CustomErrorReporter', () => {
 
     try {
       await validator.validate({
-        name: 'short'
+        name: 'short',
       })
       assert.fail('Should have thrown validation error')
     } catch (error: any) {
@@ -29,7 +29,7 @@ test.group('Validator Integration with CustomErrorReporter', () => {
   test('should use custom error reporter for body validation', async ({ assert }) => {
     const validator = vine.compile(
       vine.object({
-        genreIds: vine.array(vine.number().min(1).exists({ table: 'genres', column: 'id' }))
+        genreIds: vine.array(vine.number().min(1).exists({ table: 'genres', column: 'id' })),
       })
     )
 
@@ -37,7 +37,7 @@ test.group('Validator Integration with CustomErrorReporter', () => {
 
     try {
       await validator.validate({
-        genreIds: [999999]
+        genreIds: [999999],
       })
       assert.fail('Should have thrown validation error')
     } catch (error: any) {

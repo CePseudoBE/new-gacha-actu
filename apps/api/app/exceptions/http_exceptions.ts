@@ -22,7 +22,7 @@ export class ConflictException extends Exception {
   static status = 409
   static code = 'CONFLICT'
 
-  constructor(message: string = 'Conflit lors de l\'opération') {
+  constructor(message: string = "Conflit lors de l'opération") {
     super(message, { status: 409, code: 'CONFLICT' })
   }
 

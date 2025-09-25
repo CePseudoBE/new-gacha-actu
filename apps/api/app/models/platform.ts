@@ -18,7 +18,6 @@ export default class Platform extends BaseModel {
   })
   declare slug: string
 
-
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

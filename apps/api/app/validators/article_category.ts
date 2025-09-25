@@ -1,16 +1,39 @@
 import vine from '@vinejs/vine'
-import ArticleCategory from '#models/article_category'
-import { DateTime } from 'luxon'
-import ArticleDto from '#dtos/article'
+import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-export const articleCategoryValidator = vine.compile(
+export const createArticleCategoryValidator = vine.compile(
   vine.object({
-    id: vine.number(),
-    name: vine.string().trim(),
-    slug: vine.string().trim(),
-    description: vine.string().trim().optional(),
-    createdAt: vine.date({ formats: { utc: true } }),
-    updatedAt: vine.date({ formats: { utc: true } }),
-    articles: vine.array(vine.object({})),
+    name: vine
+      .string()
+      .trim()
+      .minLength(2)
+      .maxLength(100)
+      .unique({ table: 'article_categories', column: 'name' }),
+    description: vine.string().trim().minLength(2).maxLength(500).optional(),
   })
 )
+
+const updateArticleCategoryValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'article_categories', column: 'id' }),
+    }),
+
+    name: vine.string().trim().minLength(2).maxLength(100).optional(),
+    description: vine.string().trim().minLength(2).maxLength(500).optional(),
+  })
+)
+
+updateArticleCategoryValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const updateArticleCategoryValidator = updateArticleCategoryValidatorBase
+
+const articleCategoryParamsValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'article_categories', column: 'id' }),
+    }),
+  })
+)
+
+articleCategoryParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const articleCategoryParamsValidator = articleCategoryParamsValidatorBase

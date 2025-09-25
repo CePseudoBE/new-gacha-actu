@@ -8,8 +8,8 @@ export default class SeoKeywordDto extends BaseModelDto {
   declare keyword: string
   declare createdAt: string
   declare updatedAt: string
-  declare articles: ArticleDto[]
-  declare guides: GuideDto[]
+  declare articles?: ArticleDto[]
+  declare guides?: GuideDto[]
 
   constructor(seoKeyword?: SeoKeyword) {
     super()
@@ -19,7 +19,13 @@ export default class SeoKeywordDto extends BaseModelDto {
     this.keyword = seoKeyword.keyword
     this.createdAt = seoKeyword.createdAt.toISO()!
     this.updatedAt = seoKeyword.updatedAt.toISO()!
-    this.articles = ArticleDto.fromArray(seoKeyword.articles)
-    this.guides = GuideDto.fromArray(seoKeyword.guides)
+
+    if (seoKeyword.articles) {
+      this.articles = ArticleDto.fromArray(seoKeyword.articles)
+    }
+
+    if (seoKeyword.guides) {
+      this.guides = GuideDto.fromArray(seoKeyword.guides)
+    }
   }
 }

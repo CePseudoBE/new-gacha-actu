@@ -22,7 +22,7 @@ export default class HttpExceptionHandler extends ExceptionHandler {
         success: false,
         error: 'Resource not found',
         code: 'E_NOT_FOUND',
-        messages: (error as any).messages || []
+        messages: (error as any).messages || [],
       })
     }
 

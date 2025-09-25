@@ -1,9 +1,4 @@
 import Platform from '#models/platform'
-import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
-
-export interface PlatformFilters {
-  search?: string
-}
 
 export interface PlatformCreateData {
   name: string
@@ -12,20 +7,6 @@ export interface PlatformCreateData {
 export interface PlatformUpdateData extends Partial<PlatformCreateData> {}
 
 export default class PlatformRepository {
-  async findMany(
-    filters: PlatformFilters = {},
-    page: number = 1,
-    perPage: number = 20
-  ): Promise<ModelPaginatorContract<Platform>> {
-    const query = Platform.query().orderBy('name', 'asc')
-
-    if (filters.search) {
-      query.where('name', 'ilike', `%${filters.search}%`)
-    }
-
-    return query.paginate(page, perPage)
-  }
-
   async findAll(): Promise<Platform[]> {
     return Platform.query().orderBy('name', 'asc')
   }

@@ -25,7 +25,10 @@ test.group('Games Relations Many-to-Many', () => {
     return { genreId, platformIds, tagIds }
   }
 
-  test('should create game with genre, platforms and tags relations', async ({ client, assert }) => {
+  test('should create game with genre, platforms and tags relations', async ({
+    client,
+    assert,
+  }) => {
     const { genreId, platformIds, tagIds } = await createTestData(client)
     const gameData = {
       name: 'Genshin Impact',
@@ -58,8 +61,8 @@ test.group('Games Relations Many-to-Many', () => {
       developer: 'miHoYo',
       releaseDate: '2023-04-26',
       genreId: genreId,
-      platformIds: [platformIds[0]], 
-      tagIds: [tagIds[1]], 
+      platformIds: [platformIds[0]],
+      tagIds: [tagIds[1]],
     }
     const createResponse = await client.post('/api/admin/games').json(gameData)
     createResponse.assertStatus(201)
@@ -83,15 +86,15 @@ test.group('Games Relations Many-to-Many', () => {
       developer: 'Nexon',
       releaseDate: '2021-02-04',
       genreId: genreId,
-      platformIds: [platformIds[0]], 
-      tagIds: [tagIds[0]], 
+      platformIds: [platformIds[0]],
+      tagIds: [tagIds[0]],
     })
     createResponse.assertStatus(201)
     const gameId = createResponse.body().data.id
     const updateData = {
       name: 'Blue Archive Global',
-      platformIds: platformIds, 
-      tagIds: tagIds, 
+      platformIds: platformIds,
+      tagIds: tagIds,
     }
     const response = await client.put(`/api/admin/games/${gameId}`).json(updateData)
     response.assertStatus(200)
@@ -123,7 +126,7 @@ test.group('Games Relations Many-to-Many', () => {
       description: 'This should fail',
       developer: 'Nobody',
       releaseDate: '2023-01-01',
-      genreId: 99999, 
+      genreId: 99999,
       platformIds: platformIds,
       tagIds: tagIds,
     }
@@ -139,7 +142,7 @@ test.group('Games Relations Many-to-Many', () => {
       developer: 'Nobody',
       releaseDate: '2023-01-01',
       genreId: genreId,
-      platformIds: [99999], 
+      platformIds: [99999],
       tagIds: tagIds,
     }
     const response = await client.post('/api/admin/games').json(gameData)
@@ -154,7 +157,7 @@ test.group('Games Relations Many-to-Many', () => {
       developer: 'Test Dev',
       releaseDate: '2023-01-01',
       genreId: genreId,
-      platformIds: [platformIds[0]], 
+      platformIds: [platformIds[0]],
     })
     const response = await client.get('/api/platforms')
     response.assertStatus(200)
@@ -171,7 +174,7 @@ test.group('Games Relations Many-to-Many', () => {
       developer: 'Test Dev',
       releaseDate: '2023-01-01',
       genreId: genreId,
-      tagIds: [tagIds[0]], 
+      tagIds: [tagIds[0]],
     })
     const response = await client.get('/api/tags')
     response.assertStatus(200)

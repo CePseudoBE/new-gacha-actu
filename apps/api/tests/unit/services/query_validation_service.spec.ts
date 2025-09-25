@@ -9,7 +9,7 @@ test.group('QueryValidationService', () => {
         qs: () => ({
           page: '2',
           perPage: '15',
-        })
+        }),
       },
     } as any
 
@@ -22,7 +22,7 @@ test.group('QueryValidationService', () => {
   test('should use default values when params are missing', async ({ assert }) => {
     const mockContext = {
       request: {
-        qs: () => ({})
+        qs: () => ({}),
       },
     } as any
 
@@ -42,7 +42,7 @@ test.group('QueryValidationService', () => {
           isPopular: 'true',
           genreIds: ['1', '2'],
           platformIds: ['3', '4'],
-        })
+        }),
       },
     } as any
 
@@ -61,7 +61,7 @@ test.group('QueryValidationService', () => {
       request: {
         qs: () => ({
           limit: '25',
-        })
+        }),
       },
     } as any
 
@@ -76,12 +76,10 @@ test.group('QueryValidationService', () => {
         qs: () => ({
           page: 'abc',
           perPage: '999',
-        })
+        }),
       },
     } as any
 
-    await assert.rejects(
-      () => QueryValidationService.validatePagination(mockContext)
-    )
+    await assert.rejects(() => QueryValidationService.validatePagination(mockContext))
   })
 })

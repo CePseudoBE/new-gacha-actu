@@ -29,7 +29,9 @@ test.group('YouTube Videos API', () => {
     })
   })
 
-  test('GET /api/youtube-videos/:id should return 404 for non-existent video', async ({ client }) => {
+  test('GET /api/youtube-videos/:id should return 404 for non-existent video', async ({
+    client,
+  }) => {
     const response = await client.get('/api/youtube-videos/999999')
 
     response.assertStatus(404)

@@ -8,7 +8,7 @@ test.group('CustomErrorReporter Unit Tests', () => {
     // Simule une validation d'existence sur un paramètre
     const mockField = {
       wildCardPath: 'params.id',
-      name: 'id'
+      name: 'id',
     } as any
 
     reporter.report('Game not found', 'database.exists', mockField)
@@ -26,7 +26,7 @@ test.group('CustomErrorReporter Unit Tests', () => {
     // Simule une validation d'existence sur une donnée du body
     const mockField = {
       wildCardPath: 'genreIds.0',
-      name: 'genreIds'
+      name: 'genreIds',
     } as any
 
     reporter.report('Genre does not exist', 'database.exists', mockField)
@@ -43,7 +43,7 @@ test.group('CustomErrorReporter Unit Tests', () => {
 
     const mockField = {
       wildCardPath: 'name',
-      name: 'name'
+      name: 'name',
     } as any
 
     reporter.report('Name is required', 'required', mockField)
@@ -54,13 +54,15 @@ test.group('CustomErrorReporter Unit Tests', () => {
     assert.equal(reporter.errors[0].rule, 'required')
   })
 
-  test('createError should return 404 ONLY when there are ONLY params exists errors', async ({ assert }) => {
+  test('createError should return 404 ONLY when there are ONLY params exists errors', async ({
+    assert,
+  }) => {
     const reporter = new CustomErrorReporter()
 
     // SEULEMENT une erreur 404 sur params
     const mockParamsField = {
       wildCardPath: 'params.id',
-      name: 'id'
+      name: 'id',
     } as any
 
     reporter.report('Game not found', 'database.exists', mockParamsField)
@@ -73,19 +75,21 @@ test.group('CustomErrorReporter Unit Tests', () => {
     assert.equal(error.messages[0].field, 'params.id')
   })
 
-  test('createError should return 422 when there are mixed params and body errors', async ({ assert }) => {
+  test('createError should return 422 when there are mixed params and body errors', async ({
+    assert,
+  }) => {
     const reporter = new CustomErrorReporter()
 
     // Erreur 404 sur params
     const mockParamsField = {
       wildCardPath: 'params.id',
-      name: 'id'
+      name: 'id',
     } as any
 
     // Erreur 422 sur body
     const mockBodyField = {
       wildCardPath: 'name',
-      name: 'name'
+      name: 'name',
     } as any
 
     reporter.report('Game not found', 'database.exists', mockParamsField)
@@ -98,12 +102,14 @@ test.group('CustomErrorReporter Unit Tests', () => {
     assert.lengthOf(error.messages, 2)
   })
 
-  test('createError should return 422 when there are only validation errors', async ({ assert }) => {
+  test('createError should return 422 when there are only validation errors', async ({
+    assert,
+  }) => {
     const reporter = new CustomErrorReporter()
 
     const mockField = {
       wildCardPath: 'name',
-      name: 'name'
+      name: 'name',
     } as any
 
     reporter.report('Name is required', 'required', mockField)
@@ -121,17 +127,17 @@ test.group('CustomErrorReporter Unit Tests', () => {
 
     const mockParamsField = {
       wildCardPath: 'params.slug',
-      name: 'slug'
+      name: 'slug',
     } as any
 
     const mockBodyField1 = {
       wildCardPath: 'genreIds.0',
-      name: 'genreIds'
+      name: 'genreIds',
     } as any
 
     const mockBodyField2 = {
       wildCardPath: 'name',
-      name: 'name'
+      name: 'name',
     } as any
 
     reporter.report('Game not found', 'database.exists', mockParamsField)
@@ -141,7 +147,7 @@ test.group('CustomErrorReporter Unit Tests', () => {
     assert.lengthOf(reporter.errors, 3)
 
     // Vérifier les statuts
-    const statuses = reporter.errors.map(err => err.status)
+    const statuses = reporter.errors.map((err) => err.status)
     assert.include(statuses, 404) // params error
     assert.include(statuses, 422) // body errors
   })

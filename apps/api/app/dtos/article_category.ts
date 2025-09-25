@@ -21,6 +21,6 @@ export default class ArticleCategoryDto extends BaseModelDto {
     this.description = articleCategory.description
     this.createdAt = articleCategory.createdAt.toISO()!
     this.updatedAt = articleCategory.updatedAt.toISO()!
-    this.articles = ArticleDto.fromArray(articleCategory.articles)
+    this.articles = articleCategory.articles ? ArticleDto.fromArray(articleCategory.articles) : []
   }
 }

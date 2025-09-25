@@ -1,16 +1,41 @@
 import vine from '@vinejs/vine'
-import GuideType from '#models/guide_type'
-import { DateTime } from 'luxon'
-import GuideDto from '#dtos/guide'
+import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-export const guideTypeValidator = vine.compile(
+export const createGuideTypeValidator = vine.compile(
   vine.object({
-    id: vine.number(),
-    name: vine.string().trim(),
-    slug: vine.string().trim(),
-    description: vine.string().trim().optional(),
-    createdAt: vine.date({ formats: { utc: true } }),
-    updatedAt: vine.date({ formats: { utc: true } }),
-    guides: vine.array(vine.object({})),
+    name: vine
+      .string()
+      .trim()
+      .minLength(2)
+      .maxLength(100)
+      .unique({ table: 'guide_types', column: 'name' }),
+
+    description: vine.string().trim().minLength(10).maxLength(500).optional(),
   })
 )
+
+const updateGuideTypeValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'guide_types', column: 'id' }),
+    }),
+
+    name: vine.string().trim().minLength(2).maxLength(100).optional(),
+
+    description: vine.string().trim().minLength(10).maxLength(500).optional().nullable(),
+  })
+)
+
+updateGuideTypeValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const updateGuideTypeValidator = updateGuideTypeValidatorBase
+
+const guideTypeParamsValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'guide_types', column: 'id' }),
+    }),
+  })
+)
+
+guideTypeParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const guideTypeParamsValidator = guideTypeParamsValidatorBase

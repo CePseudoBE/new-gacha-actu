@@ -21,7 +21,7 @@ export default class GuidePrerequisite extends BaseModel {
 
   // Relations
   @belongsTo(() => Guide, {
-    foreignKey: 'guideId'
+    foreignKey: 'guideId',
   })
   declare guide: BelongsTo<typeof Guide>
 }

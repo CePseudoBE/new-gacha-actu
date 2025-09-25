@@ -1,6 +1,4 @@
 import vine from '@vinejs/vine'
-import User from '#models/user'
-import { DateTime } from 'luxon'
 
 export const userValidator = vine.compile(
   vine.object({

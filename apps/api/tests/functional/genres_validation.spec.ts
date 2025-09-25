@@ -1,11 +1,6 @@
 import { test } from '@japa/runner'
 
 test.group('Genres API Validation', () => {
-  test('GET /api/genres should fail with invalid pagination', async ({ client }) => {
-    const response = await client.get('/api/genres?page=-1&perPage=999')
-    response.assertStatus(422)
-  })
-
   test('POST /api/admin/genres should fail with missing required fields', async ({ client }) => {
     const response = await client.post('/api/admin/genres').json({})
     response.assertStatus(422)
@@ -14,7 +9,7 @@ test.group('Genres API Validation', () => {
   test('POST /api/admin/genres should fail with invalid data', async ({ client }) => {
     const response = await client.post('/api/admin/genres').json({
       name: 'X',
-      description: 'Too short'
+      description: 'Too short',
     })
     response.assertStatus(422)
   })

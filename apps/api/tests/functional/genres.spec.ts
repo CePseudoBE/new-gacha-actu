@@ -6,7 +6,7 @@ test.group('Genres CRUD API', () => {
   test('POST /api/admin/genres should create a new genre', async ({ client }) => {
     const genreData = {
       name: 'Action RPG',
-      description: 'Action role-playing games combine real-time action with character development'
+      description: 'Action role-playing games combine real-time action with character development',
     }
 
     const response = await client.post('/api/admin/genres').json(genreData)
@@ -14,7 +14,7 @@ test.group('Genres CRUD API', () => {
     response.assertStatus(201)
     response.assertBodyContains({
       success: true,
-      message: 'Genre créé avec succès'
+      message: 'Genre créé avec succès',
     })
 
     const body = response.body()
@@ -23,8 +23,8 @@ test.group('Genres CRUD API', () => {
       data: {
         name: 'Action RPG',
         description: genreData.description,
-        slug: 'action-rpg'
-      }
+        slug: 'action-rpg',
+      },
     })
   })
 
@@ -37,65 +37,32 @@ test.group('Genres CRUD API', () => {
       data: {
         id: createdGenreId,
         name: 'Action RPG',
-        slug: 'action-rpg'
-      }
+        slug: 'action-rpg',
+      },
     })
   })
 
-  test('GET /api/genres should return paginated genres including created one', async ({ client }) => {
+  test('GET /api/genres should return all genres including created one', async ({ client }) => {
     const response = await client.get('/api/genres')
 
     response.assertStatus(200)
     response.assertBodyContains({
       success: true,
-      meta: {
-        pagination: {}
-      }
     })
 
-    const body = response.body()
     response.assertBodyContains({
       data: [
         {
-          name: 'Action RPG'
-        }
-      ]
-    })
-  })
-
-  test('GET /api/genres with search should find the genre', async ({ client }) => {
-    const response = await client.get('/api/genres?search=Action')
-
-    response.assertStatus(200)
-    const body = response.body()
-    response.assertBodyContains({
-      success: true,
-      data: [
-        {
-          name: 'Action RPG'
-        }
-      ]
-    })
-  })
-
-  test('GET /api/admin/genres/all should return all genres', async ({ client }) => {
-    const response = await client.get('/api/admin/genres/all')
-
-    response.assertStatus(200)
-    response.assertBodyContains({
-      success: true,
-      data: [
-        {
-          name: 'Action RPG'
-        }
-      ]
+          name: 'Action RPG',
+        },
+      ],
     })
   })
 
   test('PUT /api/admin/genres/:id should update the genre', async ({ client }) => {
     const updateData = {
       name: 'Action RPG Updated',
-      description: 'Updated description for action RPG games'
+      description: 'Updated description for action RPG games',
     }
 
     const response = await client.put(`/api/admin/genres/${createdGenreId}`).json(updateData)
@@ -107,9 +74,9 @@ test.group('Genres CRUD API', () => {
       data: {
         id: createdGenreId,
         name: 'Action RPG Updated',
-        slug: 'action-rpg', 
-        description: updateData.description
-      }
+        slug: 'action-rpg',
+        description: updateData.description,
+      },
     })
   })
 
@@ -119,8 +86,8 @@ test.group('Genres CRUD API', () => {
     response.assertStatus(200)
     response.assertBodyContains({
       data: {
-        name: 'Action RPG Updated'
-      }
+        name: 'Action RPG Updated',
+      },
     })
   })
 
@@ -130,7 +97,7 @@ test.group('Genres CRUD API', () => {
     response.assertStatus(200)
     response.assertBodyContains({
       success: true,
-      message: 'Genre supprimé avec succès'
+      message: 'Genre supprimé avec succès',
     })
   })
 
@@ -146,7 +113,7 @@ test.group('Genres CRUD API', () => {
     response.assertStatus(200)
     response.assertBodyContains({
       success: true,
-      data: []
+      data: [],
     })
   })
 })

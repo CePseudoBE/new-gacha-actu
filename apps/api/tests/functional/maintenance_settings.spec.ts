@@ -18,7 +18,10 @@ test.group('Maintenance Settings', () => {
     assert.exists(data.updatedAt)
   })
 
-  test('PUT /api/admin/maintenance should update maintenance settings', async ({ client, assert }) => {
+  test('PUT /api/admin/maintenance should update maintenance settings', async ({
+    client,
+    assert,
+  }) => {
     const updateData = {
       isEnabled: true,
       message: 'Maintenance en cours - Retour prévu dans 2h',
@@ -39,7 +42,10 @@ test.group('Maintenance Settings', () => {
     assert.equal(data.allowAdminAccess, false)
   })
 
-  test('PATCH /api/admin/maintenance/enable should enable maintenance', async ({ client, assert }) => {
+  test('PATCH /api/admin/maintenance/enable should enable maintenance', async ({
+    client,
+    assert,
+  }) => {
     const response = await client.patch('/api/admin/maintenance/enable').json({
       message: 'Mise à jour du serveur en cours',
     })
@@ -55,7 +61,10 @@ test.group('Maintenance Settings', () => {
     assert.equal(data.message, 'Mise à jour du serveur en cours')
   })
 
-  test('PATCH /api/admin/maintenance/enable should enable without custom message', async ({ client, assert }) => {
+  test('PATCH /api/admin/maintenance/enable should enable without custom message', async ({
+    client,
+    assert,
+  }) => {
     const response = await client.patch('/api/admin/maintenance/enable').json({})
 
     response.assertStatus(200)
@@ -63,7 +72,10 @@ test.group('Maintenance Settings', () => {
     assert.equal(data.isEnabled, true)
   })
 
-  test('PATCH /api/admin/maintenance/disable should disable maintenance', async ({ client, assert }) => {
+  test('PATCH /api/admin/maintenance/disable should disable maintenance', async ({
+    client,
+    assert,
+  }) => {
     await client.patch('/api/admin/maintenance/enable').json({})
 
     const response = await client.patch('/api/admin/maintenance/disable')

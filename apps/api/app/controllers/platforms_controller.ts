@@ -1,7 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import PlatformService from '#services/platform_service'
-import QueryValidationService from '#services/query_validation_service'
 import {
   createPlatformValidator,
   updatePlatformValidator,
@@ -12,20 +11,7 @@ import {
 export default class PlatformsController {
   constructor(private platformService: PlatformService) {}
 
-  async index(ctx: HttpContext) {
-    const { page, perPage, filters } = await QueryValidationService.validateSimpleFilters(ctx)
-    const result = await this.platformService.getPlatforms(filters, page, perPage)
-
-    return ctx.response.ok({
-      success: true,
-      data: result.data,
-      meta: {
-        pagination: result.meta,
-      },
-    })
-  }
-
-  async all({ response }: HttpContext) {
+  async index({ response }: HttpContext) {
     const platforms = await this.platformService.getAllPlatforms()
 
     return response.ok({
@@ -63,7 +49,8 @@ export default class PlatformsController {
   }
 
   async update({ request, response }: HttpContext) {
-    const { params: validatedParams, ...payload } = await request.validateUsing(updatePlatformValidator)
+    const { params: validatedParams, ...payload } =
+      await request.validateUsing(updatePlatformValidator)
     const platform = await this.platformService.updatePlatform(validatedParams.id, payload)
 
     return response.ok({

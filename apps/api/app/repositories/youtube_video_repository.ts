@@ -16,9 +16,15 @@ export interface YoutubeVideoCreateData {
   gameId?: number
 }
 
-export interface YoutubeVideoUpdateData extends Partial<Omit<YoutubeVideoCreateData, 'videoId' | 'thumbnail' | 'description' | 'channelTitle' | 'category' | 'duration'>> {
-  thumbnail?: string | null
+export interface YoutubeVideoUpdateData
+  extends Partial<
+    Omit<
+      YoutubeVideoCreateData,
+      'description' | 'thumbnail' | 'channelTitle' | 'category' | 'duration'
+    >
+  > {
   description?: string | null
+  thumbnail?: string | null
   channelTitle?: string | null
   category?: string | null
   duration?: string | null

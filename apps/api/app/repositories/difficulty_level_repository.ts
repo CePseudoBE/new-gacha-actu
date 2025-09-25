@@ -2,7 +2,7 @@ import DifficultyLevel from '#models/difficulty_level'
 
 export interface DifficultyLevelCreateData {
   name: string
-  description?: string
+  description?: string | null
 }
 
 export interface DifficultyLevelUpdateData extends Partial<DifficultyLevelCreateData> {}

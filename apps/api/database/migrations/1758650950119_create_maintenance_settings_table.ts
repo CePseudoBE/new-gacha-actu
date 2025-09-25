@@ -7,7 +7,10 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.string('id').primary().defaultTo('singleton')
       table.boolean('is_enabled').notNullable().defaultTo(false)
-      table.text('message').notNullable().defaultTo('Site en maintenance. Nous reviendrons bientôt !')
+      table
+        .text('message')
+        .notNullable()
+        .defaultTo('Site en maintenance. Nous reviendrons bientôt !')
       table.timestamp('estimated_end_time').nullable()
       table.boolean('allow_admin_access').notNullable().defaultTo(true)
       table.string('enabled_by').nullable()

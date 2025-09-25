@@ -34,7 +34,7 @@ test.group('Platforms CRUD', () => {
     assert.equal(response.body().data.name, 'iOS')
   })
 
-  test('should update platform', async ({ client, assert }) => {
+  test('should update platform', async ({ client }) => {
     const updateData = {
       name: 'iOS Updated',
     }
@@ -48,8 +48,8 @@ test.group('Platforms CRUD', () => {
       data: {
         id: createdPlatformId,
         name: updateData.name,
-        slug: 'ios', 
-      }
+        slug: 'ios',
+      },
     })
   })
 
@@ -75,19 +75,55 @@ test.group('Platforms CRUD', () => {
     response.assertStatus(404)
   })
 
-  test('should get paginated platforms', async ({ client, assert }) => {
-    
+  test('should get all platforms', async ({ client, assert }) => {
     await client.post('/api/admin/platforms').json({ name: 'Steam' })
     await client.post('/api/admin/platforms').json({ name: 'Epic Games' })
 
-    const response = await client.get('/api/platforms?page=1&perPage=2')
+    const response = await client.get('/api/platforms')
 
     response.assertStatus(200)
     response.assertBodyContains({
       success: true,
     })
 
-    assert.lengthOf(response.body().data, 2)
-    assert.exists(response.body().meta.pagination)
+    assert.isArray(response.body().data)
+    assert.isAtLeast(response.body().data.length, 2)
+
+    const platformNames = response.body().data.map((p: any) => p.name)
+    assert.include(platformNames, 'Steam')
+    assert.include(platformNames, 'Epic Games')
+  })
+
+  test('should fail to create platform with invalid data', async ({ client }) => {
+    const response = await client.post('/api/admin/platforms').json({})
+
+    response.assertStatus(422)
+    response.assertBodyContains({
+      errors: [
+        {
+          field: 'name',
+          rule: 'required',
+        },
+      ],
+    })
+  })
+
+  test('should fail to update platform with invalid data', async ({ client }) => {
+    const platformResponse = await client
+      .post('/api/admin/platforms')
+      .json({ name: 'TestPlatform' })
+    const platformId = platformResponse.body().data.id
+
+    const response = await client.put(`/api/admin/platforms/${platformId}`).json({ name: 'x' })
+
+    response.assertStatus(422)
+    response.assertBodyContains({
+      errors: [
+        {
+          field: 'name',
+          rule: 'minLength',
+        },
+      ],
+    })
   })
 })

@@ -1,16 +1,37 @@
 import vine from '@vinejs/vine'
-import SeoKeyword from '#models/seo_keyword'
-import { DateTime } from 'luxon'
-import ArticleDto from '#dtos/article'
-import GuideDto from '#dtos/guide'
+import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-export const seoKeywordValidator = vine.compile(
+export const createSeoKeywordValidator = vine.compile(
   vine.object({
-    id: vine.number(),
-    keyword: vine.string().trim(),
-    createdAt: vine.date({ formats: { utc: true } }),
-    updatedAt: vine.date({ formats: { utc: true } }),
-    articles: vine.array(vine.object({})),
-    guides: vine.array(vine.object({})),
+    keyword: vine
+      .string()
+      .trim()
+      .minLength(2)
+      .maxLength(100)
+      .unique({ table: 'seo_keywords', column: 'keyword' }),
   })
 )
+
+const updateSeoKeywordValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'seo_keywords', column: 'id' }),
+    }),
+
+    keyword: vine.string().trim().minLength(2).maxLength(100).optional(),
+  })
+)
+
+updateSeoKeywordValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const updateSeoKeywordValidator = updateSeoKeywordValidatorBase
+
+const seoKeywordParamsValidatorBase = vine.compile(
+  vine.object({
+    params: vine.object({
+      id: vine.number().exists({ table: 'seo_keywords', column: 'id' }),
+    }),
+  })
+)
+
+seoKeywordParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const seoKeywordParamsValidator = seoKeywordParamsValidatorBase

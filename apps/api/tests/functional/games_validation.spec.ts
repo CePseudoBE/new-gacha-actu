@@ -17,7 +17,7 @@ test.group('Games API Validation', () => {
       description: 'Too short',
       releaseDate: 'invalid-date',
       genreIds: [],
-      platformIds: [999999]
+      platformIds: [999999],
     })
     response.assertStatus(422)
   })

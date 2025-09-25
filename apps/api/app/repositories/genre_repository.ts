@@ -1,9 +1,4 @@
 import Genre from '#models/genre'
-import { ModelPaginatorContract } from '@adonisjs/lucid/types/model'
-
-export interface GenreFilters {
-  search?: string
-}
 
 export interface GenreCreateData {
   name: string
@@ -13,20 +8,6 @@ export interface GenreCreateData {
 export interface GenreUpdateData extends Partial<GenreCreateData> {}
 
 export default class GenreRepository {
-  async findMany(
-    filters: GenreFilters = {},
-    page: number = 1,
-    perPage: number = 20
-  ): Promise<ModelPaginatorContract<Genre>> {
-    const query = Genre.query().orderBy('name', 'asc')
-
-    if (filters.search) {
-      query.where('name', 'ilike', `%${filters.search}%`)
-    }
-
-    return query.paginate(page, perPage)
-  }
-
   async findAll(): Promise<Genre[]> {
     return Genre.query().orderBy('name', 'asc')
   }
@@ -54,5 +35,4 @@ export default class GenreRepository {
     const genre = await Genre.findOrFail(id)
     await genre.delete()
   }
-
 }

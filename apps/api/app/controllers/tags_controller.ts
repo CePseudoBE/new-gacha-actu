@@ -1,31 +1,13 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import TagService from '#services/tag_service'
-import QueryValidationService from '#services/query_validation_service'
-import {
-  createTagValidator,
-  updateTagValidator,
-  tagParamsValidator,
-} from '#validators/tag'
+import { createTagValidator, updateTagValidator, tagParamsValidator } from '#validators/tag'
 
 @inject()
 export default class TagsController {
   constructor(private tagService: TagService) {}
 
-  async index(ctx: HttpContext) {
-    const { page, perPage, filters } = await QueryValidationService.validateSimpleFilters(ctx)
-    const result = await this.tagService.getTags(filters, page, perPage)
-
-    return ctx.response.ok({
-      success: true,
-      data: result.data,
-      meta: {
-        pagination: result.meta,
-      },
-    })
-  }
-
-  async all({ response }: HttpContext) {
+  async index({ response }: HttpContext) {
     const tags = await this.tagService.getAllTags()
 
     return response.ok({
