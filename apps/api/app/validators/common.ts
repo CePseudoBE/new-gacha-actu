@@ -26,3 +26,23 @@ export const paginationWithSearchValidator = vine.compile(
     search: vine.string().trim().minLength(1).optional(),
   })
 )
+
+// Query filters validators
+export const gameFiltersValidator = vine.compile(
+  vine.object({
+    page: vine.number().min(1).optional(),
+    perPage: vine.number().min(1).max(100).optional(),
+    search: vine.string().trim().minLength(1).optional(),
+    isPopular: vine.boolean().optional(),
+    genreIds: vine.array(vine.number().min(1)).optional(),
+    platformIds: vine.array(vine.number().min(1)).optional(),
+  })
+)
+
+export const simpleFiltersValidator = vine.compile(
+  vine.object({
+    page: vine.number().min(1).optional(),
+    perPage: vine.number().min(1).max(100).optional(),
+    search: vine.string().trim().minLength(1).optional(),
+  })
+)

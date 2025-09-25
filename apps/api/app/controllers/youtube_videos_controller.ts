@@ -2,12 +2,13 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { DateTime } from 'luxon'
 import YoutubeVideoService from '#services/youtube_video_service'
-import QueryValidationService from '#services/query_validation_service'
+import ResponseService from '#services/response_service'
 import {
   createYoutubeVideoValidator,
   updateYoutubeVideoValidator,
   youtubeVideoParamsValidator,
 } from '#validators/youtube_video'
+import { limitValidator } from '#validators/common'
 
 @inject()
 export default class YoutubeVideosController {
@@ -15,42 +16,24 @@ export default class YoutubeVideosController {
 
   async index(ctx: HttpContext) {
     const videos = await this.youtubeVideoService.getAllVideos()
-
-    return ctx.response.ok({
-      success: true,
-      data: videos,
-    })
+    ResponseService.ok(ctx, videos)
   }
 
   async active(ctx: HttpContext) {
-    const { limit } = await QueryValidationService.validateLimit(ctx)
+    const query = await ctx.request.validateUsing(limitValidator)
+    const limit = query.limit || 10
     const videos = await this.youtubeVideoService.getActiveVideos(limit)
-
-    return ctx.response.ok({
-      success: true,
-      data: videos,
-    })
+    ResponseService.ok(ctx, videos)
   }
 
-  async show({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(youtubeVideoParamsValidator)
+  async show(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(youtubeVideoParamsValidator)
     const video = await this.youtubeVideoService.getVideoById(validatedParams.id)
-
-    if (!video) {
-      return response.notFound({
-        success: false,
-        error: 'Vidéo non trouvée',
-      })
-    }
-
-    return response.ok({
-      success: true,
-      data: video,
-    })
+    ResponseService.ok(ctx, video)
   }
 
-  async store({ request, response }: HttpContext) {
-    const payload = await request.validateUsing(createYoutubeVideoValidator)
+  async store(ctx: HttpContext) {
+    const payload = await ctx.request.validateUsing(createYoutubeVideoValidator)
 
     const videoData = {
       ...payload,
@@ -58,16 +41,11 @@ export default class YoutubeVideosController {
     }
 
     const video = await this.youtubeVideoService.createVideo(videoData)
-
-    return response.created({
-      success: true,
-      data: video,
-      message: 'Vidéo créée avec succès',
-    })
+    ResponseService.created(ctx, video, 'Vidéo créée avec succès')
   }
 
-  async update({ request, response }: HttpContext) {
-    const { params: validatedParams, ...payload } = await request.validateUsing(
+  async update(ctx: HttpContext) {
+    const { params: validatedParams, ...payload } = await ctx.request.validateUsing(
       updateYoutubeVideoValidator
     )
 
@@ -77,21 +55,12 @@ export default class YoutubeVideosController {
     }
 
     const video = await this.youtubeVideoService.updateVideo(validatedParams.id, videoData)
-
-    return response.ok({
-      success: true,
-      data: video,
-      message: 'Vidéo mise à jour avec succès',
-    })
+    ResponseService.ok(ctx, video, 'Vidéo mise à jour avec succès')
   }
 
-  async destroy({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(youtubeVideoParamsValidator)
+  async destroy(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(youtubeVideoParamsValidator)
     await this.youtubeVideoService.deleteVideo(validatedParams.id)
-
-    return response.ok({
-      success: true,
-      message: 'Vidéo supprimée avec succès',
-    })
+    ResponseService.success(ctx, 'Vidéo supprimée avec succès')
   }
 }

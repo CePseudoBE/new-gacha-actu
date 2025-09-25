@@ -7,6 +7,7 @@ import GuideRepository, {
 import GuideDto from '#dtos/guide'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
+import { NotFoundException, BadRequestException } from '#exceptions/http_exceptions'
 
 export interface GuideListResponse {
   guides: GuideDto[]
@@ -63,23 +64,34 @@ export default class GuideService {
     return { guides: guideDtos }
   }
 
-  async getGuideById(id: number): Promise<GuideDto | null> {
+  async getGuideById(id: number): Promise<GuideDto> {
     const guide = await this.guideRepository.findById(id)
-    return guide ? new GuideDto(guide) : null
+    if (!guide) {
+      throw new NotFoundException('Guide non trouvé')
+    }
+    return new GuideDto(guide)
   }
 
-  async getGuideBySlug(slug: string): Promise<GuideDto | null> {
+  async getGuideBySlug(slug: string): Promise<GuideDto> {
     const guide = await this.guideRepository.findBySlug(slug)
-    return guide ? new GuideDto(guide) : null
+    if (!guide) {
+      throw new NotFoundException('Guide non trouvé')
+    }
+    return new GuideDto(guide)
   }
 
-  async getGuideBySlugAndIncrementViews(slug: string): Promise<GuideDto | null> {
+  async getGuideBySlugAndIncrementViews(slug: string): Promise<GuideDto> {
     // pas de cache ici : la vue est incrémentée
     const guide = await this.guideRepository.findBySlug(slug)
-    if (!guide) return null
+    if (!guide) {
+      throw new NotFoundException('Guide non trouvé')
+    }
 
     const updatedGuide = await this.guideRepository.incrementViewCount(guide.id)
-    return updatedGuide ? new GuideDto(updatedGuide) : null
+    if (!updatedGuide) {
+      throw new Error('Erreur lors de la mise à jour du compteur de vues')
+    }
+    return new GuideDto(updatedGuide)
   }
 
   async getPopularGuides(): Promise<GuideDto[]> {
@@ -106,7 +118,7 @@ export default class GuideService {
 
   async createGuide(data: GuideCreateData): Promise<GuideDto> {
     if (!data.sections || data.sections.length === 0) {
-      throw new Error('Guide must contain at least one section')
+      throw new BadRequestException('Le guide doit contenir au moins une section')
     }
 
     const guide = await this.guideRepository.create(data)
@@ -118,22 +130,20 @@ export default class GuideService {
     }
 
     // Invalidation des caches liés
-    await cache.delete({ key: CacheService.KEYS.GUIDES_ALL })
-    await cache.delete({ key: CacheService.KEYS.GUIDES_POPULAR })
-    if (completeGuide.gameId) {
-      await cache.delete({ key: CacheService.KEYS.GUIDES_BY_GAME(completeGuide.gameId) })
-    }
+    await CacheService.invalidateGuideCaches(completeGuide.gameId)
 
     return new GuideDto(completeGuide)
   }
 
-  async updateGuide(id: number, data: GuideUpdateData): Promise<GuideDto | null> {
+  async updateGuide(id: number, data: GuideUpdateData): Promise<GuideDto> {
     if (data.sections !== undefined && data.sections.length === 0) {
-      throw new Error('Guide must contain at least one section')
+      throw new BadRequestException('Le guide doit contenir au moins une section')
     }
 
     const guide = await this.guideRepository.update(id, data)
-    if (!guide) return null
+    if (!guide) {
+      throw new NotFoundException('Guide non trouvé')
+    }
 
     const completeGuide = await this.guideRepository.findById(guide.id)
     if (!completeGuide) {
@@ -141,28 +151,23 @@ export default class GuideService {
     }
 
     // Invalidation des caches liés
-    await cache.delete({ key: CacheService.KEYS.GUIDES_ALL })
-    await cache.delete({ key: CacheService.KEYS.GUIDES_POPULAR })
-    if (completeGuide.gameId) {
-      await cache.delete({ key: CacheService.KEYS.GUIDES_BY_GAME(completeGuide.gameId) })
-    }
+    await CacheService.invalidateGuideCaches(completeGuide.gameId)
 
     return new GuideDto(completeGuide)
   }
 
-  async deleteGuide(id: number): Promise<boolean> {
+  async deleteGuide(id: number): Promise<void> {
     const guide = await this.guideRepository.findById(id)
-    const result = await this.guideRepository.delete(id)
-
-    if (result && guide) {
-      // Invalidation des caches liés
-      await cache.delete({ key: CacheService.KEYS.GUIDES_ALL })
-      await cache.delete({ key: CacheService.KEYS.GUIDES_POPULAR })
-      if (guide.gameId) {
-        await cache.delete({ key: CacheService.KEYS.GUIDES_BY_GAME(guide.gameId) })
-      }
+    if (!guide) {
+      throw new NotFoundException('Guide non trouvé')
     }
 
-    return result
+    const result = await this.guideRepository.delete(id)
+    if (!result) {
+      throw new Error('Échec de la suppression du guide')
+    }
+
+    // Invalidation des caches liés
+    await CacheService.invalidateGuideCaches(guide.gameId)
   }
 }

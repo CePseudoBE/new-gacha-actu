@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { DateTime } from 'luxon'
 import MaintenanceSettingService from '#services/maintenance_setting_service'
+import ResponseService from '#services/response_service'
 import {
   enableMaintenanceValidator,
   updateMaintenanceSettingValidator,
@@ -11,17 +12,13 @@ import {
 export default class MaintenanceSettingsController {
   constructor(private maintenanceSettingService: MaintenanceSettingService) {}
 
-  async status({ response }: HttpContext) {
+  async status(ctx: HttpContext) {
     const maintenanceSetting = await this.maintenanceSettingService.getCurrentStatus()
-
-    return response.ok({
-      success: true,
-      data: maintenanceSetting,
-    })
+    ResponseService.ok(ctx, maintenanceSetting)
   }
 
-  async update({ request, response }: HttpContext) {
-    const payload = await request.validateUsing(updateMaintenanceSettingValidator)
+  async update(ctx: HttpContext) {
+    const payload = await ctx.request.validateUsing(updateMaintenanceSettingValidator)
 
     const { estimatedEndTime, ...restPayload } = payload
 
@@ -31,34 +28,19 @@ export default class MaintenanceSettingsController {
     }
 
     const maintenanceSetting = await this.maintenanceSettingService.updateMaintenance(updateData)
-
-    return response.ok({
-      success: true,
-      data: maintenanceSetting,
-      message: 'Configuration de maintenance mise à jour avec succès',
-    })
+    ResponseService.ok(ctx, maintenanceSetting, 'Configuration de maintenance mise à jour avec succès')
   }
 
-  async enable({ request, response }: HttpContext) {
-    const payload = await request.validateUsing(enableMaintenanceValidator)
+  async enable(ctx: HttpContext) {
+    const payload = await ctx.request.validateUsing(enableMaintenanceValidator)
     const maintenanceSetting = await this.maintenanceSettingService.enableMaintenance(
       payload.message
     )
-
-    return response.ok({
-      success: true,
-      data: maintenanceSetting,
-      message: 'Maintenance activée avec succès',
-    })
+    ResponseService.ok(ctx, maintenanceSetting, 'Maintenance activée avec succès')
   }
 
-  async disable({ response }: HttpContext) {
+  async disable(ctx: HttpContext) {
     const maintenanceSetting = await this.maintenanceSettingService.disableMaintenance()
-
-    return response.ok({
-      success: true,
-      data: maintenanceSetting,
-      message: 'Maintenance désactivée avec succès',
-    })
+    ResponseService.ok(ctx, maintenanceSetting, 'Maintenance désactivée avec succès')
   }
 }

@@ -4,7 +4,7 @@ import GameRepository, {
   GameFilters,
   GameUpdateData,
 } from '#repositories/game_repository'
-import { ConflictException } from '#exceptions/http_exceptions'
+import { ConflictException, NotFoundException } from '#exceptions/http_exceptions'
 import GameDto from '#dtos/game'
 import CacheService from '#services/cache_service'
 import type { SimplePaginatorMetaKeys } from '@adonisjs/lucid/types/querybuilder'
@@ -37,18 +37,24 @@ export default class GameService {
     }
   }
 
-  async getGameById(id: number): Promise<GameDto | null> {
+  async getGameById(id: number): Promise<GameDto> {
     const game = await this.gameRepository.findById(id)
-    return game ? new GameDto(game) : null
+    if (!game) {
+      throw new NotFoundException('Jeu non trouvé')
+    }
+    return new GameDto(game)
   }
 
-  async getGameBySlug(slug: string): Promise<GameDto | null> {
+  async getGameBySlug(slug: string): Promise<GameDto> {
     return await cache.getOrSet({
       key: CacheService.KEYS.GAMES_BY_SLUG(slug),
       ttl: CacheService.TTL.LONG,
       factory: async () => {
         const game = await this.gameRepository.findBySlug(slug)
-        return game ? new GameDto(game) : null
+        if (!game) {
+          throw new NotFoundException('Jeu non trouvé')
+        }
+        return new GameDto(game)
       },
     })
   }
@@ -57,7 +63,7 @@ export default class GameService {
     if (limit < 1 || limit > 50) limit = 10
 
     return await cache.getOrSet({
-      key: `${CacheService.KEYS.GAMES_POPULAR}:${limit}`,
+      key: CacheService.KEYS.GAMES_POPULAR_WITH_LIMIT(limit),
       ttl: CacheService.TTL.MEDIUM,
       factory: async () => {
         const games = await this.gameRepository.findPopular(limit)
@@ -70,10 +76,7 @@ export default class GameService {
     const game = await this.gameRepository.create(data)
 
     // Invalidation des caches liés
-    await cache.delete({ key: `${CacheService.KEYS.GAMES_POPULAR}:10` })
-    if (game.slug) {
-      await cache.delete({ key: CacheService.KEYS.GAMES_BY_SLUG(game.slug) })
-    }
+    await CacheService.invalidateGameCaches(game.slug)
 
     return new GameDto(game)
   }
@@ -81,19 +84,21 @@ export default class GameService {
   async updateGame(id: number, data: GameUpdateData): Promise<GameDto> {
     const updatedGame = await this.gameRepository.update(id, data)
     if (!updatedGame) {
-      throw new Error('Game not found')
+      throw new NotFoundException('Jeu non trouvé')
     }
 
     // Invalidation des caches liés
-    await cache.delete({ key: `${CacheService.KEYS.GAMES_POPULAR}:10` })
-    if (updatedGame.slug) {
-      await cache.delete({ key: CacheService.KEYS.GAMES_BY_SLUG(updatedGame.slug) })
-    }
+    await CacheService.invalidateGameCaches(updatedGame.slug)
 
     return new GameDto(updatedGame)
   }
 
   async deleteGame(id: number): Promise<void> {
+    const game = await this.gameRepository.findById(id)
+    if (!game) {
+      throw new NotFoundException('Jeu non trouvé')
+    }
+
     const hasContent = await this.gameRepository.hasContent(id)
     if (hasContent) {
       throw new ConflictException(
@@ -101,14 +106,10 @@ export default class GameService {
       )
     }
 
-    const game = await this.gameRepository.findById(id)
     await this.gameRepository.delete(id)
 
     // Invalidation des caches liés
-    await cache.delete({ key: `${CacheService.KEYS.GAMES_POPULAR}:10` })
-    if (game?.slug) {
-      await cache.delete({ key: CacheService.KEYS.GAMES_BY_SLUG(game.slug) })
-    }
+    await CacheService.invalidateGameCaches(game.slug)
   }
 
   async getGameStats(): Promise<{

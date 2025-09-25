@@ -4,6 +4,7 @@ import ArticleRepository from '#repositories/article_repository'
 import ArticleDto from '#dtos/article'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
+import { NotFoundException } from '#exceptions/http_exceptions'
 
 @inject()
 export default class ArticleService {
@@ -20,14 +21,20 @@ export default class ArticleService {
     })
   }
 
-  async getArticleById(id: number): Promise<ArticleDto | null> {
+  async getArticleById(id: number): Promise<ArticleDto> {
     const article = await this.articleRepository.findById(id)
-    return article ? new ArticleDto(article) : null
+    if (!article) {
+      throw new NotFoundException('Article non trouvé')
+    }
+    return new ArticleDto(article)
   }
 
-  async getArticleBySlug(slug: string): Promise<ArticleDto | null> {
+  async getArticleBySlug(slug: string): Promise<ArticleDto> {
     const article = await this.articleRepository.findBySlug(slug)
-    return article ? new ArticleDto(article) : null
+    if (!article) {
+      throw new NotFoundException('Article non trouvé')
+    }
+    return new ArticleDto(article)
   }
 
   async getPopularArticles(): Promise<ArticleDto[]> {
@@ -65,10 +72,10 @@ export default class ArticleService {
     return new ArticleDto(article)
   }
 
-  async updateArticle(id: number, data: ArticleUpdateData): Promise<ArticleDto | null> {
+  async updateArticle(id: number, data: ArticleUpdateData): Promise<ArticleDto> {
     const article = await this.articleRepository.update(id, data)
     if (!article) {
-      return null
+      throw new NotFoundException('Article non trouvé')
     }
 
     await article.refresh()
@@ -83,14 +90,14 @@ export default class ArticleService {
     return new ArticleDto(article)
   }
 
-  async deleteArticle(id: number): Promise<boolean> {
-    const result = await this.articleRepository.delete(id)
-
-    if (result) {
-      await cache.delete({ key: CacheService.KEYS.ARTICLES_ALL })
-      await cache.delete({ key: CacheService.KEYS.ARTICLES_POPULAR })
+  async deleteArticle(id: number): Promise<void> {
+    const article = await this.articleRepository.findById(id)
+    if (!article) {
+      throw new NotFoundException('Article non trouvé')
     }
 
-    return result
+    await this.articleRepository.delete(id)
+    await cache.delete({ key: CacheService.KEYS.ARTICLES_ALL })
+    await cache.delete({ key: CacheService.KEYS.ARTICLES_POPULAR })
   }
 }

@@ -1,67 +1,39 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import TagService from '#services/tag_service'
+import ResponseService from '#services/response_service'
 import { createTagValidator, updateTagValidator, tagParamsValidator } from '#validators/tag'
 
 @inject()
 export default class TagsController {
   constructor(private tagService: TagService) {}
 
-  async index({ response }: HttpContext) {
+  async index(ctx: HttpContext) {
     const tags = await this.tagService.getAllTags()
-
-    return response.ok({
-      success: true,
-      data: tags,
-    })
+    ResponseService.ok(ctx, tags)
   }
 
-  async show({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(tagParamsValidator)
+  async show(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(tagParamsValidator)
     const tag = await this.tagService.getTagById(validatedParams.id)
-
-    if (!tag) {
-      return response.notFound({
-        success: false,
-        error: 'Tag non trouvé',
-      })
-    }
-
-    return response.ok({
-      success: true,
-      data: tag,
-    })
+    ResponseService.ok(ctx, tag)
   }
 
-  async store({ request, response }: HttpContext) {
-    const payload = await request.validateUsing(createTagValidator)
+  async store(ctx: HttpContext) {
+    const payload = await ctx.request.validateUsing(createTagValidator)
     const tag = await this.tagService.createTag(payload)
-
-    return response.created({
-      success: true,
-      data: tag,
-      message: 'Tag créé avec succès',
-    })
+    ResponseService.created(ctx, tag, 'Tag créé avec succès')
   }
 
-  async update({ request, response }: HttpContext) {
-    const { params: validatedParams, ...payload } = await request.validateUsing(updateTagValidator)
+  async update(ctx: HttpContext) {
+    const { params: validatedParams, ...payload } = await ctx.request.validateUsing(updateTagValidator)
     const tag = await this.tagService.updateTag(validatedParams.id, payload)
-
-    return response.ok({
-      success: true,
-      data: tag,
-      message: 'Tag mis à jour avec succès',
-    })
+    ResponseService.ok(ctx, tag, 'Tag mis à jour avec succès')
   }
 
-  async destroy({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(tagParamsValidator)
+  async destroy(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(tagParamsValidator)
     await this.tagService.deleteTag(validatedParams.id)
-
-    return response.ok({
-      success: true,
-      message: 'Tag supprimé avec succès',
-    })
+    ResponseService.success(ctx, 'Tag supprimé avec succès')
   }
 }

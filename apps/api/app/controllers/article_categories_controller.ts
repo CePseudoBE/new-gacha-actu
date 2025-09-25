@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import ArticleCategoryService from '#services/article_category_service'
+import ResponseService from '#services/response_service'
 import {
   createArticleCategoryValidator,
   updateArticleCategoryValidator,
@@ -11,66 +12,37 @@ import {
 export default class ArticleCategoriesController {
   constructor(private articleCategoryService: ArticleCategoryService) {}
 
-  async index({ response }: HttpContext) {
+  async index(ctx: HttpContext) {
     const categories = await this.articleCategoryService.getArticleCategories()
-
-    return response.ok({
-      success: true,
-      data: categories,
-    })
+    ResponseService.ok(ctx, categories)
   }
 
-  async show({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(articleCategoryParamsValidator)
+  async show(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(articleCategoryParamsValidator)
     const category = await this.articleCategoryService.getArticleCategoryById(validatedParams.id)
-
-    if (!category) {
-      return response.notFound({
-        success: false,
-        error: "Catégorie d'article non trouvée",
-      })
-    }
-
-    return response.ok({
-      success: true,
-      data: category,
-    })
+    ResponseService.ok(ctx, category)
   }
 
-  async store({ request, response }: HttpContext) {
-    const payload = await request.validateUsing(createArticleCategoryValidator)
+  async store(ctx: HttpContext) {
+    const payload = await ctx.request.validateUsing(createArticleCategoryValidator)
     const category = await this.articleCategoryService.createArticleCategory(payload)
-
-    return response.created({
-      success: true,
-      data: category,
-      message: "Catégorie d'article créée avec succès",
-    })
+    ResponseService.created(ctx, category, "Catégorie d'article créée avec succès")
   }
 
-  async update({ request, response }: HttpContext) {
-    const { params: validatedParams, ...payload } = await request.validateUsing(
+  async update(ctx: HttpContext) {
+    const { params: validatedParams, ...payload } = await ctx.request.validateUsing(
       updateArticleCategoryValidator
     )
     const category = await this.articleCategoryService.updateArticleCategory(
       validatedParams.id,
       payload
     )
-
-    return response.ok({
-      success: true,
-      data: category,
-      message: "Catégorie d'article mise à jour avec succès",
-    })
+    ResponseService.ok(ctx, category, "Catégorie d'article mise à jour avec succès")
   }
 
-  async destroy({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(articleCategoryParamsValidator)
+  async destroy(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(articleCategoryParamsValidator)
     await this.articleCategoryService.deleteArticleCategory(validatedParams.id)
-
-    return response.ok({
-      success: true,
-      message: "Catégorie d'article supprimée avec succès",
-    })
+    ResponseService.success(ctx, "Catégorie d'article supprimée avec succès")
   }
 }

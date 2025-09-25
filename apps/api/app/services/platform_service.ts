@@ -6,6 +6,7 @@ import PlatformRepository, {
 import PlatformDto from '#dtos/platform'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
+import { NotFoundException } from '#exceptions/http_exceptions'
 
 @inject()
 export default class PlatformService {
@@ -22,14 +23,20 @@ export default class PlatformService {
     })
   }
 
-  async getPlatformById(id: number): Promise<PlatformDto | null> {
+  async getPlatformById(id: number): Promise<PlatformDto> {
     const platform = await this.platformRepository.findById(id)
-    return platform ? new PlatformDto(platform) : null
+    if (!platform) {
+      throw new NotFoundException('Plateforme non trouvée')
+    }
+    return new PlatformDto(platform)
   }
 
-  async getPlatformBySlug(slug: string): Promise<PlatformDto | null> {
+  async getPlatformBySlug(slug: string): Promise<PlatformDto> {
     const platform = await this.platformRepository.findBySlug(slug)
-    return platform ? new PlatformDto(platform) : null
+    if (!platform) {
+      throw new NotFoundException('Plateforme non trouvée')
+    }
+    return new PlatformDto(platform)
   }
 
   async createPlatform(data: PlatformCreateData): Promise<PlatformDto> {
@@ -43,6 +50,9 @@ export default class PlatformService {
 
   async updatePlatform(id: number, data: PlatformUpdateData): Promise<PlatformDto> {
     const updatedPlatform = await this.platformRepository.update(id, data)
+    if (!updatedPlatform) {
+      throw new NotFoundException('Plateforme non trouvée')
+    }
 
     // Invalidation des caches liés
     await cache.delete({ key: CacheService.KEYS.PLATFORMS_ALL })
@@ -51,6 +61,11 @@ export default class PlatformService {
   }
 
   async deletePlatform(id: number): Promise<void> {
+    const platform = await this.platformRepository.findById(id)
+    if (!platform) {
+      throw new NotFoundException('Plateforme non trouvée')
+    }
+
     await this.platformRepository.delete(id)
 
     // Invalidation des caches liés

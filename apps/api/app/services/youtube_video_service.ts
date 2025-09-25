@@ -6,6 +6,7 @@ import YoutubeVideoRepository, {
 import YoutubeVideoDto from '#dtos/youtube_video'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
+import { NotFoundException } from '#exceptions/http_exceptions'
 
 @inject()
 export default class YoutubeVideoService {
@@ -29,9 +30,12 @@ export default class YoutubeVideoService {
     return YoutubeVideoDto.fromArray(videos)
   }
 
-  async getVideoById(id: number): Promise<YoutubeVideoDto | null> {
+  async getVideoById(id: number): Promise<YoutubeVideoDto> {
     const video = await this.youtubeVideoRepository.findById(id)
-    return video ? new YoutubeVideoDto(video) : null
+    if (!video) {
+      throw new NotFoundException('Vidéo YouTube non trouvée')
+    }
+    return new YoutubeVideoDto(video)
   }
 
   async createVideo(data: YoutubeVideoCreateData): Promise<YoutubeVideoDto> {
@@ -46,7 +50,7 @@ export default class YoutubeVideoService {
   async updateVideo(id: number, data: YoutubeVideoUpdateData): Promise<YoutubeVideoDto> {
     const updatedVideo = await this.youtubeVideoRepository.update(id, data)
     if (!updatedVideo) {
-      throw new Error('Video not found')
+      throw new NotFoundException('Vidéo YouTube non trouvée')
     }
 
     // Invalidation des caches liés
@@ -56,6 +60,11 @@ export default class YoutubeVideoService {
   }
 
   async deleteVideo(id: number): Promise<void> {
+    const video = await this.youtubeVideoRepository.findById(id)
+    if (!video) {
+      throw new NotFoundException('Vidéo YouTube non trouvée')
+    }
+
     await this.youtubeVideoRepository.delete(id)
 
     // Invalidation des caches liés

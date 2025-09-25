@@ -3,6 +3,7 @@ import GenreRepository, { GenreCreateData, GenreUpdateData } from '#repositories
 import GenreDto from '#dtos/genre'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
+import { NotFoundException } from '#exceptions/http_exceptions'
 
 @inject()
 export default class GenreService {
@@ -19,14 +20,20 @@ export default class GenreService {
     })
   }
 
-  async getGenreById(id: number): Promise<GenreDto | null> {
+  async getGenreById(id: number): Promise<GenreDto> {
     const genre = await this.genreRepository.findById(id)
-    return genre ? new GenreDto(genre) : null
+    if (!genre) {
+      throw new NotFoundException('Genre non trouvé')
+    }
+    return new GenreDto(genre)
   }
 
-  async getGenreBySlug(slug: string): Promise<GenreDto | null> {
+  async getGenreBySlug(slug: string): Promise<GenreDto> {
     const genre = await this.genreRepository.findBySlug(slug)
-    return genre ? new GenreDto(genre) : null
+    if (!genre) {
+      throw new NotFoundException('Genre non trouvé')
+    }
+    return new GenreDto(genre)
   }
 
   async createGenre(data: GenreCreateData): Promise<GenreDto> {
@@ -39,6 +46,9 @@ export default class GenreService {
 
   async updateGenre(id: number, data: GenreUpdateData): Promise<GenreDto> {
     const updatedGenre = await this.genreRepository.update(id, data)
+    if (!updatedGenre) {
+      throw new NotFoundException('Genre non trouvé')
+    }
 
     await cache.delete({ key: CacheService.KEYS.GENRES_ALL })
 
@@ -46,8 +56,12 @@ export default class GenreService {
   }
 
   async deleteGenre(id: number): Promise<void> {
-    await this.genreRepository.delete(id)
+    const genre = await this.genreRepository.findById(id)
+    if (!genre) {
+      throw new NotFoundException('Genre non trouvé')
+    }
 
+    await this.genreRepository.delete(id)
     await cache.delete({ key: CacheService.KEYS.GENRES_ALL })
   }
 }

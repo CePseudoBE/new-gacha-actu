@@ -2,60 +2,52 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { DateTime } from 'luxon'
 import GameService from '#services/game_service'
-import QueryValidationService from '#services/query_validation_service'
+import ResponseService from '#services/response_service'
 import {
   createGameValidator,
   updateGameValidator,
   gameParamsValidator,
   gameSlugParamsValidator,
 } from '#validators/game'
+import { gameFiltersValidator, limitValidator } from '#validators/common'
 
 @inject()
 export default class GamesController {
   constructor(private gameService: GameService) {}
 
   async index(ctx: HttpContext) {
-    const { page, perPage, filters } = await QueryValidationService.validateGameFilters(ctx)
-    const result = await this.gameService.getGames(filters, page, perPage)
+    const filters = await ctx.request.validateUsing(gameFiltersValidator)
 
-    return ctx.response.ok({
-      success: true,
-      data: result.data,
-      meta: {
-        pagination: result.meta,
-      },
-    })
+    const page = filters.page || 1
+    const perPage = filters.perPage || 20
+    const gameFilters = {
+      search: filters.search,
+      isPopular: filters.isPopular,
+      genreIds: filters.genreIds,
+      platformIds: filters.platformIds,
+    }
+
+    const result = await this.gameService.getGames(gameFilters, page, perPage)
+
+    ResponseService.okWithPagination(ctx, result.data, result.meta)
   }
 
   async popular(ctx: HttpContext) {
-    const { limit } = await QueryValidationService.validateLimit(ctx)
+    const query = await ctx.request.validateUsing(limitValidator)
+    const limit = query.limit || 10
     const games = await this.gameService.getPopularGames(limit)
 
-    return ctx.response.ok({
-      success: true,
-      data: games,
-    })
+    ResponseService.ok(ctx, games)
   }
 
-  async show({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(gameSlugParamsValidator)
+  async show(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(gameSlugParamsValidator)
     const game = await this.gameService.getGameBySlug(validatedParams.slug)
-
-    if (!game) {
-      return response.notFound({
-        success: false,
-        error: 'Jeu non trouvé',
-      })
-    }
-
-    return response.ok({
-      success: true,
-      data: game,
-    })
+    ResponseService.ok(ctx, game)
   }
 
-  async store({ request, response }: HttpContext) {
-    const payload = await request.validateUsing(createGameValidator)
+  async store(ctx: HttpContext) {
+    const payload = await ctx.request.validateUsing(createGameValidator)
 
     // Convert Date to DateTime for Luxon compatibility and handle relations
     const {
@@ -79,16 +71,11 @@ export default class GamesController {
     }
 
     const game = await this.gameService.createGame(gameData)
-
-    return response.created({
-      success: true,
-      data: game,
-      message: 'Jeu créé avec succès',
-    })
+    ResponseService.created(ctx, game, 'Jeu créé avec succès')
   }
 
-  async update({ request, response }: HttpContext) {
-    const { params: validatedParams, ...payload } = await request.validateUsing(updateGameValidator)
+  async update(ctx: HttpContext) {
+    const { params: validatedParams, ...payload } = await ctx.request.validateUsing(updateGameValidator)
 
     const {
       genreId,
@@ -115,30 +102,17 @@ export default class GamesController {
     }
 
     const game = await this.gameService.updateGame(validatedParams.id, gameData)
-
-    return response.ok({
-      success: true,
-      data: game,
-      message: 'Jeu mis à jour avec succès',
-    })
+    ResponseService.ok(ctx, game, 'Jeu mis à jour avec succès')
   }
 
-  async destroy({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(gameParamsValidator)
+  async destroy(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(gameParamsValidator)
     await this.gameService.deleteGame(validatedParams.id)
-
-    return response.ok({
-      success: true,
-      message: 'Jeu supprimé avec succès',
-    })
+    ResponseService.success(ctx, 'Jeu supprimé avec succès')
   }
 
-  async stats({ response }: HttpContext) {
+  async stats(ctx: HttpContext) {
     const stats = await this.gameService.getGameStats()
-
-    return response.ok({
-      success: true,
-      data: stats,
-    })
+    ResponseService.ok(ctx, stats)
   }
 }

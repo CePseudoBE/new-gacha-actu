@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import PlatformService from '#services/platform_service'
+import ResponseService from '#services/response_service'
 import {
   createPlatformValidator,
   updatePlatformValidator,
@@ -11,62 +12,33 @@ import {
 export default class PlatformsController {
   constructor(private platformService: PlatformService) {}
 
-  async index({ response }: HttpContext) {
+  async index(ctx: HttpContext) {
     const platforms = await this.platformService.getAllPlatforms()
-
-    return response.ok({
-      success: true,
-      data: platforms,
-    })
+    ResponseService.ok(ctx, platforms)
   }
 
-  async show({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(platformParamsValidator)
+  async show(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(platformParamsValidator)
     const platform = await this.platformService.getPlatformById(validatedParams.id)
-
-    if (!platform) {
-      return response.notFound({
-        success: false,
-        error: 'Platform non trouvée',
-      })
-    }
-
-    return response.ok({
-      success: true,
-      data: platform,
-    })
+    ResponseService.ok(ctx, platform)
   }
 
-  async store({ request, response }: HttpContext) {
-    const payload = await request.validateUsing(createPlatformValidator)
+  async store(ctx: HttpContext) {
+    const payload = await ctx.request.validateUsing(createPlatformValidator)
     const platform = await this.platformService.createPlatform(payload)
-
-    return response.created({
-      success: true,
-      data: platform,
-      message: 'Platform créée avec succès',
-    })
+    ResponseService.created(ctx, platform, 'Platform créée avec succès')
   }
 
-  async update({ request, response }: HttpContext) {
+  async update(ctx: HttpContext) {
     const { params: validatedParams, ...payload } =
-      await request.validateUsing(updatePlatformValidator)
+      await ctx.request.validateUsing(updatePlatformValidator)
     const platform = await this.platformService.updatePlatform(validatedParams.id, payload)
-
-    return response.ok({
-      success: true,
-      data: platform,
-      message: 'Platform mise à jour avec succès',
-    })
+    ResponseService.ok(ctx, platform, 'Platform mise à jour avec succès')
   }
 
-  async destroy({ request, response }: HttpContext) {
-    const { params: validatedParams } = await request.validateUsing(platformParamsValidator)
+  async destroy(ctx: HttpContext) {
+    const { params: validatedParams } = await ctx.request.validateUsing(platformParamsValidator)
     await this.platformService.deletePlatform(validatedParams.id)
-
-    return response.ok({
-      success: true,
-      message: 'Platform supprimée avec succès',
-    })
+    ResponseService.success(ctx, 'Platform supprimée avec succès')
   }
 }

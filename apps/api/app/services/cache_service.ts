@@ -1,8 +1,11 @@
+import cache from '@adonisjs/cache/services/main'
+
 export default class CacheService {
   // Cache keys constants
   static KEYS = {
     GAMES_ALL: 'games:all',
     GAMES_POPULAR: 'games:popular',
+    GAMES_POPULAR_WITH_LIMIT: (limit: number) => `games:popular:${limit}`,
     GAMES_BY_SLUG: (slug: string) => `games:slug:${slug}`,
     GENRES_ALL: 'genres:all',
     PLATFORMS_ALL: 'platforms:all',
@@ -28,4 +31,52 @@ export default class CacheService {
     LONG: 2 * 60 * 60, // 2 hours - for rarely changing data
     VERY_LONG: 24 * 60 * 60, // 24 hours - for very static data
   } as const
+
+  /**
+   * Invalide plusieurs clés de cache en parallèle
+   */
+  static async invalidateKeys(keys: string[]): Promise<void> {
+    await Promise.all(keys.map((key) => cache.delete({ key })))
+  }
+
+  /**
+   * Invalide tous les caches liés aux jeux
+   */
+  static async invalidateGameCaches(gameSlug?: string): Promise<void> {
+    const keys = [
+      this.KEYS.GAMES_ALL,
+      this.KEYS.GAMES_POPULAR,
+      // Invalide les différentes limites populaires courantes
+      this.KEYS.GAMES_POPULAR_WITH_LIMIT(5),
+      this.KEYS.GAMES_POPULAR_WITH_LIMIT(10),
+      this.KEYS.GAMES_POPULAR_WITH_LIMIT(20),
+      this.KEYS.GAMES_POPULAR_WITH_LIMIT(50),
+    ]
+
+    if (gameSlug) {
+      keys.push(this.KEYS.GAMES_BY_SLUG(gameSlug))
+    }
+
+    await this.invalidateKeys(keys)
+  }
+
+  /**
+   * Invalide tous les caches liés aux guides
+   */
+  static async invalidateGuideCaches(gameId?: number): Promise<void> {
+    const keys = [this.KEYS.GUIDES_ALL, this.KEYS.GUIDES_POPULAR]
+
+    if (gameId) {
+      keys.push(this.KEYS.GUIDES_BY_GAME(gameId))
+    }
+
+    await this.invalidateKeys(keys)
+  }
+
+  /**
+   * Invalide tous les caches liés aux articles
+   */
+  static async invalidateArticleCaches(): Promise<void> {
+    await this.invalidateKeys([this.KEYS.ARTICLES_ALL, this.KEYS.ARTICLES_POPULAR])
+  }
 }

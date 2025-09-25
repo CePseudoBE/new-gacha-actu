@@ -7,6 +7,7 @@ import ArticleCategoryRepository from '#repositories/article_category_repository
 import ArticleCategoryDto from '#dtos/article_category'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
+import { NotFoundException } from '#exceptions/http_exceptions'
 
 @inject()
 export default class ArticleCategoryService {
@@ -23,14 +24,20 @@ export default class ArticleCategoryService {
     })
   }
 
-  async getArticleCategoryById(id: number): Promise<ArticleCategoryDto | null> {
+  async getArticleCategoryById(id: number): Promise<ArticleCategoryDto> {
     const category = await this.articleCategoryRepository.findById(id)
-    return category ? new ArticleCategoryDto(category) : null
+    if (!category) {
+      throw new NotFoundException('Catégorie d\'article non trouvée')
+    }
+    return new ArticleCategoryDto(category)
   }
 
-  async getArticleCategoryBySlug(slug: string): Promise<ArticleCategoryDto | null> {
+  async getArticleCategoryBySlug(slug: string): Promise<ArticleCategoryDto> {
     const category = await this.articleCategoryRepository.findBySlug(slug)
-    return category ? new ArticleCategoryDto(category) : null
+    if (!category) {
+      throw new NotFoundException('Catégorie d\'article non trouvée')
+    }
+    return new ArticleCategoryDto(category)
   }
 
   async createArticleCategory(data: ArticleCategoryCreateData): Promise<ArticleCategoryDto> {
@@ -45,10 +52,10 @@ export default class ArticleCategoryService {
   async updateArticleCategory(
     id: number,
     data: ArticleCategoryUpdateData
-  ): Promise<ArticleCategoryDto | null> {
+  ): Promise<ArticleCategoryDto> {
     const category = await this.articleCategoryRepository.update(id, data)
     if (!category) {
-      return null
+      throw new NotFoundException('Catégorie d\'article non trouvée')
     }
 
     await category.refresh()
@@ -58,13 +65,13 @@ export default class ArticleCategoryService {
     return new ArticleCategoryDto(category)
   }
 
-  async deleteArticleCategory(id: number): Promise<boolean> {
-    const result = await this.articleCategoryRepository.delete(id)
-
-    if (result) {
-      await cache.delete({ key: CacheService.KEYS.ARTICLE_CATEGORIES_ALL })
+  async deleteArticleCategory(id: number): Promise<void> {
+    const category = await this.articleCategoryRepository.findById(id)
+    if (!category) {
+      throw new NotFoundException('Catégorie d\'article non trouvée')
     }
 
-    return result
+    await this.articleCategoryRepository.delete(id)
+    await cache.delete({ key: CacheService.KEYS.ARTICLE_CATEGORIES_ALL })
   }
 }

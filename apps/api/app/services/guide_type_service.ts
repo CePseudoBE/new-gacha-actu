@@ -6,6 +6,7 @@ import GuideTypeRepository, {
 import GuideTypeDto from '#dtos/guide_type'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
+import { NotFoundException } from '#exceptions/http_exceptions'
 
 @inject()
 export default class GuideTypeService {
@@ -22,9 +23,12 @@ export default class GuideTypeService {
     })
   }
 
-  async getGuideTypeById(id: number): Promise<GuideTypeDto | null> {
+  async getGuideTypeById(id: number): Promise<GuideTypeDto> {
     const guideType = await this.guideTypeRepository.findById(id)
-    return guideType ? new GuideTypeDto(guideType) : null
+    if (!guideType) {
+      throw new NotFoundException('Type de guide non trouvé')
+    }
+    return new GuideTypeDto(guideType)
   }
 
   async createGuideType(data: GuideTypeCreateData): Promise<GuideTypeDto> {
@@ -38,6 +42,9 @@ export default class GuideTypeService {
 
   async updateGuideType(id: number, data: GuideTypeUpdateData): Promise<GuideTypeDto> {
     const guideType = await this.guideTypeRepository.update(id, data)
+    if (!guideType) {
+      throw new NotFoundException('Type de guide non trouvé')
+    }
 
     // Invalidate related caches
     await cache.delete({ key: CacheService.KEYS.GUIDE_TYPES_ALL })
@@ -46,6 +53,11 @@ export default class GuideTypeService {
   }
 
   async deleteGuideType(id: number): Promise<void> {
+    const guideType = await this.guideTypeRepository.findById(id)
+    if (!guideType) {
+      throw new NotFoundException('Type de guide non trouvé')
+    }
+
     await this.guideTypeRepository.delete(id)
 
     // Invalidate related caches

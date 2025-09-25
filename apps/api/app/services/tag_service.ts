@@ -3,6 +3,7 @@ import TagRepository, { TagCreateData, TagUpdateData } from '#repositories/tag_r
 import TagDto from '#dtos/tag'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
+import { NotFoundException } from '#exceptions/http_exceptions'
 
 @inject()
 export default class TagService {
@@ -19,14 +20,20 @@ export default class TagService {
     })
   }
 
-  async getTagById(id: number): Promise<TagDto | null> {
+  async getTagById(id: number): Promise<TagDto> {
     const tag = await this.tagRepository.findById(id)
-    return tag ? new TagDto(tag) : null
+    if (!tag) {
+      throw new NotFoundException('Tag non trouvé')
+    }
+    return new TagDto(tag)
   }
 
-  async getTagBySlug(slug: string): Promise<TagDto | null> {
+  async getTagBySlug(slug: string): Promise<TagDto> {
     const tag = await this.tagRepository.findBySlug(slug)
-    return tag ? new TagDto(tag) : null
+    if (!tag) {
+      throw new NotFoundException('Tag non trouvé')
+    }
+    return new TagDto(tag)
   }
 
   async createTag(data: TagCreateData): Promise<TagDto> {
@@ -40,6 +47,9 @@ export default class TagService {
 
   async updateTag(id: number, data: TagUpdateData): Promise<TagDto> {
     const updatedTag = await this.tagRepository.update(id, data)
+    if (!updatedTag) {
+      throw new NotFoundException('Tag non trouvé')
+    }
 
     // Invalidation des caches liés
     await cache.delete({ key: CacheService.KEYS.TAGS_ALL })
@@ -48,6 +58,11 @@ export default class TagService {
   }
 
   async deleteTag(id: number): Promise<void> {
+    const tag = await this.tagRepository.findById(id)
+    if (!tag) {
+      throw new NotFoundException('Tag non trouvé')
+    }
+
     await this.tagRepository.delete(id)
 
     // Invalidation des caches liés
