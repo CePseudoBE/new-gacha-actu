@@ -6,6 +6,7 @@ import Game from '#models/game'
 import ArticleCategory from '#models/article_category'
 import Tag from '#models/tag'
 import SeoKeyword from '#models/seo_keyword'
+import Image from '#models/image'
 
 export default class Article extends BaseModel {
   @column({ isPrimary: true })
@@ -32,6 +33,9 @@ export default class Article extends BaseModel {
 
   @column()
   declare imageUrl: string | null
+
+  @column()
+  declare imageId: number | null
 
   @column()
   declare content: string
@@ -67,6 +71,11 @@ export default class Article extends BaseModel {
     foreignKey: 'categoryId',
   })
   declare category: BelongsTo<typeof ArticleCategory>
+
+  @belongsTo(() => Image, {
+    foreignKey: 'imageId',
+  })
+  declare image: BelongsTo<typeof Image>
 
   @manyToMany(() => Tag, {
     pivotTable: 'articles_tags',

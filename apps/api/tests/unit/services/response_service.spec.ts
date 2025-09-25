@@ -1,5 +1,4 @@
 import { test } from '@japa/runner'
-import type { HttpContext } from '@adonisjs/core/http'
 import ResponseService from '#services/response_service'
 
 test.group('ResponseService', () => {

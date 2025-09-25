@@ -9,6 +9,7 @@ import Tag from '#models/tag'
 import SeoKeyword from '#models/seo_keyword'
 import GuideSection from '#models/guide_section'
 import GuidePrerequisite from '#models/guide_prerequisite'
+import Image from '#models/image'
 
 export default class Guide extends BaseModel {
   @column({ isPrimary: true })
@@ -35,6 +36,9 @@ export default class Guide extends BaseModel {
 
   @column()
   declare imageUrl: string | null
+
+  @column()
+  declare imageId: number | null
 
   @column()
   declare readingTime: number | null
@@ -78,6 +82,11 @@ export default class Guide extends BaseModel {
     foreignKey: 'difficultyId',
   })
   declare difficulty: BelongsTo<typeof DifficultyLevel>
+
+  @belongsTo(() => Image, {
+    foreignKey: 'imageId',
+  })
+  declare image: BelongsTo<typeof Image>
 
   @hasMany(() => GuideSection, {
     foreignKey: 'guideId',

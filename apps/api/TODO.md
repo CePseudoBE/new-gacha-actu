@@ -17,6 +17,16 @@
 - ✅ **Tests** - Variables inutilisées, types `any` explicites résolvés
 - ✅ **Messages français** - Provider VineJS activé + tests corrigés
 
+### 🔧 STANDARDISATION ARCHITECTURALE COMPLÈTE ✅
+
+- ✅ **QueryValidationService supprimé** - Plus de bypass des validateurs VineJS
+- ✅ **ResponseService créé** - Réponses API standardisées (ok, created, notFound, etc.)
+- ✅ **Controllers standardisés** - Signature `ctx: HttpContext`, plus de try/catch manuels
+- ✅ **Services standardisés** - Retournent `Promise<Dto>` et lancent des exceptions
+- ✅ **Cache centralisé** - Clés dans `CacheService.KEYS`, invalidation via méthodes dédiées
+- ✅ **Tests ResponseService** - Couverture complète avec Japa/assert pattern
+- ✅ **Exception handling** - `NotFoundException`, `BadRequestException`, etc.
+
 ## 🏆 STATUS FINAL - EXCELLENT ⭐
 
 ### Entités Complètes avec CRUD + Tests ✅
@@ -42,7 +52,7 @@
 
 - **Entités simples** : 11/11 ✅ (100%)
 - **Entités complexes** : 2/2 ✅ (100%) - Article + Guide
-- **Tests** : 144/144 ✅ (100%) 🚀
+- **Tests** : 155/155 ✅ (100%) 🚀
 - **TypeScript** : 0 erreur ✅ (compilation parfaite)
 - **Routes publiques** : Optimisées ✅
 - **Validation** : VineJS complète + messages français ACTIVÉS ✅
@@ -55,7 +65,7 @@
 - ✅ **GuideType** - Implémenté avec pattern établi
 - ✅ **Guide** - Système complexe complet (sections hiérarchiques, prérequis, relations multiples)
 - ✅ **TypeScript** - 0 erreur, code parfaitement typé
-- ✅ **Tests** - 144 tests passent (100% success rate)
+- ✅ **Tests** - 155 tests passent (100% success rate)
 - ✅ **Architecture** - Repository/Service/Controller cohérente
 - ✅ **Validation** - VineJS + messages français ACTIVÉS (production + tests)
 - ✅ **Relations** - Many-to-many complètes sur toutes entités
@@ -96,7 +106,7 @@ sérialisées
 - **Framework** : AdonisJS 6 ✅
 - **Database** : PostgreSQL + Lucid ORM ✅
 - **Validation** : VineJS + CustomErrorReporter + Messages français ✅
-- **Testing** : Japa (144 tests passent) ✅
+- **Testing** : Japa (155 tests passent) ✅
 - **Architecture** : Repository pattern + DI ✅
 - **TypeScript** : 100% typé, 0 erreur ✅
 
@@ -117,15 +127,16 @@ Le backend API est fonctionnellement complet, mais reste à implémenter les **o
 
 ### Phase 5: Image Management 🔥🔥 (PRIORITÉ 2)
 
-- ❌ **Upload d'images** : Middleware multer/drive pour articles/games/guides
+- ✅ **Table Image centralisée** : Modèle + migrations + relations Article/Guide
+- ❌ **Upload d'images** : AdonisJS Drive intégré dans formulaires création
 - ❌ **Image processing** : Resize, compression, formats WebP
-- ❌ **Storage** : Local/S3/Cloudinary selon config
-- ❌ **Validation** : Types, tailles, dimensions d'images
-- ❌ **CDN Integration** : URLs optimisées pour performance
+- ❌ **Storage** : Local/S3/Cloudinary selon config AdonisJS Drive
+- ❌ **Validation** : VineJS file validation (types, tailles, dimensions)
 - 📋 **Actions** :
-  - Route `POST /api/admin/upload/images`
-  - Middleware image validation & processing
-  - Service ImageOptimization
+  - Modifier validators Article/Guide pour `vine.file()`
+  - Service ImageService avec AdonisJS Drive
+  - Upload dans ArticleController.store() / GuideController.store()
+  - Supprimer champs imageUrl (garder pour compatibilité temporaire)
 
 ### Phase Next: Frontend Nuxt (Après optimisations backend) ⏭️
 
@@ -138,10 +149,12 @@ Le backend API est fonctionnellement complet, mais reste à implémenter les **o
 **Backend AdonisJS - API FONCTIONNELLE COMPLÈTE** ✅
 
 - **12 entités** production-ready avec relations complexes
-- **144 tests** passent (100% coverage fonctionnel)
+- **155 tests** passent (100% coverage fonctionnel)
 - **TypeScript** parfaitement typé (0 erreur)
 - **API REST** complète avec validation française
-- **Architecture** robuste et scalable
+- **Architecture** robuste et scalable standardisée
+- **ResponseService** pour réponses cohérentes
+- **Cache management** centralisé et optimisé
 - **Documentation** code complète
 
 **Reste : Cache + Images = Backend production-ready final !** 🎯
@@ -174,6 +187,6 @@ Provider **ACTIVÉ** avec **103 messages français** couvrant :
 - Validation base de données (unique, exists)
 - Messages spécifiques par champ (email, password, title...)
 - **Production** : API retourne messages français
-- **Tests** : 144 tests utilisent messages français (corrigés)
+- **Tests** : 155 tests utilisent messages français (corrigés)
 
 **CustomVineMessagesProvider opérationnel via adonisrc.ts** 🇫🇷
