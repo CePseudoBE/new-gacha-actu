@@ -1,7 +1,6 @@
 import { test } from '@japa/runner'
 import drive from '@adonisjs/drive/services/main'
-import { writeFileSync, unlinkSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import fileGenerator from '@poppinss/file-generator'
 
 test.group('Image Upload', (group) => {
   group.setup(async () => {
@@ -41,12 +40,8 @@ test.group('Image Upload', (group) => {
     const categoryResponse = await client.post('/api/admin/article-categories').json(categoryData)
     const categoryId = categoryResponse.body().data.id
 
-    // Créer un fichier temporaire avec vraie extension
-    const tempFile = join(process.cwd(), 'tmp', 'test-image.jpg')
-    const jpegHeader = Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46])
-    const jpegFooter = Buffer.from([0xFF, 0xD9])
-    const fakeImageData = Buffer.concat([jpegHeader, Buffer.from('fake-image-content'), jpegFooter])
-    writeFileSync(tempFile, fakeImageData)
+    // Générer un fichier JPEG fake en mémoire
+    const { contents, mime, name } = await fileGenerator.generateJpg('100kb')
 
     const articleData = {
       title: 'Article with Image Upload Test',
@@ -67,17 +62,10 @@ test.group('Image Upload', (group) => {
       .field('content', articleData.content)
       .field('gameId', articleData.gameId.toString())
       .field('categoryId', articleData.categoryId.toString())
-      .file('image', readFileSync(tempFile), {
-        filename: 'test-image.jpg',
-        contentType: 'image/jpeg'
+      .file('image', contents, {
+        filename: name,
+        contentType: mime
       })
-
-    // Nettoyer le fichier temporaire
-    try {
-      unlinkSync(tempFile)
-    } catch (error) {
-      // Ignorer si le fichier n'existe pas
-    }
 
     if (response.status() !== 201) {
       console.log('Response body:', response.body())
@@ -129,13 +117,8 @@ test.group('Image Upload', (group) => {
     const createResponse = await client.post('/api/admin/articles').json(articleData)
     const articleId = createResponse.body().data.id
 
-    // Maintenant update avec une image
-    const tempFile2 = join(process.cwd(), 'tmp', 'test-update.png')
-    // Créer un PNG minimal (header PNG valide)
-    const pngHeader = Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
-    const pngEnd = Buffer.from([0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82])
-    const fakeImageData2 = Buffer.concat([pngHeader, Buffer.from('fake-png-content'), pngEnd])
-    writeFileSync(tempFile2, fakeImageData2)
+    // Maintenant update avec une image PNG
+    const { contents: pngContents, mime: pngMime, name: pngName } = await fileGenerator.generatePng('50kb')
 
     const updateData = {
       title: 'Updated Article with Image',
@@ -144,17 +127,10 @@ test.group('Image Upload', (group) => {
     const updateResponse = await client
       .put(`/api/admin/articles/${articleId}`)
       .field('title', updateData.title)
-      .file('image', readFileSync(tempFile2), {
-        filename: 'test-update.png',
-        contentType: 'image/png'
+      .file('image', pngContents, {
+        filename: pngName,
+        contentType: pngMime
       })
-
-    // Nettoyer le fichier temporaire
-    try {
-      unlinkSync(tempFile2)
-    } catch (error) {
-      // Ignorer si le fichier n'existe pas
-    }
 
     updateResponse.assertStatus(200)
     assert.exists(updateResponse.body().data.image)
@@ -189,12 +165,7 @@ test.group('Image Upload', (group) => {
     const categoryId = categoryResponse.body().data.id
 
     // Créer un fichier trop gros (> 2MB)
-    const tempLargeFile = join(process.cwd(), 'tmp', 'large-image.jpg')
-    const jpegHeader = Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46])
-    const jpegFooter = Buffer.from([0xFF, 0xD9])
-    const largeContent = Buffer.alloc(3 * 1024 * 1024, 'x') // 3MB
-    const largeFakeImageData = Buffer.concat([jpegHeader, largeContent, jpegFooter])
-    writeFileSync(tempLargeFile, largeFakeImageData)
+    const { contents: largeContents, mime: largeMime, name: largeName } = await fileGenerator.generateJpg('3mb')
 
     const articleData = {
       title: 'Article with Large Image Test',
@@ -215,17 +186,10 @@ test.group('Image Upload', (group) => {
       .field('content', articleData.content)
       .field('gameId', articleData.gameId.toString())
       .field('categoryId', articleData.categoryId.toString())
-      .file('image', readFileSync(tempLargeFile), {
-        filename: 'large-image.jpg',
-        contentType: 'image/jpeg'
+      .file('image', largeContents, {
+        filename: largeName,
+        contentType: largeMime
       })
-
-    // Nettoyer le fichier temporaire
-    try {
-      unlinkSync(tempLargeFile)
-    } catch (error) {
-      // Ignorer si le fichier n'existe pas
-    }
 
     // Devrait échouer à cause de la validation de taille
     response.assertStatus(422)
@@ -255,11 +219,7 @@ test.group('Image Upload', (group) => {
     const categoryId = categoryResponse.body().data.id
 
     // Créer un article avec image
-    const tempFile3 = join(process.cwd(), 'tmp', 'delete-test.jpg')
-    const jpegHeader = Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46])
-    const jpegFooter = Buffer.from([0xFF, 0xD9])
-    const fakeImageData3 = Buffer.concat([jpegHeader, Buffer.from('fake-image-for-deletion'), jpegFooter])
-    writeFileSync(tempFile3, fakeImageData3)
+    const { contents: deleteContents, mime: deleteMime, name: deleteName } = await fileGenerator.generateJpg('50kb')
 
     const articleData = {
       title: 'Article for Image Deletion Test',
@@ -280,17 +240,10 @@ test.group('Image Upload', (group) => {
       .field('content', articleData.content)
       .field('gameId', articleData.gameId.toString())
       .field('categoryId', articleData.categoryId.toString())
-      .file('image', readFileSync(tempFile3), {
-        filename: 'delete-test.jpg',
-        contentType: 'image/jpeg'
+      .file('image', deleteContents, {
+        filename: deleteName,
+        contentType: deleteMime
       })
-
-    // Nettoyer le fichier temporaire
-    try {
-      unlinkSync(tempFile3)
-    } catch (error) {
-      // Ignorer si le fichier n'existe pas
-    }
 
     const imageId = createResponse.body().data.image.id
     const imagePath = `images/${createResponse.body().data.image.filename}`

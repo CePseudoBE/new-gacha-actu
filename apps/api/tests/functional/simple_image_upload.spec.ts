@@ -1,7 +1,6 @@
 import { test } from '@japa/runner'
 import drive from '@adonisjs/drive/services/main'
-import { writeFileSync, unlinkSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import fileGenerator from '@poppinss/file-generator'
 
 test.group('Simple Image Upload Test', (group) => {
   group.setup(async () => {
@@ -39,13 +38,8 @@ test.group('Simple Image Upload Test', (group) => {
     })
     const categoryId = categoryResponse.body().data.id
 
-    // Créer un fichier temporaire avec vraie extension et content-type
-    const tempFile = join(process.cwd(), 'tmp', 'test-image.jpg')
-    // Créer un vrai JPEG minimal (header JPEG valide)
-    const jpegHeader = Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46])
-    const jpegFooter = Buffer.from([0xFF, 0xD9])
-    const fakeImageData = Buffer.concat([jpegHeader, Buffer.from('fake-image-content'), jpegFooter])
-    writeFileSync(tempFile, fakeImageData)
+    // Générer un fichier JPEG fake en mémoire
+    const { contents, mime, name } = await fileGenerator.generateJpg('100kb')
 
     // Créer article avec image
     const response = await client
@@ -57,9 +51,9 @@ test.group('Simple Image Upload Test', (group) => {
       .field('content', 'This is the content of the test article with image upload. It contains enough text to meet the minimum requirements.')
       .field('gameId', gameId.toString())
       .field('categoryId', categoryId.toString())
-      .file('image', readFileSync(tempFile), {
-        filename: 'test-image.jpg',
-        contentType: 'image/jpeg'
+      .file('image', contents, {
+        filename: name,
+        contentType: mime
       })
 
     // Vérifier le statut
@@ -77,12 +71,5 @@ test.group('Simple Image Upload Test', (group) => {
     // Vérifier que le fichier existe dans le fake drive
     const fakeDisk = drive.use()
     await fakeDisk.assertExists(`images/${responseData.image.filename}`)
-
-    // Nettoyer le fichier temporaire
-    try {
-      unlinkSync(tempFile)
-    } catch (error) {
-      // Ignorer si le fichier n'existe pas
-    }
   })
 })
