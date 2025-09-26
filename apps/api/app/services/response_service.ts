@@ -10,6 +10,16 @@ export interface PaginationMeta {
 }
 
 export default class ResponseService {
+  static adaptPaginationMeta(lucidMeta: any): PaginationMeta {
+    return {
+      page: lucidMeta.currentPage || lucidMeta.page || 1,
+      perPage: lucidMeta.perPage || lucidMeta.limit || 20,
+      total: lucidMeta.total || 0,
+      totalPages: lucidMeta.lastPage || lucidMeta.totalPages || 1,
+      hasNextPage: lucidMeta.hasNextPage || false,
+      hasPrevPage: lucidMeta.hasPrevPage || false,
+    }
+  }
   static ok<T>(ctx: HttpContext, data: T, message?: string): void {
     ctx.response.ok({
       success: true,

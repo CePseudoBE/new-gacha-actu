@@ -4,10 +4,11 @@ import fileGenerator from '@poppinss/file-generator'
 
 test.group('Guide Sections CRUD', (group) => {
   let guideId: number
+  let fakeDisk: any
 
   group.setup(async () => {
     // Fake the drive during tests
-    drive.fake()
+    fakeDisk = drive.fake()
   })
 
   group.teardown(async () => {
@@ -122,7 +123,6 @@ test.group('Guide Sections CRUD', (group) => {
     assert.isTrue(responseData.image.url.includes('/uploads/'))
 
     // Vérifier que le fichier existe dans le fake drive
-    const fakeDisk = drive.fake()
     fakeDisk.assertExists(`images/${responseData.image.filename}`)
   })
 
@@ -202,7 +202,6 @@ test.group('Guide Sections CRUD', (group) => {
     assert.isString(responseData.image.url)
 
     // Vérifier que le fichier existe dans le fake drive
-    const fakeDisk = drive.fake()
     fakeDisk.assertExists(`images/${responseData.image.filename}`)
   })
 

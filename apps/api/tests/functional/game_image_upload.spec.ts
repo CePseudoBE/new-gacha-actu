@@ -3,9 +3,11 @@ import drive from '@adonisjs/drive/services/main'
 import fileGenerator from '@poppinss/file-generator'
 
 test.group('Game Image Upload', (group) => {
+  let fakeDisk: any
+
   group.setup(async () => {
     // Fake the drive during tests
-    drive.fake()
+    fakeDisk = drive.fake()
   })
 
   group.teardown(async () => {
@@ -49,9 +51,7 @@ test.group('Game Image Upload', (group) => {
     assert.isTrue(responseData.image.url.includes('/uploads/'))
 
     // Vérifier que le fichier existe dans le fake drive
-    const fakeDisk = drive.use()
-    const exists = await fakeDisk.exists(`images/${responseData.image.filename}`)
-    assert.isTrue(exists)
+    fakeDisk.assertExists(`images/${responseData.image.filename}`)
   })
 
   test('should update game with new image', async ({ client, assert }) => {
@@ -94,7 +94,6 @@ test.group('Game Image Upload', (group) => {
     assert.isTrue(updateResponse.body().data.image.url.includes('/uploads/'))
 
     // Vérifier que le fichier a été créé dans le fake drive
-    const fakeDisk = drive.fake()
     fakeDisk.assertExists(`images/${updateResponse.body().data.image.filename}`)
   })
 

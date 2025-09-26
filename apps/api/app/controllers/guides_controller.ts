@@ -28,7 +28,7 @@ export default class GuidesController {
     })
 
     if (result.pagination) {
-      ResponseService.okWithPagination(ctx, result.guides, result.pagination)
+      ResponseService.okWithPagination(ctx, result.guides, ResponseService.adaptPaginationMeta(result.pagination))
     } else {
       ResponseService.ok(ctx, result.guides)
     }

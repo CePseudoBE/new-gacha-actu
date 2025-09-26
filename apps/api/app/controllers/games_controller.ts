@@ -29,7 +29,7 @@ export default class GamesController {
 
     const result = await this.gameService.getGames(gameFilters, page, perPage)
 
-    ResponseService.okWithPagination(ctx, result.data, result.meta)
+    ResponseService.okWithPagination(ctx, result.data, ResponseService.adaptPaginationMeta(result.meta))
   }
 
   async popular(ctx: HttpContext) {

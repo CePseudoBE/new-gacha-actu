@@ -1,5 +1,5 @@
 import app from '@adonisjs/core/services/app'
-import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
+import { ExceptionHandler, HttpContext } from '@adonisjs/core/http'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -39,7 +39,9 @@ export default class HttpExceptionHandler extends ExceptionHandler {
     if (
       app.inTest &&
       error instanceof Error &&
-      ((error as any).code === 'E_VALIDATION_ERROR' || (error as any).code === 'E_NOT_FOUND')
+      ((error as any).code === 'E_VALIDATION_ERROR' ||
+        (error as any).code === 'E_NOT_FOUND' ||
+        (error as any).code === 'NOT_FOUND')
     ) {
       return
     }
