@@ -8,6 +8,7 @@ export default class ImageDto extends BaseModelDto {
   declare mimeType: string
   declare size: number
   declare altText: string | null
+  declare url: string
   declare createdAt: string
   declare updatedAt: string
 
@@ -21,6 +22,7 @@ export default class ImageDto extends BaseModelDto {
     this.mimeType = image.mimeType
     this.size = image.size
     this.altText = image.altText
+    this.url = `/uploads/${image.path}`
     this.createdAt = image.createdAt.toISO()!
     this.updatedAt = image.updatedAt.toISO()!
   }

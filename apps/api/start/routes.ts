@@ -31,6 +31,7 @@ const GuideTypesController = () => import('#controllers/guide_types_controller')
 const GuidesController = () => import('#controllers/guides_controller')
 const ArticleCategoriesController = () => import('#controllers/article_categories_controller')
 const ArticlesController = () => import('#controllers/articles_controller')
+const ImagesController = () => import('#controllers/images_controller')
 const MaintenanceSettingsController = () => import('#controllers/maintenance_settings_controller')
 
 /*
@@ -246,6 +247,14 @@ router
         router.delete('/:id', [ArticlesController, 'destroy'])
       })
       .prefix('articles')
+
+    // Images
+    router
+      .group(() => {
+        router.get('/:id', [ImagesController, 'show'])
+        router.delete('/:id', [ImagesController, 'destroy'])
+      })
+      .prefix('images')
 
     // Maintenance
     router

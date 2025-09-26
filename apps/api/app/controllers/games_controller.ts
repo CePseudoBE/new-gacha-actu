@@ -58,6 +58,7 @@ export default class GamesController {
       platformIds,
       tagIds,
       releaseDate,
+      image,
       ...restPayload
     } = payload
 
@@ -70,7 +71,7 @@ export default class GamesController {
       tagIds: tagId || tagIds || undefined,
     }
 
-    const game = await this.gameService.createGame(gameData)
+    const game = await this.gameService.createGame(gameData, image)
     ResponseService.created(ctx, game, 'Jeu créé avec succès')
   }
 
@@ -87,6 +88,7 @@ export default class GamesController {
       releaseDate,
       officialSite,
       wiki,
+      image,
       ...restPayload
     } = payload
 
@@ -101,7 +103,7 @@ export default class GamesController {
       tagIds: tagId || tagIds || undefined,
     }
 
-    const game = await this.gameService.updateGame(validatedParams.id, gameData)
+    const game = await this.gameService.updateGame(validatedParams.id, gameData, image)
     ResponseService.ok(ctx, game, 'Jeu mis à jour avec succès')
   }
 

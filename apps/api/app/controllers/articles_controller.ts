@@ -37,14 +37,16 @@ export default class ArticlesController {
 
   async store(ctx: HttpContext) {
     const payload = await ctx.request.validateUsing(createArticleValidator)
-    const article = await this.articleService.createArticle(payload)
+    const { image, ...articleData } = payload
+    const article = await this.articleService.createArticle(articleData, image)
     ResponseService.created(ctx, article, 'Article créé avec succès')
   }
 
   async update(ctx: HttpContext) {
     const { params: validatedParams, ...payload } =
       await ctx.request.validateUsing(updateArticleValidator)
-    const article = await this.articleService.updateArticle(validatedParams.id, payload)
+    const { image, ...articleData } = payload
+    const article = await this.articleService.updateArticle(validatedParams.id, articleData, image)
     ResponseService.ok(ctx, article, 'Article mis à jour avec succès')
   }
 

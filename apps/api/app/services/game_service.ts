@@ -9,10 +9,15 @@ import GameDto from '#dtos/game'
 import CacheService from '#services/cache_service'
 import type { SimplePaginatorMetaKeys } from '@adonisjs/lucid/types/querybuilder'
 import cache from '@adonisjs/cache/services/main'
+import ImageService from '#services/image_service'
+import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 @inject()
 export default class GameService {
-  constructor(private gameRepository: GameRepository) {}
+  constructor(
+    private gameRepository: GameRepository,
+    private imageService: ImageService
+  ) {}
 
   async getGames(
     filters: GameFilters = {},
@@ -72,8 +77,23 @@ export default class GameService {
     })
   }
 
-  async createGame(data: GameCreateData): Promise<GameDto> {
-    const game = await this.gameRepository.create(data)
+  async createGame(data: GameCreateData, imageFile?: MultipartFile): Promise<GameDto> {
+    let imageId: number | undefined
+
+    if (imageFile) {
+      const uploadedImage = await this.imageService.uploadImage(imageFile)
+      imageId = uploadedImage.id
+    }
+
+    const gameData = {
+      ...data,
+      imageId,
+    }
+
+    const game = await this.gameRepository.create(gameData)
+    if (game.imageId) {
+      await game.load('image')
+    }
 
     // Invalidation des caches liés
     await CacheService.invalidateGameCaches(game.slug)
@@ -81,10 +101,21 @@ export default class GameService {
     return new GameDto(game)
   }
 
-  async updateGame(id: number, data: GameUpdateData): Promise<GameDto> {
-    const updatedGame = await this.gameRepository.update(id, data)
+  async updateGame(id: number, data: GameUpdateData, imageFile?: MultipartFile): Promise<GameDto> {
+    let updateData = { ...data }
+
+    if (imageFile) {
+      const uploadedImage = await this.imageService.uploadImage(imageFile)
+      updateData.imageId = uploadedImage.id
+    }
+
+    const updatedGame = await this.gameRepository.update(id, updateData)
     if (!updatedGame) {
       throw new NotFoundException('Jeu non trouvé')
+    }
+
+    if (updatedGame.imageId) {
+      await updatedGame.load('image')
     }
 
     // Invalidation des caches liés

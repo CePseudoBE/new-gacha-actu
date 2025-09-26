@@ -4,6 +4,7 @@ import GameDto from '#dtos/game'
 import ArticleCategoryDto from '#dtos/article_category'
 import TagDto from '#dtos/tag'
 import SeoKeywordDto from '#dtos/seo_keyword'
+import ImageDto from '#dtos/image'
 
 export default class ArticleDto extends BaseModelDto {
   declare id: number
@@ -25,6 +26,7 @@ export default class ArticleDto extends BaseModelDto {
   declare category: ArticleCategoryDto | null
   declare tags: TagDto[]
   declare seoKeywords: SeoKeywordDto[]
+  declare image: ImageDto | null
 
   constructor(article?: Article) {
     super()
@@ -49,5 +51,6 @@ export default class ArticleDto extends BaseModelDto {
     this.category = article.category && new ArticleCategoryDto(article.category)
     this.tags = TagDto.fromArray(article.tags)
     this.seoKeywords = SeoKeywordDto.fromArray(article.seoKeywords)
+    this.image = article.image && new ImageDto(article.image)
   }
 }

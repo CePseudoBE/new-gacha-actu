@@ -5,10 +5,15 @@ import ArticleDto from '#dtos/article'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
 import { NotFoundException } from '#exceptions/http_exceptions'
+import ImageService from '#services/image_service'
+import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 @inject()
 export default class ArticleService {
-  constructor(private articleRepository: ArticleRepository) {}
+  constructor(
+    private articleRepository: ArticleRepository,
+    private imageService: ImageService
+  ) {}
 
   async getArticles(): Promise<ArticleDto[]> {
     return await cache.getOrSet({
@@ -58,13 +63,26 @@ export default class ArticleService {
     return articles.map((article) => new ArticleDto(article))
   }
 
-  async createArticle(data: ArticleCreateData): Promise<ArticleDto> {
-    const article = await this.articleRepository.create(data)
+  async createArticle(data: ArticleCreateData, imageFile?: MultipartFile): Promise<ArticleDto> {
+    let imageId: number | undefined
+
+    if (imageFile) {
+      const uploadedImage = await this.imageService.uploadImage(imageFile)
+      imageId = uploadedImage.id
+    }
+
+    const articleData = {
+      ...data,
+      imageId,
+    }
+
+    const article = await this.articleRepository.create(articleData)
     await article.refresh()
     await article.load('game')
     await article.load('category')
     await article.load('tags')
     await article.load('seoKeywords')
+    await article.load('image')
 
     await cache.delete({ key: CacheService.KEYS.ARTICLES_ALL })
     await cache.delete({ key: CacheService.KEYS.ARTICLES_POPULAR })
@@ -72,8 +90,15 @@ export default class ArticleService {
     return new ArticleDto(article)
   }
 
-  async updateArticle(id: number, data: ArticleUpdateData): Promise<ArticleDto> {
-    const article = await this.articleRepository.update(id, data)
+  async updateArticle(id: number, data: ArticleUpdateData, imageFile?: MultipartFile): Promise<ArticleDto> {
+    let updateData = { ...data }
+
+    if (imageFile) {
+      const uploadedImage = await this.imageService.uploadImage(imageFile)
+      updateData.imageId = uploadedImage.id
+    }
+
+    const article = await this.articleRepository.update(id, updateData)
     if (!article) {
       throw new NotFoundException('Article non trouvé')
     }
@@ -83,6 +108,7 @@ export default class ArticleService {
     await article.load('category')
     await article.load('tags')
     await article.load('seoKeywords')
+    await article.load('image')
 
     await cache.delete({ key: CacheService.KEYS.ARTICLES_ALL })
     await cache.delete({ key: CacheService.KEYS.ARTICLES_POPULAR })

@@ -6,6 +6,10 @@ const guideSectionSchema = vine.object({
   title: vine.string().trim().minLength(1).maxLength(200),
   content: vine.string().trim().minLength(10).maxLength(10000),
   order: vine.number().min(0),
+  image: vine.file({
+    size: '2mb',
+    extnames: ['jpg', 'jpeg', 'png', 'webp']
+  }).optional(),
 })
 
 // Guide Prerequisite Validator
@@ -40,6 +44,11 @@ export const createGuideValidator = vine.compile(
       .optional(),
 
     imageUrl: vine.string().trim().url().optional().nullable(),
+
+    image: vine.file({
+      size: '2mb',
+      extnames: ['jpg', 'jpeg', 'png', 'webp']
+    }).optional(),
 
     readingTime: vine.number().min(1).optional().nullable(),
 
@@ -87,6 +96,11 @@ const updateGuideValidatorBase = vine.compile(
     slug: vine.string().trim().minLength(5).maxLength(200).optional(),
 
     imageUrl: vine.string().trim().url().optional().nullable(),
+
+    image: vine.file({
+      size: '2mb',
+      extnames: ['jpg', 'jpeg', 'png', 'webp']
+    }).optional(),
 
     readingTime: vine.number().min(1).optional().nullable(),
 

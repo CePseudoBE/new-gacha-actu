@@ -1,13 +1,14 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import { slugify } from '@adonisjs/lucid-slugify'
-import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import Article from '#models/article'
 import Guide from '#models/guide'
 import Genre from '#models/genre'
 import Tag from '#models/tag'
 import Platform from '#models/platform'
 import YoutubeVideo from '#models/youtube_video'
+import Image from '#models/image'
 
 export default class Game extends BaseModel {
   @column({ isPrimary: true })
@@ -38,6 +39,9 @@ export default class Game extends BaseModel {
   @column()
   declare wiki: string | null
 
+  @column()
+  declare imageId: number | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
@@ -45,6 +49,11 @@ export default class Game extends BaseModel {
   declare updatedAt: DateTime
 
   // Relations
+  @belongsTo(() => Image, {
+    foreignKey: 'imageId',
+  })
+  declare image: BelongsTo<typeof Image>
+
   @hasMany(() => Article, {
     foreignKey: 'gameId',
   })

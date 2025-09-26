@@ -9,18 +9,6 @@ export interface PaginationMeta {
   hasPrevPage: boolean
 }
 
-export interface ApiResponse<T = any> {
-  success: boolean
-  data?: T
-  error?: string
-  code?: string
-  message?: string
-  meta?: {
-    pagination?: PaginationMeta
-    [key: string]: any
-  }
-}
-
 export default class ResponseService {
   static ok<T>(ctx: HttpContext, data: T, message?: string): void {
     ctx.response.ok({

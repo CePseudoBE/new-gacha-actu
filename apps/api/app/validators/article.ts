@@ -8,6 +8,10 @@ export const createArticleValidator = vine.compile(
     author: vine.string().trim().minLength(2).maxLength(100),
     publishedAt: vine.date({ formats: ['YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DD'] }),
     imageUrl: vine.string().trim().url().optional(),
+    image: vine.file({
+      size: '2mb',
+      extnames: ['jpg', 'jpeg', 'png', 'webp']
+    }).optional(),
     content: vine.string().trim().minLength(50),
     metaDescription: vine.string().trim().minLength(10).maxLength(160).optional(),
     readingTime: vine.number().min(1).max(120).optional(),
@@ -34,6 +38,10 @@ const updateArticleValidatorBase = vine.compile(
     author: vine.string().trim().minLength(2).maxLength(100).optional(),
     publishedAt: vine.date({ formats: ['YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DD'] }).optional(),
     imageUrl: vine.string().trim().url().optional(),
+    image: vine.file({
+      size: '2mb',
+      extnames: ['jpg', 'jpeg', 'png', 'webp']
+    }).optional(),
     content: vine.string().trim().minLength(50).optional(),
     metaDescription: vine.string().trim().minLength(10).maxLength(160).optional(),
     readingTime: vine.number().min(1).max(120).optional(),
