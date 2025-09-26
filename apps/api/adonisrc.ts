@@ -30,6 +30,7 @@ export default defineConfig({
     () => import('@adonisjs/lucid/commands'),
     () => import('@adocasts.com/dto/commands'),
     () => import('@adonisjs/cache/commands'),
+    () => import('@tuyau/core/commands')
   ],
 
   /*
@@ -56,6 +57,7 @@ export default defineConfig({
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/cache/cache_provider'),
     () => import('@adonisjs/drive/drive_provider'),
+    () => import('@tuyau/core/tuyau_provider')
   ],
 
   /*

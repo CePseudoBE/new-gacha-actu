@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
@@ -12,6 +12,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./api": "./.adonisjs/index.ts"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
@@ -44,6 +47,7 @@
     "@japa/runner": "^4.2.0",
     "@poppinss/file-generator": "^2.1.5",
     "@swc/core": "1.11.24",
+    "@tuyau/utils": "^0.0.9",
     "@types/luxon": "^3.7.1",
     "@types/node": "^22.15.18",
     "eslint": "^9.26.0",
@@ -63,6 +67,7 @@
     "@adonisjs/lucid": "^21.6.1",
     "@adonisjs/lucid-slugify": "^3.0.0",
     "@adonisjs/session": "^7.5.1",
+    "@tuyau/core": "^0.4.2",
     "@vinejs/vine": "^3.0.1",
     "luxon": "^3.7.2",
     "pg": "^8.16.3",
