@@ -24,10 +24,12 @@ export const createGameValidator = vine.compile(
 
     wiki: vine.string().trim().url().optional(),
 
-    image: vine.file({
-      size: '2mb',
-      extnames: ['jpg', 'jpeg', 'png', 'webp']
-    }).optional(),
+    image: vine
+      .file({
+        size: '2mb',
+        extnames: ['jpg', 'jpeg', 'png', 'webp'],
+      })
+      .optional(),
 
     genreId: vine
       .array(vine.number().min(1).exists({ table: 'genres', column: 'id' }))
@@ -106,10 +108,12 @@ const updateGameValidatorBase = vine.compile(
 
     wiki: vine.string().trim().url().optional().nullable(),
 
-    image: vine.file({
-      size: '2mb',
-      extnames: ['jpg', 'jpeg', 'png', 'webp']
-    }).optional(),
+    image: vine
+      .file({
+        size: '2mb',
+        extnames: ['jpg', 'jpeg', 'png', 'webp'],
+      })
+      .optional(),
 
     genreId: vine
       .array(vine.number().min(1).exists({ table: 'genres', column: 'id' }))

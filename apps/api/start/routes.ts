@@ -32,6 +32,7 @@ const GuidesController = () => import('#controllers/guides_controller')
 const ArticleCategoriesController = () => import('#controllers/article_categories_controller')
 const ArticlesController = () => import('#controllers/articles_controller')
 const ImagesController = () => import('#controllers/images_controller')
+const GuideSectionsController = () => import('#controllers/guide_sections_controller')
 const MaintenanceSettingsController = () => import('#controllers/maintenance_settings_controller')
 
 /*
@@ -227,6 +228,17 @@ router
         router.post('/', [GuidesController, 'store'])
         router.put('/:id', [GuidesController, 'update'])
         router.delete('/:id', [GuidesController, 'destroy'])
+      })
+      .prefix('guides')
+
+    // Guide Sections
+    router
+      .group(() => {
+        router.get('/:guideId/sections', [GuideSectionsController, 'index'])
+        router.post('/:guideId/sections', [GuideSectionsController, 'store'])
+        router.get('/sections/:id', [GuideSectionsController, 'show'])
+        router.put('/sections/:id', [GuideSectionsController, 'update'])
+        router.delete('/sections/:id', [GuideSectionsController, 'destroy'])
       })
       .prefix('guides')
 

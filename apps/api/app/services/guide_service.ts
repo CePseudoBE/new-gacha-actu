@@ -8,6 +8,8 @@ import GuideDto from '#dtos/guide'
 import CacheService from '#services/cache_service'
 import cache from '@adonisjs/cache/services/main'
 import { NotFoundException, BadRequestException } from '#exceptions/http_exceptions'
+import ImageService from '#services/image_service'
+import { MultipartFile } from '@adonisjs/core/bodyparser'
 
 export interface GuideListResponse {
   guides: GuideDto[]
@@ -23,7 +25,10 @@ export interface GuideListResponse {
 
 @inject()
 export default class GuideService {
-  constructor(private guideRepository: GuideRepository) {}
+  constructor(
+    private guideRepository: GuideRepository,
+    private imageService: ImageService
+  ) {}
 
   async getGuides(): Promise<GuideDto[]> {
     return cache.getOrSet({
@@ -116,17 +121,33 @@ export default class GuideService {
     })
   }
 
-  async createGuide(data: GuideCreateData): Promise<GuideDto> {
+  async createGuide(data: GuideCreateData, imageFile?: MultipartFile): Promise<GuideDto> {
     if (!data.sections || data.sections.length === 0) {
       throw new BadRequestException('Le guide doit contenir au moins une section')
     }
 
-    const guide = await this.guideRepository.create(data)
+    let imageId: number | undefined
+
+    if (imageFile) {
+      const uploadedImage = await this.imageService.uploadImage(imageFile)
+      imageId = uploadedImage.id
+    }
+
+    const guideData = {
+      ...data,
+      imageId,
+    }
+
+    const guide = await this.guideRepository.create(guideData)
 
     // recharger la version complète (relations) pour la réponse
     const completeGuide = await this.guideRepository.findById(guide.id)
     if (!completeGuide) {
       throw new Error('Failed to fetch created guide')
+    }
+
+    if (completeGuide.imageId) {
+      await completeGuide.load('image')
     }
 
     // Invalidation des caches liés
@@ -135,12 +156,23 @@ export default class GuideService {
     return new GuideDto(completeGuide)
   }
 
-  async updateGuide(id: number, data: GuideUpdateData): Promise<GuideDto> {
+  async updateGuide(
+    id: number,
+    data: GuideUpdateData,
+    imageFile?: MultipartFile
+  ): Promise<GuideDto> {
     if (data.sections !== undefined && data.sections.length === 0) {
       throw new BadRequestException('Le guide doit contenir au moins une section')
     }
 
-    const guide = await this.guideRepository.update(id, data)
+    let updateData = { ...data }
+
+    if (imageFile) {
+      const uploadedImage = await this.imageService.uploadImage(imageFile)
+      updateData.imageId = uploadedImage.id
+    }
+
+    const guide = await this.guideRepository.update(id, updateData)
     if (!guide) {
       throw new NotFoundException('Guide non trouvé')
     }
@@ -148,6 +180,10 @@ export default class GuideService {
     const completeGuide = await this.guideRepository.findById(guide.id)
     if (!completeGuide) {
       throw new Error('Failed to fetch updated guide')
+    }
+
+    if (completeGuide.imageId) {
+      await completeGuide.load('image')
     }
 
     // Invalidation des caches liés

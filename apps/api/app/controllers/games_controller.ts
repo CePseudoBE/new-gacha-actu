@@ -5,9 +5,9 @@ import GameService from '#services/game_service'
 import ResponseService from '#services/response_service'
 import {
   createGameValidator,
-  updateGameValidator,
   gameParamsValidator,
   gameSlugParamsValidator,
+  updateGameValidator,
 } from '#validators/game'
 import { gameFiltersValidator, limitValidator } from '#validators/common'
 
@@ -76,7 +76,8 @@ export default class GamesController {
   }
 
   async update(ctx: HttpContext) {
-    const { params: validatedParams, ...payload } = await ctx.request.validateUsing(updateGameValidator)
+    const { params: validatedParams, ...payload } =
+      await ctx.request.validateUsing(updateGameValidator)
 
     const {
       genreId,

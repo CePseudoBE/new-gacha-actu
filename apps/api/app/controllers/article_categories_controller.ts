@@ -3,9 +3,9 @@ import { inject } from '@adonisjs/core'
 import ArticleCategoryService from '#services/article_category_service'
 import ResponseService from '#services/response_service'
 import {
+  articleCategoryParamsValidator,
   createArticleCategoryValidator,
   updateArticleCategoryValidator,
-  articleCategoryParamsValidator,
 } from '#validators/article_category'
 
 @inject()
@@ -18,7 +18,9 @@ export default class ArticleCategoriesController {
   }
 
   async show(ctx: HttpContext) {
-    const { params: validatedParams } = await ctx.request.validateUsing(articleCategoryParamsValidator)
+    const { params: validatedParams } = await ctx.request.validateUsing(
+      articleCategoryParamsValidator
+    )
     const category = await this.articleCategoryService.getArticleCategoryById(validatedParams.id)
     ResponseService.ok(ctx, category)
   }
@@ -41,7 +43,9 @@ export default class ArticleCategoriesController {
   }
 
   async destroy(ctx: HttpContext) {
-    const { params: validatedParams } = await ctx.request.validateUsing(articleCategoryParamsValidator)
+    const { params: validatedParams } = await ctx.request.validateUsing(
+      articleCategoryParamsValidator
+    )
     await this.articleCategoryService.deleteArticleCategory(validatedParams.id)
     ResponseService.success(ctx, "Catégorie d'article supprimée avec succès")
   }

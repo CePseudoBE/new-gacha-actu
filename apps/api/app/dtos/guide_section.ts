@@ -1,5 +1,6 @@
 import { BaseModelDto } from '@adocasts.com/dto/base'
 import GuideSection from '#models/guide_section'
+import ImageDto from '#dtos/image'
 
 export default class GuideSectionDto extends BaseModelDto {
   declare id: number
@@ -9,6 +10,7 @@ export default class GuideSectionDto extends BaseModelDto {
   declare guideId: number
   declare createdAt: string
   declare updatedAt: string
+  declare image: ImageDto | null
 
   constructor(guideSection?: GuideSection) {
     super()
@@ -21,5 +23,6 @@ export default class GuideSectionDto extends BaseModelDto {
     this.guideId = guideSection.guideId
     this.createdAt = guideSection.createdAt.toISO()!
     this.updatedAt = guideSection.updatedAt.toISO()!
+    this.image = guideSection.image && new ImageDto(guideSection.image)
   }
 }

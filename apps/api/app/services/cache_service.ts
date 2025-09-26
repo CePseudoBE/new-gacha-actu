@@ -64,7 +64,7 @@ export default class CacheService {
    * Invalide tous les caches liés aux guides
    */
   static async invalidateGuideCaches(gameId?: number): Promise<void> {
-    const keys = [this.KEYS.GUIDES_ALL, this.KEYS.GUIDES_POPULAR]
+    const keys: string[] = [this.KEYS.GUIDES_ALL, this.KEYS.GUIDES_POPULAR]
 
     if (gameId) {
       keys.push(this.KEYS.GUIDES_BY_GAME(gameId))

@@ -3,11 +3,23 @@ import { BaseSchema } from '@adonisjs/lucid/schema'
 export default class extends BaseSchema {
   async up() {
     this.schema.alterTable('articles', (table) => {
-      table.integer('image_id').unsigned().nullable().references('id').inTable('images').onDelete('SET NULL')
+      table
+        .integer('image_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('images')
+        .onDelete('SET NULL')
     })
 
     this.schema.alterTable('guides', (table) => {
-      table.integer('image_id').unsigned().nullable().references('id').inTable('images').onDelete('SET NULL')
+      table
+        .integer('image_id')
+        .unsigned()
+        .nullable()
+        .references('id')
+        .inTable('images')
+        .onDelete('SET NULL')
     })
   }
 

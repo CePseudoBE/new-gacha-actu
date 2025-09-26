@@ -6,6 +6,7 @@ import YoutubeVideoDto from '#dtos/youtube_video'
 import GenreDto from '#dtos/genre'
 import TagDto from '#dtos/tag'
 import PlatformDto from '#dtos/platform'
+import ImageDto from '#dtos/image'
 
 export default class GameDto extends BaseModelDto {
   declare id: number
@@ -24,6 +25,7 @@ export default class GameDto extends BaseModelDto {
   declare genres: GenreDto[]
   declare tags: TagDto[]
   declare platforms: PlatformDto[]
+  declare image: ImageDto | null
 
   constructor(game?: Game) {
     super()
@@ -47,5 +49,6 @@ export default class GameDto extends BaseModelDto {
     this.genres = game.genres ? GenreDto.fromArray(game.genres) : []
     this.tags = game.tags ? TagDto.fromArray(game.tags) : []
     this.platforms = game.platforms ? PlatformDto.fromArray(game.platforms) : []
+    this.image = game.image && new ImageDto(game.image)
   }
 }

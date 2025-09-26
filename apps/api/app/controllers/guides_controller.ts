@@ -81,7 +81,7 @@ export default class GuidesController {
       seoKeywordIds: payload.seoKeywordIds || [],
     }
 
-    const guide = await this.guideService.createGuide(guideData)
+    const guide = await this.guideService.createGuide(guideData, payload.image)
     ResponseService.created(ctx, guide, 'Guide créé avec succès')
   }
 
@@ -109,7 +109,7 @@ export default class GuidesController {
       ...(payload.seoKeywordIds !== undefined && { seoKeywordIds: payload.seoKeywordIds }),
     }
 
-    const guide = await this.guideService.updateGuide(validatedParams.id, updateData)
+    const guide = await this.guideService.updateGuide(validatedParams.id, updateData, payload.image)
     ResponseService.ok(ctx, guide, 'Guide mis à jour avec succès')
   }
 

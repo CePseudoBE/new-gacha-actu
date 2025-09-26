@@ -8,6 +8,7 @@ export interface ArticleCreateData {
   publishedAt: Date
   slug?: string
   imageUrl?: string
+  imageId?: number
   content: string
   metaDescription?: string
   readingTime?: number
@@ -25,6 +26,7 @@ export interface ArticleUpdateData {
   publishedAt?: Date
   slug?: string
   imageUrl?: string
+  imageId?: number
   content?: string
   metaDescription?: string
   readingTime?: number

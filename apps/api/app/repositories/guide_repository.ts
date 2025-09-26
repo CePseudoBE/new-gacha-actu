@@ -20,6 +20,7 @@ export interface GuideCreateData {
   publishedAt: Date
   slug?: string
   imageUrl?: string | null
+  imageId?: number
   readingTime?: number | null
   difficultyId: number
   guideTypeId: number
@@ -40,6 +41,7 @@ export interface GuideUpdateData {
   publishedAt?: Date
   slug?: string
   imageUrl?: string | null
+  imageId?: number
   readingTime?: number | null
   difficultyId?: number
   guideTypeId?: number
@@ -69,8 +71,9 @@ export default class GuideRepository {
       .preload('difficulty')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .preload('sections', (query) => {
-        query.orderBy('order', 'asc')
+        query.preload('image').orderBy('order', 'asc')
       })
       .preload('prerequisites')
       .orderBy([
@@ -109,8 +112,9 @@ export default class GuideRepository {
       .preload('guideType')
       .preload('difficulty')
       .preload('tags')
+      .preload('image')
       .preload('sections', (sectionQuery) => {
-        sectionQuery.orderBy('order', 'asc')
+        sectionQuery.preload('image').orderBy('order', 'asc')
       })
 
     // Count for pagination
@@ -144,8 +148,9 @@ export default class GuideRepository {
       .preload('difficulty')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .preload('sections', (query) => {
-        query.orderBy('order', 'asc')
+        query.preload('image').orderBy('order', 'asc')
       })
       .preload('prerequisites')
       .first()
@@ -159,8 +164,9 @@ export default class GuideRepository {
       .preload('difficulty')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .preload('sections', (query) => {
-        query.orderBy('order', 'asc')
+        query.preload('image').orderBy('order', 'asc')
       })
       .preload('prerequisites')
       .first()
@@ -174,8 +180,9 @@ export default class GuideRepository {
       .preload('difficulty')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .preload('sections', (query) => {
-        query.orderBy('order', 'asc')
+        query.preload('image').orderBy('order', 'asc')
       })
       .orderBy('publishedAt', 'desc')
   }
@@ -188,8 +195,9 @@ export default class GuideRepository {
       .preload('difficulty')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .preload('sections', (query) => {
-        query.orderBy('order', 'asc')
+        query.preload('image').orderBy('order', 'asc')
       })
       .orderBy([
         { column: 'isPopular', order: 'desc' },

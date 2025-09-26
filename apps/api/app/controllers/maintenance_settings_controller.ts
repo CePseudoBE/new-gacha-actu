@@ -28,7 +28,11 @@ export default class MaintenanceSettingsController {
     }
 
     const maintenanceSetting = await this.maintenanceSettingService.updateMaintenance(updateData)
-    ResponseService.ok(ctx, maintenanceSetting, 'Configuration de maintenance mise à jour avec succès')
+    ResponseService.ok(
+      ctx,
+      maintenanceSetting,
+      'Configuration de maintenance mise à jour avec succès'
+    )
   }
 
   async enable(ctx: HttpContext) {

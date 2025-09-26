@@ -7,6 +7,7 @@ import GuideSectionDto from '#dtos/guide_section'
 import GuidePrerequisiteDto from '#dtos/guide_prerequisite'
 import TagDto from '#dtos/tag'
 import SeoKeywordDto from '#dtos/seo_keyword'
+import ImageDto from '#dtos/image'
 
 export default class GuideDto extends BaseModelDto {
   declare id: number
@@ -32,6 +33,7 @@ export default class GuideDto extends BaseModelDto {
   declare prerequisites: GuidePrerequisiteDto[]
   declare tags: TagDto[]
   declare seoKeywords: SeoKeywordDto[]
+  declare image: ImageDto | null
 
   constructor(guide?: Guide) {
     super()
@@ -60,5 +62,6 @@ export default class GuideDto extends BaseModelDto {
     this.prerequisites = GuidePrerequisiteDto.fromArray(guide.prerequisites)
     this.tags = TagDto.fromArray(guide.tags)
     this.seoKeywords = SeoKeywordDto.fromArray(guide.seoKeywords)
+    this.image = guide.image && new ImageDto(guide.image)
   }
 }

@@ -6,10 +6,12 @@ const guideSectionSchema = vine.object({
   title: vine.string().trim().minLength(1).maxLength(200),
   content: vine.string().trim().minLength(10).maxLength(10000),
   order: vine.number().min(0),
-  image: vine.file({
-    size: '2mb',
-    extnames: ['jpg', 'jpeg', 'png', 'webp']
-  }).optional(),
+  image: vine
+    .file({
+      size: '2mb',
+      extnames: ['jpg', 'jpeg', 'png', 'webp'],
+    })
+    .optional(),
 })
 
 // Guide Prerequisite Validator
@@ -45,10 +47,12 @@ export const createGuideValidator = vine.compile(
 
     imageUrl: vine.string().trim().url().optional().nullable(),
 
-    image: vine.file({
-      size: '2mb',
-      extnames: ['jpg', 'jpeg', 'png', 'webp']
-    }).optional(),
+    image: vine
+      .file({
+        size: '2mb',
+        extnames: ['jpg', 'jpeg', 'png', 'webp'],
+      })
+      .optional(),
 
     readingTime: vine.number().min(1).optional().nullable(),
 
@@ -97,10 +101,12 @@ const updateGuideValidatorBase = vine.compile(
 
     imageUrl: vine.string().trim().url().optional().nullable(),
 
-    image: vine.file({
-      size: '2mb',
-      extnames: ['jpg', 'jpeg', 'png', 'webp']
-    }).optional(),
+    image: vine
+      .file({
+        size: '2mb',
+        extnames: ['jpg', 'jpeg', 'png', 'webp'],
+      })
+      .optional(),
 
     readingTime: vine.number().min(1).optional().nullable(),
 

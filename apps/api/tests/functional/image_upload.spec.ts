@@ -48,7 +48,8 @@ test.group('Image Upload', (group) => {
       summary: 'This is a test article with image upload functionality',
       author: 'Test Author',
       publishedAt: '2024-01-01 00:00:00',
-      content: 'This is the content of the test article with image upload. It contains enough text to meet the minimum requirements.',
+      content:
+        'This is the content of the test article with image upload. It contains enough text to meet the minimum requirements.',
       gameId: gameId,
       categoryId: categoryId,
     }
@@ -64,7 +65,7 @@ test.group('Image Upload', (group) => {
       .field('categoryId', articleData.categoryId.toString())
       .file('image', contents, {
         filename: name,
-        contentType: mime
+        contentType: mime,
       })
 
     if (response.status() !== 201) {
@@ -76,8 +77,8 @@ test.group('Image Upload', (group) => {
     assert.isTrue(response.body().data.image.url.includes('/uploads/'))
 
     // Vérifier que le fichier a été créé dans le fake drive
-    const fakeDisk = drive.use()
-    await fakeDisk.assertExists(`images/${response.body().data.image.filename}`)
+    const fakeDisk = drive.fake()
+    fakeDisk.assertExists(`images/${response.body().data.image.filename}`)
   })
 
   test('should update article with new image', async ({ client, assert }) => {
@@ -109,7 +110,8 @@ test.group('Image Upload', (group) => {
       summary: 'This is a test article for update with image',
       author: 'Test Author',
       publishedAt: '2024-01-01 00:00:00',
-      content: 'This is the content of the test article for update. It contains enough text to meet the minimum requirements.',
+      content:
+        'This is the content of the test article for update. It contains enough text to meet the minimum requirements.',
       gameId: gameId,
       categoryId: categoryId,
     }
@@ -118,7 +120,11 @@ test.group('Image Upload', (group) => {
     const articleId = createResponse.body().data.id
 
     // Maintenant update avec une image PNG
-    const { contents: pngContents, mime: pngMime, name: pngName } = await fileGenerator.generatePng('50kb')
+    const {
+      contents: pngContents,
+      mime: pngMime,
+      name: pngName,
+    } = await fileGenerator.generatePng('50kb')
 
     const updateData = {
       title: 'Updated Article with Image',
@@ -129,7 +135,7 @@ test.group('Image Upload', (group) => {
       .field('title', updateData.title)
       .file('image', pngContents, {
         filename: pngName,
-        contentType: pngMime
+        contentType: pngMime,
       })
 
     updateResponse.assertStatus(200)
@@ -137,8 +143,8 @@ test.group('Image Upload', (group) => {
     assert.isTrue(updateResponse.body().data.image.url.includes('/uploads/'))
 
     // Vérifier que le fichier a été créé dans le fake drive
-    const fakeDisk = drive.use()
-    await fakeDisk.assertExists(`images/${updateResponse.body().data.image.filename}`)
+    const fakeDisk = drive.fake()
+    fakeDisk.assertExists(`images/${updateResponse.body().data.image.filename}`)
   })
 
   test('should validate image file requirements', async ({ client }) => {
@@ -165,14 +171,19 @@ test.group('Image Upload', (group) => {
     const categoryId = categoryResponse.body().data.id
 
     // Créer un fichier trop gros (> 2MB)
-    const { contents: largeContents, mime: largeMime, name: largeName } = await fileGenerator.generateJpg('3mb')
+    const {
+      contents: largeContents,
+      mime: largeMime,
+      name: largeName,
+    } = await fileGenerator.generateJpg('3mb')
 
     const articleData = {
       title: 'Article with Large Image Test',
       summary: 'This should fail due to large image size',
       author: 'Test Author',
       publishedAt: '2024-01-01 00:00:00',
-      content: 'This is the content of the test article with large image. It contains enough text to meet the minimum requirements.',
+      content:
+        'This is the content of the test article with large image. It contains enough text to meet the minimum requirements.',
       gameId: gameId,
       categoryId: categoryId,
     }
@@ -188,14 +199,14 @@ test.group('Image Upload', (group) => {
       .field('categoryId', articleData.categoryId.toString())
       .file('image', largeContents, {
         filename: largeName,
-        contentType: largeMime
+        contentType: largeMime,
       })
 
     // Devrait échouer à cause de la validation de taille
     response.assertStatus(422)
   })
 
-  test('should delete image via images endpoint', async ({ client, assert }) => {
+  test('should delete image via images endpoint', async ({ client }) => {
     // Créer les données de test
     const genreResponse = await client.post('/api/admin/genres').json({
       name: 'Test Genre for Deletion',
@@ -219,14 +230,19 @@ test.group('Image Upload', (group) => {
     const categoryId = categoryResponse.body().data.id
 
     // Créer un article avec image
-    const { contents: deleteContents, mime: deleteMime, name: deleteName } = await fileGenerator.generateJpg('50kb')
+    const {
+      contents: deleteContents,
+      mime: deleteMime,
+      name: deleteName,
+    } = await fileGenerator.generateJpg('50kb')
 
     const articleData = {
       title: 'Article for Image Deletion Test',
       summary: 'This is a test article for image deletion',
       author: 'Test Author',
       publishedAt: '2024-01-01 00:00:00',
-      content: 'This is the content of the test article for image deletion. It contains enough text to meet the minimum requirements.',
+      content:
+        'This is the content of the test article for image deletion. It contains enough text to meet the minimum requirements.',
       gameId: gameId,
       categoryId: categoryId,
     }
@@ -242,21 +258,21 @@ test.group('Image Upload', (group) => {
       .field('categoryId', articleData.categoryId.toString())
       .file('image', deleteContents, {
         filename: deleteName,
-        contentType: deleteMime
+        contentType: deleteMime,
       })
 
     const imageId = createResponse.body().data.image.id
     const imagePath = `images/${createResponse.body().data.image.filename}`
 
     // Vérifier que l'image existe
-    const fakeDisk = drive.use()
-    await fakeDisk.assertExists(imagePath)
+    const fakeDisk = drive.fake()
+    fakeDisk.assertExists(imagePath)
 
     // Supprimer l'image
     const deleteResponse = await client.delete(`/api/admin/images/${imageId}`)
     deleteResponse.assertStatus(200)
 
     // Vérifier que l'image a été supprimée du fake drive
-    await fakeDisk.assertMissing(imagePath)
+    fakeDisk.assertMissing(imagePath)
   })
 })

@@ -52,7 +52,7 @@
 
 - **Entités simples** : 11/11 ✅ (100%)
 - **Entités complexes** : 2/2 ✅ (100%) - Article + Guide
-- **Tests** : 155/155 ✅ (100%) 🚀
+- **Tests** : 160/160 ✅ (100%) 🚀
 - **TypeScript** : 0 erreur ✅ (compilation parfaite)
 - **Routes publiques** : Optimisées ✅
 - **Validation** : VineJS complète + messages français ACTIVÉS ✅
@@ -65,7 +65,7 @@
 - ✅ **GuideType** - Implémenté avec pattern établi
 - ✅ **Guide** - Système complexe complet (sections hiérarchiques, prérequis, relations multiples)
 - ✅ **TypeScript** - 0 erreur, code parfaitement typé
-- ✅ **Tests** - 155 tests passent (100% success rate)
+- ✅ **Tests** - 160 tests passent (100% success rate)
 - ✅ **Architecture** - Repository/Service/Controller cohérente
 - ✅ **Validation** - VineJS + messages français ACTIVÉS (production + tests)
 - ✅ **Relations** - Many-to-many complètes sur toutes entités
@@ -125,18 +125,31 @@ Le backend API est fonctionnellement complet, mais reste à implémenter les **o
   - Middleware cache pour routes publiques
   - Cache tags pour invalidation granulaire
 
-### Phase 5: Image Management 🔥🔥 (PRIORITÉ 2)
+### Phase 5: Image Management ✅ COMPLÉTÉE 🎉
 
-- ✅ **Table Image centralisée** : Modèle + migrations + relations Article/Guide
-- ❌ **Upload d'images** : AdonisJS Drive intégré dans formulaires création
-- ❌ **Image processing** : Resize, compression, formats WebP
-- ❌ **Storage** : Local/S3/Cloudinary selon config AdonisJS Drive
-- ❌ **Validation** : VineJS file validation (types, tailles, dimensions)
-- 📋 **Actions** :
-  - Modifier validators Article/Guide pour `vine.file()`
-  - Service ImageService avec AdonisJS Drive
-  - Upload dans ArticleController.store() / GuideController.store()
-  - Supprimer champs imageUrl (garder pour compatibilité temporaire)
+- ✅ **Table Image centralisée** : Modèle + migrations + relations Article/Guide/Game/GuideSection
+- ✅ **Upload d'images** : AdonisJS Drive intégré dans formulaires création/modification
+- ✅ **Storage local** : Configuration AdonisJS Drive avec filesystem local `/uploads`
+- ✅ **Validation VineJS** : Types (.jpg, .jpeg, .png, .webp), taille max 2MB
+- ✅ **Service ImageService** : Upload, suppression, gestion centralisée
+- ✅ **Controllers intégrés** : Article/Game/Guide/GuideSection avec upload
+- ✅ **Tests complets** : 5 tests d'image avec @poppinss/file-generator
+- ✅ **Endpoint suppression** : DELETE `/api/admin/images/:id`
+
+**ENTITÉS AVEC IMAGES** :
+
+- ✅ **Article** : `article.image` relation + upload/update
+- ✅ **Game** : `game.image` relation + upload/update
+- ✅ **Guide** : `guide.image` relation + upload/update
+- ✅ **GuideSection** : `guideSection.image` relation + upload/update
+
+**FONCTIONNALITÉS** :
+
+- ✅ Upload lors création/modification via multipart/form-data
+- ✅ URLs d'accès : `/uploads/images/filename.ext`
+- ✅ Validation extension + taille (VineJS)
+- ✅ Fake Drive pour tests + nettoyage automatique
+- ✅ DTOs mis à jour avec relation image sérialisée
 
 ### Phase Next: Frontend Nuxt (Après optimisations backend) ⏭️
 

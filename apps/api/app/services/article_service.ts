@@ -90,7 +90,11 @@ export default class ArticleService {
     return new ArticleDto(article)
   }
 
-  async updateArticle(id: number, data: ArticleUpdateData, imageFile?: MultipartFile): Promise<ArticleDto> {
+  async updateArticle(
+    id: number,
+    data: ArticleUpdateData,
+    imageFile?: MultipartFile
+  ): Promise<ArticleDto> {
     let updateData = { ...data }
 
     if (imageFile) {

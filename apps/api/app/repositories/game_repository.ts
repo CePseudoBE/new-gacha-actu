@@ -16,6 +16,7 @@ export interface GameCreateData {
   isPopular?: boolean
   officialSite?: string
   wiki?: string
+  imageId?: number
   genreIds?: number[]
   platformIds?: number[]
   tagIds?: number[]
@@ -136,6 +137,7 @@ export default class GameRepository {
       isPopular: data.isPopular || false,
       officialSite: data.officialSite,
       wiki: data.wiki,
+      imageId: data.imageId,
     })
 
     if (data.genreIds && data.genreIds.length > 0) {
@@ -169,6 +171,7 @@ export default class GameRepository {
         isPopular: data.isPopular,
         officialSite: data.officialSite,
         wiki: data.wiki,
+        imageId: data.imageId,
       }).filter(([, value]) => value !== undefined)
     )
 

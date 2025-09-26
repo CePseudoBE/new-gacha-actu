@@ -27,7 +27,7 @@ export default class ArticleCategoryService {
   async getArticleCategoryById(id: number): Promise<ArticleCategoryDto> {
     const category = await this.articleCategoryRepository.findById(id)
     if (!category) {
-      throw new NotFoundException('Catégorie d\'article non trouvée')
+      throw new NotFoundException("Catégorie d'article non trouvée")
     }
     return new ArticleCategoryDto(category)
   }
@@ -35,7 +35,7 @@ export default class ArticleCategoryService {
   async getArticleCategoryBySlug(slug: string): Promise<ArticleCategoryDto> {
     const category = await this.articleCategoryRepository.findBySlug(slug)
     if (!category) {
-      throw new NotFoundException('Catégorie d\'article non trouvée')
+      throw new NotFoundException("Catégorie d'article non trouvée")
     }
     return new ArticleCategoryDto(category)
   }
@@ -55,7 +55,7 @@ export default class ArticleCategoryService {
   ): Promise<ArticleCategoryDto> {
     const category = await this.articleCategoryRepository.update(id, data)
     if (!category) {
-      throw new NotFoundException('Catégorie d\'article non trouvée')
+      throw new NotFoundException("Catégorie d'article non trouvée")
     }
 
     await category.refresh()
@@ -68,7 +68,7 @@ export default class ArticleCategoryService {
   async deleteArticleCategory(id: number): Promise<void> {
     const category = await this.articleCategoryRepository.findById(id)
     if (!category) {
-      throw new NotFoundException('Catégorie d\'article non trouvée')
+      throw new NotFoundException("Catégorie d'article non trouvée")
     }
 
     await this.articleCategoryRepository.delete(id)

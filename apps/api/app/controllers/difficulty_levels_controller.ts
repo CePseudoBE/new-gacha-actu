@@ -18,7 +18,9 @@ export default class DifficultyLevelsController {
   }
 
   async show(ctx: HttpContext) {
-    const { params: validatedParams } = await ctx.request.validateUsing(difficultyLevelParamsValidator)
+    const { params: validatedParams } = await ctx.request.validateUsing(
+      difficultyLevelParamsValidator
+    )
     const difficultyLevel = await this.difficultyLevelService.getDifficultyLevelById(
       validatedParams.id
     )
@@ -43,7 +45,9 @@ export default class DifficultyLevelsController {
   }
 
   async destroy(ctx: HttpContext) {
-    const { params: validatedParams } = await ctx.request.validateUsing(difficultyLevelParamsValidator)
+    const { params: validatedParams } = await ctx.request.validateUsing(
+      difficultyLevelParamsValidator
+    )
     await this.difficultyLevelService.deleteDifficultyLevel(validatedParams.id)
     ResponseService.success(ctx, 'Niveau de difficulté supprimé avec succès')
   }

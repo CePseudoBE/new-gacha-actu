@@ -71,6 +71,7 @@ export default class GameService {
       key: CacheService.KEYS.GAMES_POPULAR_WITH_LIMIT(limit),
       ttl: CacheService.TTL.MEDIUM,
       factory: async () => {
+        console.log('re')
         const games = await this.gameRepository.findPopular(limit)
         return GameDto.fromArray(games)
       },

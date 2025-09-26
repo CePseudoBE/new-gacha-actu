@@ -48,12 +48,15 @@ test.group('Simple Image Upload Test', (group) => {
       .field('summary', 'This is a test article with image upload functionality')
       .field('author', 'Test Author')
       .field('publishedAt', '2024-01-01 00:00:00')
-      .field('content', 'This is the content of the test article with image upload. It contains enough text to meet the minimum requirements.')
+      .field(
+        'content',
+        'This is the content of the test article with image upload. It contains enough text to meet the minimum requirements.'
+      )
       .field('gameId', gameId.toString())
       .field('categoryId', categoryId.toString())
       .file('image', contents, {
         filename: name,
-        contentType: mime
+        contentType: mime,
       })
 
     // Vérifier le statut
@@ -69,7 +72,7 @@ test.group('Simple Image Upload Test', (group) => {
     assert.isTrue(responseData.image.url.includes('/uploads/'))
 
     // Vérifier que le fichier existe dans le fake drive
-    const fakeDisk = drive.use()
-    await fakeDisk.assertExists(`images/${responseData.image.filename}`)
+    const fakeDisk = drive.fake()
+    fakeDisk.assertExists(`images/${responseData.image.filename}`)
   })
 })

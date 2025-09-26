@@ -26,7 +26,8 @@ export default class TagsController {
   }
 
   async update(ctx: HttpContext) {
-    const { params: validatedParams, ...payload } = await ctx.request.validateUsing(updateTagValidator)
+    const { params: validatedParams, ...payload } =
+      await ctx.request.validateUsing(updateTagValidator)
     const tag = await this.tagService.updateTag(validatedParams.id, payload)
     ResponseService.ok(ctx, tag, 'Tag mis à jour avec succès')
   }

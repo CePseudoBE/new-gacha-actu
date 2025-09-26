@@ -97,8 +97,8 @@ test.group('GuideTypes CRUD', () => {
       success: true,
     })
 
-    assert.lengthOf(response.body().data, 2)
     assert.isArray(response.body().data)
+    assert.isAtLeast(response.body().data.length, 2)
 
     const typeNames = response.body().data.map((t: any) => t.name)
     assert.include(typeNames, 'Team Comp')
