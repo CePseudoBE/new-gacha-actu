@@ -1,0 +1,172 @@
+<template>
+  <footer class="bg-background border-t">
+    <div class="container mx-auto px-4 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Logo et description -->
+        <div class="space-y-4">
+          <div class="flex items-center space-x-2">
+            <IconGamepad class="h-6 w-6 text-primary" />
+            <span
+              class="font-bold text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+            >
+              GachaActu
+            </span>
+          </div>
+          <p class="text-sm text-muted-foreground">
+            Par un fan, pour les fans. Votre source d'actualités et de guides pour l'univers des
+            jeux Gacha.
+          </p>
+          <div class="flex items-center gap-1 text-sm text-muted-foreground">
+            <span>Fait avec</span>
+            <IconHeart class="h-4 w-4 text-red-500 fill-red-500" />
+            <span>pour la communauté</span>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div>
+          <h3 class="font-semibold mb-4">Navigation</h3>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <NuxtLink to="/" class="text-muted-foreground hover:text-foreground transition-colors">
+                Accueil
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/news" class="text-muted-foreground hover:text-foreground transition-colors">
+                Actualités
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/games" class="text-muted-foreground hover:text-foreground transition-colors">
+                Jeux
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/guides" class="text-muted-foreground hover:text-foreground transition-colors">
+                Guides
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink to="/tier-lists" class="text-muted-foreground hover:text-foreground transition-colors">
+                Tier Lists
+              </NuxtLink>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Jeux populaires -->
+        <div>
+          <h3 class="font-semibold mb-4">Jeux populaires</h3>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <NuxtLink
+                to="/games/genshin-impact"
+                class="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Genshin Impact
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink
+                to="/games/honkai-star-rail"
+                class="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Honkai Star Rail
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink
+                to="/games/bleach-soul-resonance"
+                class="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Bleach Soul Resonance
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink
+                to="/games/seven-deadly-sins-origins"
+                class="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Seven Deadly Sins Origins
+              </NuxtLink>
+            </li>
+            <li>
+              <NuxtLink
+                to="/games/fire-emblem-heroes"
+                class="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Fire Emblem Heroes
+              </NuxtLink>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Partenaires & Communauté -->
+        <div>
+          <h3 class="font-semibold mb-4">Partenaires</h3>
+          <div class="space-y-4">
+            <NuxtLink
+              to="https://leap.ldplayer.gg/T4DYBI9Ic"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <NuxtImg src="/icons/ldplayer.svg" alt="LDPlayer" width="20" height="20" />
+              LDPlayer
+            </NuxtLink>
+            <NuxtLink
+              to="https://fr.gamesplanet.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <NuxtImg src="/icons/gamesplanetsmall.png" alt="Gamesplanet" width="20" height="20" />
+              Gamesplanet
+            </NuxtLink>
+          </div>
+
+          <div class="mt-6">
+            <h4 class="font-medium mb-3">Communauté</h4>
+            <div class="flex items-center gap-3">
+              <NuxtLink
+                to="https://discord.gg/ton-discord"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-muted-foreground hover:text-foreground transition-colors"
+                title="Discord"
+              >
+                <IconDiscord class="h-5 w-5" />
+              </NuxtLink>
+              <NuxtLink
+                to="#"
+                class="text-muted-foreground hover:text-foreground transition-colors"
+                title="Twitter"
+              >
+                <IconTwitter class="h-5 w-5" />
+              </NuxtLink>
+              <NuxtLink
+                to="#"
+                class="text-muted-foreground hover:text-foreground transition-colors"
+                title="YouTube"
+              >
+                <IconYoutube class="h-5 w-5" />
+              </NuxtLink>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
+        <p>© 2025 GachaActu. Tous droits réservés. Fait avec passion pour la communauté Gacha.</p>
+      </div>
+    </div>
+  </footer>
+</template>
+
+<script setup lang="ts">
+import { Gamepad as IconGamepad, Heart as IconHeart, Youtube as IconYoutube } from 'lucide-vue-next'
+import IconDiscord from '@/components/icons/IconDiscord.vue'
+import IconTwitter from '@/components/icons/IconTwitter.vue'
+</script>

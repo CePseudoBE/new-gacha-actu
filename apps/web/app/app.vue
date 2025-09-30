@@ -1,10 +1,12 @@
 <template>
   <div>
     <NuxtRouteAnnouncer />
-    <NuxtWelcome />
-    <Button>Test</Button>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
-<script lang="ts" setup>
-import { Button } from "@/components/ui/button";
+
+<script setup lang="ts">
+// App root component
 </script>
