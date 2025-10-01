@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit"
   },
   "exports": {
-    "./api": "./.adonisjs/index.ts"
+    "./api": "./.adonisjs/index.ts",
+    "./.adonisjs/api": "./.adonisjs/api.ts"
   },
   "imports": {
     "#controllers/*": "./app/controllers/*.js",

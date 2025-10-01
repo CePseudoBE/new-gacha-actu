@@ -35,11 +35,17 @@ export default class ArticleService {
   }
 
   async getArticleBySlug(slug: string): Promise<ArticleDto> {
-    const article = await this.articleRepository.findBySlug(slug)
-    if (!article) {
-      throw new NotFoundException('Article non trouvé')
-    }
-    return new ArticleDto(article)
+    return await cache.getOrSet({
+      key: CacheService.KEYS.ARTICLES_BY_SLUG(slug),
+      ttl: CacheService.TTL.LONG,
+      factory: async () => {
+        const article = await this.articleRepository.findBySlug(slug)
+        if (!article) {
+          throw new NotFoundException('Article non trouvé')
+        }
+        return new ArticleDto(article)
+      },
+    })
   }
 
   async getPopularArticles(): Promise<ArticleDto[]> {
@@ -54,8 +60,14 @@ export default class ArticleService {
   }
 
   async getArticlesByGame(gameId: number): Promise<ArticleDto[]> {
-    const articles = await this.articleRepository.findByGame(gameId)
-    return articles.map((article) => new ArticleDto(article))
+    return await cache.getOrSet({
+      key: CacheService.KEYS.ARTICLES_BY_GAME(gameId),
+      ttl: CacheService.TTL.MEDIUM,
+      factory: async () => {
+        const articles = await this.articleRepository.findByGame(gameId)
+        return articles.map((article) => new ArticleDto(article))
+      },
+    })
   }
 
   async getArticlesByCategory(categoryId: number): Promise<ArticleDto[]> {

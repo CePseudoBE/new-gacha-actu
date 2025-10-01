@@ -1,10 +1,11 @@
 <template>
   <div>
     <HeroSection />
-    <ArticlesSection />
+    <ArticlesSection v-if="articles" :articles="articles" />
 
     <!-- Section Vidéos YouTube -->
     <YouTubeCarousel
+      v-if="youtubeVideos && youtubeVideos.length > 0"
       :videos="youtubeVideos"
       title="Vidéos de la Communauté"
     />
@@ -27,11 +28,25 @@
 <script setup lang="ts">
 import HeroSection from '@/components/home/HeroSection.vue'
 import ArticlesSection from '@/components/home/ArticlesSection.vue'
-import YouTubeCarousel from '@/components/home/YouTubeCarousel.vue'
-import SocialSection from '@/components/social/SocialSection.vue'
-import { useMockYouTubeVideos } from '@/composables/useMockData'
+// Lazy load composants below the fold pour améliorer LCP
+const YouTubeCarousel = defineAsyncComponent(() => import('@/components/home/YouTubeCarousel.vue'))
+const SocialSection = defineAsyncComponent(() => import('@/components/social/SocialSection.vue'))
 
-const { videos: youtubeVideos } = useMockYouTubeVideos()
+const config = useRuntimeConfig()
+
+// Fetch popular articles from API
+const { data: articles = [] } = await useAsyncData(
+  'popular-articles',
+  () => $fetch(`${config.public.apiUrl}/api/articles/popular`)
+    .then((res: any) => res.data || [])
+)
+
+// Fetch active YouTube videos from API
+const { data: youtubeVideos = [] } = await useAsyncData(
+  'active-youtube-videos',
+  () => $fetch(`${config.public.apiUrl}/api/youtube-videos/active?limit=10`)
+    .then((res: any) => res.data || [])
+)
 
 // SEO Meta tags
 useSeoMeta({

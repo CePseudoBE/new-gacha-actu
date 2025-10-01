@@ -1,23 +1,13 @@
 <template>
-  <div class="min-h-screen bg-background">
-    <!-- Admin Header -->
-    <header class="border-b">
-      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <IconLayoutDashboard class="w-6 h-6 text-primary" />
-          <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-        </div>
-        <Button variant="outline" size="sm">
-          <IconLogOut class="w-4 h-4 mr-2" />
-          Déconnexion
-        </Button>
-      </div>
-    </header>
+  <div class="space-y-8">
+    <!-- Page Header -->
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
+      <p class="text-muted-foreground mt-2">Bienvenue dans le back-office</p>
+    </div>
 
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 py-8">
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader class="flex flex-row items-center justify-between pb-2">
             <CardTitle class="text-sm font-medium">Articles</CardTitle>
@@ -63,8 +53,10 @@
         </Card>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Quick Actions -->
+    <div>
+      <h2 class="text-xl font-semibold mb-4">Actions rapides</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card class="group hover:shadow-lg transition-shadow cursor-pointer" @click="navigateTo('/admin/articles')">
           <CardHeader>
             <div class="flex items-center gap-3">
@@ -204,7 +196,11 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
+definePageMeta({
+  layout: 'admin'
+})
+
 useHead({
-  title: 'Admin Dashboard'
+  title: 'Admin Dashboard - Anime Gacha Pulse'
 })
 </script>

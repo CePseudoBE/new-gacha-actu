@@ -4,7 +4,14 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  css: ["./app/assets/css/main.css"],
+  css: ["./app/assets/css/main.css", "vue-sonner/style.css"],
+
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3333',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://animegachapulse.com'
+    }
+  },
 
   vite: {
     plugins: [tailwindcss()],

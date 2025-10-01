@@ -19,6 +19,8 @@ export default class CacheService {
     GUIDES_BY_GAME: (gameId: number) => `guides:game:${gameId}`,
     ARTICLES_ALL: 'articles:all',
     ARTICLES_POPULAR: 'articles:popular',
+    ARTICLES_BY_SLUG: (slug: string) => `articles:slug:${slug}`,
+    ARTICLES_BY_GAME: (gameId: number) => `articles:game:${gameId}`,
     YOUTUBE_VIDEOS_ACTIVE: 'youtube_videos:active',
     MAINTENANCE_STATUS: 'maintenance:status',
   } as const
@@ -76,7 +78,17 @@ export default class CacheService {
   /**
    * Invalide tous les caches liés aux articles
    */
-  static async invalidateArticleCaches(): Promise<void> {
-    await this.invalidateKeys([this.KEYS.ARTICLES_ALL, this.KEYS.ARTICLES_POPULAR])
+  static async invalidateArticleCaches(gameId?: number, slug?: string): Promise<void> {
+    const keys = [this.KEYS.ARTICLES_ALL, this.KEYS.ARTICLES_POPULAR]
+
+    if (gameId) {
+      keys.push(this.KEYS.ARTICLES_BY_GAME(gameId))
+    }
+
+    if (slug) {
+      keys.push(this.KEYS.ARTICLES_BY_SLUG(slug))
+    }
+
+    await this.invalidateKeys(keys)
   }
 }

@@ -55,13 +55,13 @@ export default class GuideDto extends BaseModelDto {
     this.metaDescription = guide.metaDescription
     this.createdAt = guide.createdAt.toISO()!
     this.updatedAt = guide.updatedAt.toISO()!
-    this.game = guide.game && new GameDto(guide.game)
-    this.guideType = guide.guideType && new GuideTypeDto(guide.guideType)
-    this.difficulty = guide.difficulty && new DifficultyLevelDto(guide.difficulty)
-    this.sections = GuideSectionDto.fromArray(guide.sections)
-    this.prerequisites = GuidePrerequisiteDto.fromArray(guide.prerequisites)
-    this.tags = TagDto.fromArray(guide.tags)
-    this.seoKeywords = SeoKeywordDto.fromArray(guide.seoKeywords)
-    this.image = guide.image && new ImageDto(guide.image)
+    this.game = guide.game !== undefined ? new GameDto(guide.game) : null
+    this.guideType = guide.guideType !== undefined ? new GuideTypeDto(guide.guideType) : null
+    this.difficulty = guide.difficulty !== undefined ? new DifficultyLevelDto(guide.difficulty) : null
+    this.sections = guide.sections !== undefined ? GuideSectionDto.fromArray(guide.sections) : []
+    this.prerequisites = guide.prerequisites !== undefined ? GuidePrerequisiteDto.fromArray(guide.prerequisites) : []
+    this.tags = guide.tags !== undefined ? TagDto.fromArray(guide.tags) : []
+    this.seoKeywords = guide.seoKeywords !== undefined ? SeoKeywordDto.fromArray(guide.seoKeywords) : []
+    this.image = guide.image !== undefined ? new ImageDto(guide.image) : null
   }
 }

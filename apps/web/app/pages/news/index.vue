@@ -22,19 +22,17 @@
 </template>
 
 <script setup lang="ts">
-import { useMockArticles } from '@/composables/useMockData'
 import ArticleCard from '@/components/ArticleCard.vue'
+import { useDate } from '@/composables/useDate'
 
-const { articles } = useMockArticles()
+const api = useApi()
+const { formatDate } = useDate()
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  }).format(date)
-}
+// Fetch all articles from API
+const { data: articles = [] } = await useAsyncData('all-articles', async () => {
+  const response = await api.api.articles.$get()
+  return response.data?.data || []
+})
 
 useHead({
   title: 'Actualités - Anime Gacha Pulse'

@@ -132,36 +132,34 @@ import {
   Edit as IconEdit,
   Trash as IconTrash
 } from 'lucide-vue-next'
-import { useMockArticles } from '@/composables/useMockData'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
+import { useDate } from '@/composables/useDate'
 
-const { articles } = useMockArticles()
+const api = useApi()
+const { formatDateShort: formatDate } = useDate()
+
+// Fetch all articles from API
+const { data: articles = [] } = await useAsyncData('admin-articles', async () => {
+  const response = await api.api.articles.$get()
+  return response.data?.data || []
+})
 
 const searchQuery = ref('')
 const filterGame = ref('all')
 const filterCategory = ref('all')
 
 const filteredArticles = computed(() => {
-  return articles.filter(article => {
+  return (articles.value || []).filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(searchQuery.value.toLowerCase())
     const matchesGame = filterGame.value === 'all' || article.game?.slug === filterGame.value
     const matchesCategory = filterCategory.value === 'all' || article.category?.slug === filterCategory.value
     return matchesSearch && matchesGame && matchesCategory
   })
 })
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  }).format(date)
-}
 
 const getCategoryVariant = (category?: string) => {
   if (!category) return 'default'

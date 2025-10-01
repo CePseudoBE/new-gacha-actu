@@ -12,13 +12,13 @@ export default class GameDto extends BaseModelDto {
   declare id: number
   declare name: string
   declare slug: string
-  declare description: string
-  declare releaseDate: string
+  declare description: string | null
+  declare releaseDate: string | null
   declare isPopular: boolean
   declare officialSite: string | null
   declare wiki: string | null
-  declare createdAt: string
-  declare updatedAt: string
+  declare createdAt: string | null
+  declare updatedAt: string | null
   declare articles: ArticleDto[]
   declare guides: GuideDto[]
   declare youtubeVideos: YoutubeVideoDto[]
@@ -34,21 +34,22 @@ export default class GameDto extends BaseModelDto {
     this.id = game.id
     this.name = game.name
     this.slug = game.slug
-    this.description = game.description
-    this.releaseDate = game.releaseDate.toISO()!
-    this.isPopular = game.isPopular
-    this.officialSite = game.officialSite
-    this.wiki = game.wiki
-    this.createdAt = game.createdAt.toISO()!
-    this.updatedAt = game.updatedAt.toISO()!
+    this.description = game.description ?? null
+    this.releaseDate = game.releaseDate?.toISO() ?? null
+    this.isPopular = game.isPopular ?? false
+    this.officialSite = game.officialSite ?? null
+    this.wiki = game.wiki ?? null
+    this.createdAt = game.createdAt?.toISO() ?? null
+    this.updatedAt = game.updatedAt?.toISO() ?? null
 
     // Relations (seulement si chargées)
-    this.articles = game.articles ? ArticleDto.fromArray(game.articles) : []
-    this.guides = game.guides ? GuideDto.fromArray(game.guides) : []
-    this.youtubeVideos = game.youtubeVideos ? YoutubeVideoDto.fromArray(game.youtubeVideos) : []
-    this.genres = game.genres ? GenreDto.fromArray(game.genres) : []
-    this.tags = game.tags ? TagDto.fromArray(game.tags) : []
-    this.platforms = game.platforms ? PlatformDto.fromArray(game.platforms) : []
-    this.image = game.image && new ImageDto(game.image)
+    this.articles = game.articles !== undefined ? ArticleDto.fromArray(game.articles) : []
+    this.guides = game.guides !== undefined ? GuideDto.fromArray(game.guides) : []
+    this.youtubeVideos =
+      game.youtubeVideos !== undefined ? YoutubeVideoDto.fromArray(game.youtubeVideos) : []
+    this.genres = game.genres !== undefined ? GenreDto.fromArray(game.genres) : []
+    this.tags = game.tags !== undefined ? TagDto.fromArray(game.tags) : []
+    this.platforms = game.platforms !== undefined ? PlatformDto.fromArray(game.platforms) : []
+    this.image = game.image !== undefined ? new ImageDto(game.image) : null
   }
 }

@@ -54,6 +54,7 @@ export default class ArticleRepository {
       .preload('category')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .first()
   }
 
@@ -64,6 +65,7 @@ export default class ArticleRepository {
       .preload('category')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .first()
   }
 

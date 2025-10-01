@@ -47,10 +47,10 @@ export default class ArticleDto extends BaseModelDto {
     this.gameId = article.gameId
     this.createdAt = article.createdAt.toISO()!
     this.updatedAt = article.updatedAt.toISO()!
-    this.game = article.game && new GameDto(article.game)
-    this.category = article.category && new ArticleCategoryDto(article.category)
-    this.tags = TagDto.fromArray(article.tags)
-    this.seoKeywords = SeoKeywordDto.fromArray(article.seoKeywords)
-    this.image = article.image && new ImageDto(article.image)
+    this.game = article.game !== undefined ? new GameDto(article.game) : null
+    this.category = article.category !== undefined ? new ArticleCategoryDto(article.category) : null
+    this.tags = article.tags !== undefined ? TagDto.fromArray(article.tags) : []
+    this.seoKeywords = article.seoKeywords !== undefined ? SeoKeywordDto.fromArray(article.seoKeywords) : []
+    this.image = article.image !== undefined ? new ImageDto(article.image) : null
   }
 }

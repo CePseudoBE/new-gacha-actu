@@ -10,7 +10,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <ArticleCard
-          v-for="article in articles"
+          v-for="article in props.articles"
           :key="article.id"
           :title="article.title"
           :summary="article.summary"
@@ -28,18 +28,16 @@
 </template>
 
 <script setup lang="ts">
-import { useMockArticles } from '@/composables/useMockData'
 import ArticleCard from '@/components/ArticleCard.vue'
+import { useDate } from '@/composables/useDate'
 
-const { getPopularArticles } = useMockArticles()
-const articles = getPopularArticles(6)
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  }).format(date)
+interface Props {
+  articles?: any[]
 }
+
+const props = withDefaults(defineProps<Props>(), {
+  articles: () => []
+})
+
+const { formatDate } = useDate()
 </script>

@@ -71,16 +71,10 @@ export default class GameRepository {
       .preload('platforms')
       .preload('tags')
       .preload('articles', (articleQuery) => {
-        articleQuery
-          .select(['id', 'title', 'slug', 'summary', 'publishedAt', 'isPopular'])
-          .orderBy('publishedAt', 'desc')
-          .limit(5)
+        articleQuery.orderBy('publishedAt', 'desc').limit(5)
       })
       .preload('guides', (guideQuery) => {
-        guideQuery
-          .select(['id', 'title', 'slug', 'summary', 'publishedAt', 'isPopular'])
-          .orderBy('publishedAt', 'desc')
-          .limit(5)
+        guideQuery.orderBy('publishedAt', 'desc').limit(5)
       })
       .first()
   }
@@ -104,16 +98,10 @@ export default class GameRepository {
       .preload('platforms')
       .preload('tags')
       .preload('articles', (articleQuery) => {
-        articleQuery
-          .select(['id', 'title', 'slug', 'summary', 'publishedAt', 'isPopular'])
-          .orderBy('publishedAt', 'desc')
-          .limit(10)
+        articleQuery.orderBy('publishedAt', 'desc').limit(10)
       })
       .preload('guides', (guideQuery) => {
-        guideQuery
-          .select(['id', 'title', 'slug', 'summary', 'publishedAt', 'isPopular'])
-          .orderBy('publishedAt', 'desc')
-          .limit(10)
+        guideQuery.orderBy('publishedAt', 'desc').limit(10)
       })
       .first()
   }

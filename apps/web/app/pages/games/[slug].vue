@@ -31,26 +31,26 @@
 </template>
 
 <script setup lang="ts">
-import { useMockGames, useMockArticles } from '@/composables/useMockData'
 import ArticleCard from '@/components/ArticleCard.vue'
+import { useDate } from '@/composables/useDate'
 
 const route = useRoute()
-const { getGameBySlug } = useMockGames()
-const { getArticlesByGame } = useMockArticles()
+const api = useApi()
+const { formatDate } = useDate()
 
-const game = computed(() => getGameBySlug(route.params.slug as string))
-const gameArticles = computed(() =>
-  game.value ? getArticlesByGame(game.value.slug) : []
-)
+// Fetch game by slug
+const { data: game } = await useAsyncData(`game-${route.params.slug}`, async () => {
+  const response = await api.api.games({ slug: route.params.slug as string }).$get()
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  }).format(date)
-}
+  if (!response.data?.data) {
+    throw createError({ statusCode: 404, statusMessage: 'Jeu non trouvé' })
+  }
+
+  return response.data.data
+})
+
+// Use articles already preloaded from the game
+const gameArticles = computed(() => game.value?.articles || [])
 
 useHead({
   title: game.value ? `${game.value.name} - Anime Gacha Pulse` : 'Jeu non trouvé'

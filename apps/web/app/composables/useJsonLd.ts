@@ -1,86 +1,120 @@
-export function useWebsiteJsonLd() {
-  useHead({
-    script: [
-      {
-        type: 'application/ld+json',
-        children: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'WebSite',
-          name: 'Anime Gacha Pulse',
-          url: 'https://animegachapulse.com',
-          description: 'Anime Gacha Pulse est LE site d\'actualités pour les fans de jeux Gacha. Guides experts, tier lists, événements et dernières news.',
-          inLanguage: 'fr-FR',
-          publisher: {
-            '@type': 'Organization',
-            name: 'Anime Gacha Pulse',
-            logo: {
-              '@type': 'ImageObject',
-              url: 'https://animegachapulse.com/logo.png'
-            }
-          }
-        })
-      }
-    ]
-  })
-}
+/**
+ * Composable pour générer des données structurées JSON-LD (Schema.org)
+ * Améliore le SEO et l'affichage dans les résultats de recherche (rich snippets)
+ */
+export function useJsonLd() {
+  /**
+   * Génère le JSON-LD pour un article
+   */
+  const generateArticleJsonLd = (article: {
+    title: string
+    summary: string
+    content: string
+    author: string
+    publishedAt: string
+    updatedAt?: string
+    imageUrl?: string | null
+    slug: string
+    game?: { name: string }
+    tags?: Array<{ name: string }>
+  }) => {
+    const siteUrl = 'https://animegachapulse.com'
 
-export function useArticleJsonLd(article: {
-  title: string
-  description: string
-  imageUrl: string | null
-  publishedAt: string
-  author: string
-  url: string
-}) {
-  useHead({
-    script: [
-      {
-        type: 'application/ld+json',
-        children: JSON.stringify({
-          '@context': 'https://schema.org',
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: article.title,
+      description: article.summary,
+      image: article.imageUrl || `${siteUrl}/og-image.jpg`,
+      datePublished: article.publishedAt,
+      dateModified: article.updatedAt || article.publishedAt,
+      author: {
+        '@type': 'Person',
+        name: article.author
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Anime Gacha Pulse',
+        logo: {
+          '@type': 'ImageObject',
+          url: `${siteUrl}/logo.png`
+        }
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${siteUrl}/article/${article.slug}`
+      },
+      about: article.game ? {
+        '@type': 'VideoGame',
+        name: article.game.name
+      } : undefined,
+      keywords: article.tags?.map(tag => tag.name).join(', ')
+    }
+  }
+
+  /**
+   * Génère le JSON-LD pour une liste d'articles (ItemList)
+   */
+  const generateArticleListJsonLd = (articles: Array<{ title: string; slug: string; imageUrl?: string | null }>) => {
+    const siteUrl = 'https://animegachapulse.com'
+
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      itemListElement: articles.map((article, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
           '@type': 'Article',
           headline: article.title,
-          description: article.description,
-          image: article.imageUrl || 'https://animegachapulse.com/og-image.jpg',
-          datePublished: article.publishedAt,
-          author: {
-            '@type': 'Person',
-            name: article.author
-          },
-          publisher: {
-            '@type': 'Organization',
-            name: 'Anime Gacha Pulse',
-            logo: {
-              '@type': 'ImageObject',
-              url: 'https://animegachapulse.com/logo.png'
-            }
-          },
-          mainEntityOfPage: {
-            '@type': 'WebPage',
-            '@id': article.url
-          }
-        })
-      }
-    ]
-  })
-}
+          url: `${siteUrl}/article/${article.slug}`,
+          image: article.imageUrl
+        }
+      }))
+    }
+  }
 
-export function useBreadcrumbJsonLd(items: Array<{ name: string; url: string }>) {
-  useHead({
-    script: [
-      {
-        type: 'application/ld+json',
-        children: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'BreadcrumbList',
-          itemListElement: items.map((item, index) => ({
-            '@type': 'ListItem',
-            position: index + 1,
-            name: item.name,
-            item: item.url
-          }))
-        })
+  /**
+   * Génère le JSON-LD pour le site web (WebSite + SearchAction)
+   */
+  const generateWebsiteJsonLd = () => {
+    const siteUrl = 'https://animegachapulse.com'
+
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Anime Gacha Pulse',
+      url: siteUrl,
+      description: 'L\'actualité des jeux Gacha par des passionnés',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${siteUrl}/search?q={search_term_string}`
+        },
+        'query-input': 'required name=search_term_string'
       }
-    ]
-  })
+    }
+  }
+
+  /**
+   * Injecte le JSON-LD dans le head de la page
+   */
+  const setJsonLd = (jsonLdData: object) => {
+    useHead({
+      script: [
+        {
+          type: 'application/ld+json',
+          children: JSON.stringify(jsonLdData)
+        }
+      ]
+    })
+  }
+
+  return {
+    generateArticleJsonLd,
+    generateArticleListJsonLd,
+    generateWebsiteJsonLd,
+    setJsonLd
+  }
 }

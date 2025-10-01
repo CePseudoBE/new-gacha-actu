@@ -22,7 +22,7 @@
       />
     </div>
 
-    <div class="prose prose-lg max-w-none dark:prose-invert">
+    <div class="prose prose-dark prose-lg max-w-none">
       <p class="lead text-xl mb-6">{{ article.summary }}</p>
       <div v-html="renderedContent" class="article-content"></div>
     </div>
@@ -39,27 +39,39 @@
 </template>
 
 <script setup lang="ts">
-import { marked } from 'marked'
-import { useMockArticles } from '@/composables/useMockData'
+import { useMarkdown } from '@/composables/useMarkdown'
+import { useDate } from '@/composables/useDate'
+import { useJsonLd } from '@/composables/useJsonLd'
+import { handleApiError } from '@/composables/useApi'
 import { Badge } from '@/components/ui/badge'
 
 const route = useRoute()
-const { getArticleBySlug } = useMockArticles()
+const api = useApi()
+const { parseMarkdown } = useMarkdown()
+const { formatDate } = useDate()
+const { generateArticleJsonLd, setJsonLd } = useJsonLd()
 
-const article = computed(() => getArticleBySlug(route.params.slug as string))
+// Fetch article from API
+const { data: article } = await useAsyncData(
+  `article-${route.params.slug}`,
+  async () => {
+    const response = await api.api.articles.slug({ slug: route.params.slug as string }).$get()
 
-const renderedContent = computed(() => {
-  if (!article.value?.content) return ''
-  return marked.parse(article.value.content)
-})
+    // L'API retourne { data: { success: true, data: {...} } }
+    if (!response.data?.data) {
+      throw createError({ statusCode: 404, statusMessage: 'Article non trouvé' })
+    }
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  }).format(date)
+    return response.data.data
+  }
+)
+
+const renderedContent = computed(() => parseMarkdown(article.value?.content || ''))
+
+// Ajouter JSON-LD pour le SEO
+if (article.value) {
+  const jsonLd = generateArticleJsonLd(article.value)
+  setJsonLd(jsonLd)
 }
 
 useSeoMeta({

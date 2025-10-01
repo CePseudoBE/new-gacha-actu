@@ -99,7 +99,7 @@
                   </p>
                 </TabsContent>
                 <TabsContent value="preview" class="mt-4">
-                  <div class="prose prose-sm max-w-none dark:prose-invert p-4 border rounded-md min-h-[300px]">
+                  <div class="prose prose-dark prose-sm max-w-none p-4 border rounded-md min-h-[300px]">
                     <div v-html="previewContent"></div>
                   </div>
                 </TabsContent>
@@ -240,7 +240,7 @@
 </template>
 
 <script setup lang="ts">
-import { marked } from 'marked'
+import { useMarkdown } from '@/composables/useMarkdown'
 import {
   ArrowLeft as IconArrowLeft,
   FileText as IconFileText,
@@ -256,6 +256,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+
+const { parseMarkdown } = useMarkdown()
 
 const form = ref({
   title: '',
@@ -277,7 +279,7 @@ const tagInput = ref('')
 
 const previewContent = computed(() => {
   if (!form.value.content) return '<p class="text-muted-foreground">Aucun contenu à prévisualiser</p>'
-  return marked.parse(form.value.content)
+  return parseMarkdown(form.value.content)
 })
 
 watch(() => form.value.title, (newTitle) => {

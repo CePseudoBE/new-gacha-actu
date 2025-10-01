@@ -49,10 +49,15 @@
 
 <script setup lang="ts">
 import { Gamepad2 as IconGamepad, ArrowRight as IconArrowRight } from 'lucide-vue-next'
-import { useMockGames } from '@/composables/useMockData'
 import { Card, CardContent } from '@/components/ui/card'
 
-const { games } = useMockGames()
+const api = useApi()
+
+// Fetch all games from API
+const { data: games = [] } = await useAsyncData('all-games', async () => {
+  const response = await api.api.games.$get()
+  return response.data?.data || []
+})
 
 useHead({
   title: 'Jeux - Anime Gacha Pulse'
