@@ -41,9 +41,18 @@ export default class GamesController {
   }
 
   async show(ctx: HttpContext) {
-    const { params: validatedParams } = await ctx.request.validateUsing(gameSlugParamsValidator)
-    const game = await this.gameService.getGameBySlug(validatedParams.slug)
-    ResponseService.ok(ctx, game)
+    // Check if param is a number (ID) or string (slug)
+    const param = ctx.params.slug || ctx.params.id
+
+    if (!isNaN(Number(param))) {
+      // It's an ID
+      const game = await this.gameService.getGameById(Number(param))
+      return ResponseService.ok(ctx, game)
+    } else {
+      // It's a slug
+      const game = await this.gameService.getGameBySlug(param)
+      return ResponseService.ok(ctx, game)
+    }
   }
 
   async store(ctx: HttpContext) {

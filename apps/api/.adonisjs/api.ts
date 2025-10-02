@@ -16,8 +16,8 @@ type ApiGamesPopularGetHead = {
   response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['popular'], true>
 }
 type ApiGamesIdGetHead = {
-  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/game.ts')['gameSlugParamsValidator']>>
-  response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['show'], true>
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['show'], false>
 }
 type ApiYoutubevideosGetHead = {
   request: unknown
@@ -127,6 +127,14 @@ type ApiMaintenanceStatusGetHead = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/maintenance_settings_controller.ts').default['status'], false>
 }
+type ApiAdminGamesStatsGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['stats'], false>
+}
+type ApiAdminGamesIdGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['show'], false>
+}
 type ApiAdminGamesPost = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/game.ts')['createGameValidator']>>
   response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['store'], true>
@@ -138,10 +146,6 @@ type ApiAdminGamesIdPut = {
 type ApiAdminGamesIdDelete = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/game.ts')['gameParamsValidator']>>
   response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['destroy'], true>
-}
-type ApiAdminGamesStatsGetHead = {
-  request: unknown
-  response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['stats'], false>
 }
 type ApiAdminYoutubevideosPost = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/youtube_video.ts')['createYoutubeVideoValidator']>>
@@ -495,21 +499,23 @@ export interface ApiDefinition {
     };
     'admin': {
       'games': {
-        '$url': {
-        };
-        '$post': ApiAdminGamesPost;
-        ':id': {
-          '$url': {
-          };
-          '$put': ApiAdminGamesIdPut;
-          '$delete': ApiAdminGamesIdDelete;
-        };
         'stats': {
           '$url': {
           };
           '$get': ApiAdminGamesStatsGetHead;
           '$head': ApiAdminGamesStatsGetHead;
         };
+        ':id': {
+          '$url': {
+          };
+          '$get': ApiAdminGamesIdGetHead;
+          '$head': ApiAdminGamesIdGetHead;
+          '$put': ApiAdminGamesIdPut;
+          '$delete': ApiAdminGamesIdDelete;
+        };
+        '$url': {
+        };
+        '$post': ApiAdminGamesPost;
       };
       'youtube-videos': {
         '$url': {

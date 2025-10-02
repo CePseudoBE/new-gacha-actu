@@ -67,6 +67,7 @@ export default class GameRepository {
   async findById(id: number): Promise<Game | null> {
     return Game.query()
       .where('id', id)
+      .preload('image')
       .preload('genres')
       .preload('platforms')
       .preload('tags')

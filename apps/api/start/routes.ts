@@ -152,10 +152,11 @@ router
     // Games
     router
       .group(() => {
+        router.get('/stats', [GamesController, 'stats'])
+        router.get('/:id', [GamesController, 'show'])
         router.post('/', [GamesController, 'store'])
         router.put('/:id', [GamesController, 'update'])
         router.delete('/:id', [GamesController, 'destroy'])
-        router.get('/stats', [GamesController, 'stats'])
       })
       .prefix('games')
 
