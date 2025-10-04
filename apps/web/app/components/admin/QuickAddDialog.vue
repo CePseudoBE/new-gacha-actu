@@ -18,7 +18,7 @@
         </div>
 
         <div class="space-y-2">
-          <Label for="quick-name">Nom *</Label>
+          <Label for="quick-name">{{ nameLabel }} *</Label>
           <Input id="quick-name" v-model="name" required />
         </div>
         <div v-if="showDescription" class="space-y-2">
@@ -49,7 +49,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 
 interface Props {
-  type: 'genre' | 'platform' | 'tag'
+  type: 'genre' | 'platform' | 'tag' | 'seo-keyword' | 'category'
   modelValue: boolean
 }
 
@@ -76,6 +76,15 @@ const title = computed(() => {
     case 'genre': return 'Ajouter un genre'
     case 'platform': return 'Ajouter une plateforme'
     case 'tag': return 'Ajouter un tag'
+    case 'seo-keyword': return 'Ajouter un mot-clé SEO'
+    case 'category': return 'Ajouter une catégorie'
+  }
+})
+
+const nameLabel = computed(() => {
+  switch (props.type) {
+    case 'seo-keyword': return 'Mot-clé'
+    default: return 'Nom'
   }
 })
 
@@ -94,7 +103,7 @@ const handleSubmit = async () => {
   errors.value = []
 
   try {
-    const payload: any = { name: name.value }
+    let payload: any = { name: name.value }
     if (showDescription.value && description.value) {
       payload.description = description.value
     }
@@ -114,6 +123,16 @@ const handleSubmit = async () => {
       case 'tag':
         response = await api.api.admin.tags.$post(payload)
         successMessage = 'Tag ajouté avec succès'
+        break
+      case 'seo-keyword':
+        // SEO keywords use 'keyword' field instead of 'name'
+        payload = { keyword: name.value }
+        response = await api.api.admin['seo-keywords'].$post(payload)
+        successMessage = 'Mot-clé SEO ajouté avec succès'
+        break
+      case 'category':
+        response = await api.api.admin['article-categories'].$post(payload)
+        successMessage = 'Catégorie ajoutée avec succès'
         break
     }
 

@@ -39,9 +39,9 @@
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tous les jeux</SelectItem>
-                <SelectItem value="genshin">Genshin Impact</SelectItem>
-                <SelectItem value="hsr">Honkai Star Rail</SelectItem>
-                <SelectItem value="feh">Fire Emblem Heroes</SelectItem>
+                <SelectItem v-for="game in games" :key="game.id" :value="game.id.toString()">
+                  {{ game.name }}
+                </SelectItem>
               </SelectContent>
             </Select>
             <Select v-model="filterCategory">
@@ -50,9 +50,9 @@
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes catégories</SelectItem>
-                <SelectItem value="news">News</SelectItem>
-                <SelectItem value="guide">Guide</SelectItem>
-                <SelectItem value="event">Événement</SelectItem>
+                <SelectItem v-for="category in categories" :key="category.id" :value="category.id.toString()">
+                  {{ category.name }}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -148,6 +148,17 @@ const { data: articles = [] } = await useAsyncData('admin-articles', async () =>
   return response.data?.data || []
 })
 
+// Fetch games and categories for filters
+const { data: games = [] } = await useAsyncData('games', async () => {
+  const response = await api.api.games.$get()
+  return response.data?.data || []
+})
+
+const { data: categories = [] } = await useAsyncData('article-categories', async () => {
+  const response = await api.api['article-categories'].$get()
+  return response.data?.data || []
+})
+
 const searchQuery = ref('')
 const filterGame = ref('all')
 const filterCategory = ref('all')
@@ -155,8 +166,8 @@ const filterCategory = ref('all')
 const filteredArticles = computed(() => {
   return (articles.value || []).filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchesGame = filterGame.value === 'all' || article.game?.slug === filterGame.value
-    const matchesCategory = filterCategory.value === 'all' || article.category?.slug === filterCategory.value
+    const matchesGame = filterGame.value === 'all' || article.game?.id.toString() === filterGame.value
+    const matchesCategory = filterCategory.value === 'all' || article.category?.id.toString() === filterCategory.value
     return matchesSearch && matchesGame && matchesCategory
   })
 })

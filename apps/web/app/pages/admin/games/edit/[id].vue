@@ -50,6 +50,13 @@
       :type="quickAddType"
       @success="handleQuickAddSuccess"
     />
+
+    <DeleteDialog
+      v-model:open="deleteImageDialogOpen"
+      title="Supprimer l'image"
+      description="Êtes-vous sûr de vouloir supprimer cette image ? Cette action est irréversible."
+      @confirm="confirmDeleteImage"
+    />
   </div>
 </template>
 
@@ -60,6 +67,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import GameFormFields from '@/components/admin/GameFormFields.vue'
 import QuickAddDialog from '@/components/admin/QuickAddDialog.vue'
+import DeleteDialog from '@/components/admin/DeleteDialog.vue'
 import { useGameForm } from '@/composables/useGameForm'
 
 definePageMeta({
@@ -145,9 +153,33 @@ const {
 
 // Image deletion handling
 const imageToDelete = ref(false)
+const deleteImageDialogOpen = ref(false)
 
 const handleDeleteImage = () => {
+  deleteImageDialogOpen.value = true
+}
+
+const confirmDeleteImage = async () => {
+  if (!game.value?.image?.id) return
+
+  const response = await api.api.admin.images({ id: game.value.image.id }).$delete()
+
+  if (response?.error || response?.status >= 400) {
+    const errorData = response?.error?.value
+    if (errorData?.errors && Array.isArray(errorData.errors)) {
+      errorData.errors.forEach((err: any) => {
+        toast.error(err.message || 'Erreur de validation')
+      })
+    } else {
+      const message = errorData?.message || 'Erreur lors de la suppression de l\'image'
+      toast.error(message)
+    }
+    throw response
+  }
+
   imageToDelete.value = true
+  toast.success('Image supprimée avec succès')
+  await refreshNuxtData(`game-${gameId}`)
 }
 
 const onSubmit = handleSubmit(async (values) => {

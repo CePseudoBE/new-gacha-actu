@@ -190,6 +190,11 @@ export default class GameRepository {
     const game = await Game.find(id)
     if (!game) return false
 
+    // Detach many-to-many relations before deleting
+    await game.related('genres').detach()
+    await game.related('platforms').detach()
+    await game.related('tags').detach()
+
     await game.delete()
     return true
   }

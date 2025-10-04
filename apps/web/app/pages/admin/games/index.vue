@@ -48,7 +48,7 @@
                   <Button variant="ghost" size="sm" @click="editGame(game)">
                     <Pencil class="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" @click="deleteGame(game.id)">
+                  <Button variant="ghost" size="sm" @click="openDeleteDialog(game)">
                     <Trash class="w-4 h-4" />
                   </Button>
                 </div>
@@ -61,11 +61,19 @@
         </div>
       </CardContent>
     </Card>
+
+    <DeleteDialog
+      v-model:open="deleteDialogOpen"
+      :title="`Supprimer ${gameToDelete?.name}`"
+      description="Êtes-vous sûr de vouloir supprimer ce jeu ? Cette action est irréversible."
+      @confirm="confirmDeleteGame"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { Plus, Pencil, Trash } from 'lucide-vue-next'
+import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -77,6 +85,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import DeleteDialog from '@/components/admin/DeleteDialog.vue'
 import { useDate } from '@/composables/useDate'
 
 definePageMeta({
@@ -98,19 +107,38 @@ const openCreateDialog = () => {
 }
 
 const editGame = (game: any) => {
-  navigateTo(`/admin/games/${game.id}/edit`)
+  navigateTo(`/admin/games/edit/${game.id}`)
 }
 
-const deleteGame = async (id: number) => {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer ce jeu ?')) return
+const deleteDialogOpen = ref(false)
+const gameToDelete = ref<any>(null)
 
-  try {
-    await api.api.admin.games({ id }).$delete()
-    await refresh()
-  } catch (error) {
-    console.error('Error deleting game:', error)
-    alert('Erreur lors de la suppression du jeu')
+const openDeleteDialog = (game: any) => {
+  gameToDelete.value = game
+  deleteDialogOpen.value = true
+}
+
+const confirmDeleteGame = async () => {
+  if (!gameToDelete.value) return
+
+  const response = await api.api.admin.games({ id: gameToDelete.value.id }).$delete()
+
+  if (response?.error || response?.status >= 400) {
+    const errorData = response?.error?.value
+    if (errorData?.errors && Array.isArray(errorData.errors)) {
+      errorData.errors.forEach((err: any) => {
+        toast.error(err.message || 'Erreur de validation')
+      })
+    } else {
+      const message = errorData?.message || 'Erreur lors de la suppression du jeu'
+      toast.error(message)
+    }
+    throw response
   }
+
+  toast.success('Jeu supprimé avec succès')
+  await refresh()
+  gameToDelete.value = null
 }
 
 useHead({

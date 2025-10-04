@@ -218,15 +218,15 @@
           </Button>
         </div>
 
-        <!-- File input -->
-        <FormControl>
+        <!-- File input (hidden if image exists) -->
+        <FormControl v-if="!currentImageUrl || imageToDelete">
           <Input
             type="file"
             accept="image/*"
             @change="$emit('imageChange', $event)"
           />
         </FormControl>
-        <FormDescription>Format: PNG, JPG, WEBP (max 2MB)</FormDescription>
+        <FormDescription v-if="!currentImageUrl || imageToDelete">Format: PNG, JPG, WEBP (max 2MB)</FormDescription>
         <FormMessage />
       </FormItem>
     </FormField>
