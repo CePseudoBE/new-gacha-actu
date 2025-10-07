@@ -19,7 +19,6 @@ export interface GuideCreateData {
   author: string
   publishedAt: Date
   slug?: string
-  imageUrl?: string | null
   imageId?: number
   readingTime?: number | null
   difficultyId: number
@@ -40,7 +39,6 @@ export interface GuideUpdateData {
   author?: string
   publishedAt?: Date
   slug?: string
-  imageUrl?: string | null
   imageId?: number
   readingTime?: number | null
   difficultyId?: number
@@ -106,9 +104,7 @@ export default class GuideRepository {
 
     // Preload relations
     query
-      .preload('game', (gameQuery) => {
-        gameQuery.select(['name', 'slug', 'imageUrl'])
-      })
+      .preload('game')
       .preload('guideType')
       .preload('difficulty')
       .preload('tags')

@@ -12,9 +12,9 @@
       </div>
     </div>
 
-    <div v-if="article.imageUrl" class="mb-8 rounded-lg overflow-hidden">
+    <div v-if="article.image?.url" class="mb-8 rounded-lg overflow-hidden">
       <NuxtImg
-        :src="article.imageUrl"
+        :src="article.image.url"
         :alt="article.title"
         class="w-full h-auto"
         width="800"
@@ -79,12 +79,12 @@ useSeoMeta({
   description: article.value?.metaDescription || article.value?.summary,
   ogTitle: article.value?.title,
   ogDescription: article.value?.metaDescription || article.value?.summary,
-  ogImage: article.value?.imageUrl,
+  ogImage: article.value?.image?.url,
   ogType: 'article',
   twitterCard: 'summary_large_image',
   twitterTitle: article.value?.title,
   twitterDescription: article.value?.metaDescription || article.value?.summary,
-  twitterImage: article.value?.imageUrl,
+  twitterImage: article.value?.image?.url,
   articlePublishedTime: article.value?.publishedAt,
   articleModifiedTime: article.value?.updatedAt,
   articleAuthor: article.value?.author,

@@ -45,8 +45,6 @@ export const createGuideValidator = vine.compile(
       .unique({ table: 'guides', column: 'slug' })
       .optional(),
 
-    imageUrl: vine.string().trim().url().optional().nullable(),
-
     image: vine
       .file({
         size: '2mb',
@@ -98,8 +96,6 @@ const updateGuideValidatorBase = vine.compile(
       .optional(),
 
     slug: vine.string().trim().minLength(5).maxLength(200).optional(),
-
-    imageUrl: vine.string().trim().url().optional().nullable(),
 
     image: vine
       .file({

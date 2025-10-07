@@ -16,7 +16,6 @@ export default class GuideDto extends BaseModelDto {
   declare author: string
   declare publishedAt: string
   declare slug: string
-  declare imageUrl: string | null
   declare readingTime: number | null
   declare difficultyId: number
   declare guideTypeId: number
@@ -45,7 +44,6 @@ export default class GuideDto extends BaseModelDto {
     this.author = guide.author
     this.publishedAt = guide.publishedAt.toISO()!
     this.slug = guide.slug
-    this.imageUrl = guide.imageUrl
     this.readingTime = guide.readingTime
     this.difficultyId = guide.difficultyId
     this.guideTypeId = guide.guideTypeId

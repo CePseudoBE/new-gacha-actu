@@ -1,123 +1,65 @@
 <template>
-  <div class="max-w-4xl mx-auto space-y-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-3xl font-bold">Créer un Article</h1>
-        <p class="text-muted-foreground">Ajouter un nouvel article à la plateforme</p>
-      </div>
-      <Button variant="outline" @click="navigateTo('/admin/articles')">
-        <ArrowLeft class="w-4 h-4 mr-2" />
-        Retour
-      </Button>
-    </div>
+  <AdminFormLayout
+    title="Créer un Article"
+    description="Ajouter un nouvel article à la plateforme"
+    card-title="Informations de l'article"
+    back-url="/admin/articles"
+  >
+    <form @submit="onSubmit" class="space-y-6">
+      <ArticleFormFields
+        :games="games || []"
+        :categories="categories || []"
+        :tags="tags || []"
+        :seo-keywords="seoKeywords || []"
+        @quick-add="openQuickAdd"
+        @image-change="handleImageChange"
+      />
 
-    <Card>
-      <CardHeader>
-        <CardTitle>Informations de l'article</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form @submit="onSubmit" class="space-y-6">
-          <ArticleFormFields
-            :games="games || []"
-            :categories="categories || []"
-            :tags="tags || []"
-            :seo-keywords="seoKeywords || []"
-            @quick-add="openQuickAdd"
-            @image-change="handleImageChange"
-          />
+      <FormActions
+        submit-label="Créer l'article"
+        :is-submitting="isSubmitting"
+        cancel-url="/admin/articles"
+      />
+    </form>
 
-          <div class="flex gap-3">
-            <Button type="submit" :disabled="isSubmitting">
-              <Loader2 v-if="isSubmitting" class="w-4 h-4 mr-2 animate-spin" />
-              Créer l'article
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              @click="navigateTo('/admin/articles')"
-            >
-              Annuler
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
-
-    <QuickAddDialog
-      v-model="quickAddDialogOpen"
-      :type="quickAddType"
-      @success="handleQuickAddSuccess"
-    />
-  </div>
+    <template #dialogs>
+      <QuickAddDialog
+        v-model="quickAddDialogOpen"
+        :type="quickAddType"
+        @success="handleQuickAddSuccess"
+      />
+    </template>
+  </AdminFormLayout>
 </template>
 
 <script setup lang="ts">
-import { ArrowLeft, Loader2 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import AdminFormLayout from '@/components/admin/AdminFormLayout.vue'
+import FormActions from '@/components/admin/FormActions.vue'
 import ArticleFormFields from '@/components/admin/ArticleFormFields.vue'
 import QuickAddDialog from '@/components/admin/QuickAddDialog.vue'
 import { useArticleForm } from '@/composables/useArticleForm'
+import { useArticleFormData } from '@/composables/useArticleFormData'
+import { useQuickAdd } from '@/composables/useQuickAdd'
 
 definePageMeta({
   layout: 'admin',
 })
 
-const api = useApi()
-
-// Fetch all necessary data
-const { data: games } = await useAsyncData('games', async () => {
-  const response = await api.api.games.$get()
-  return response.data?.data || []
-})
-
-const { data: categories, refresh: refreshCategories } = await useAsyncData('article-categories', async () => {
-  const response = await api.api['article-categories'].$get()
-  return response.data?.data || []
-})
-
-const { data: tags, refresh: refreshTags } = await useAsyncData('tags', async () => {
-  const response = await api.api.tags.$get()
-  return response.data?.data || []
-})
-
-const { data: seoKeywords, refresh: refreshSeoKeywords } = await useAsyncData('seo-keywords', async () => {
-  const response = await api.api['seo-keywords'].$get()
-  return response.data?.data || []
-})
+// Load form data
+const { games, categories, tags, seoKeywords, refreshCategories, refreshTags, refreshSeoKeywords } =
+  useArticleFormData()
 
 // Quick add dialog
-const quickAddDialogOpen = ref(false)
-const quickAddType = ref<'tag' | 'seo-keyword' | 'category'>('tag')
-
-const openQuickAdd = (type: 'tag' | 'seo-keyword' | 'category') => {
-  quickAddType.value = type
-  quickAddDialogOpen.value = true
-}
-
-const handleQuickAddSuccess = () => {
-  switch (quickAddType.value) {
-    case 'tag':
-      refreshTags()
-      break
-    case 'seo-keyword':
-      refreshSeoKeywords()
-      break
-    case 'category':
-      refreshCategories()
-      break
-  }
-}
+const { quickAddDialogOpen, quickAddType, openQuickAdd, handleQuickAddSuccess } = useQuickAdd({
+  refreshCategories,
+  refreshTags,
+  refreshSeoKeywords,
+})
 
 // Form handling
-const {
-  handleSubmit,
-  isSubmitting,
-  handleImageChange,
-  createArticle,
-  handleError,
-} = useArticleForm()
+const { handleSubmit, isSubmitting, handleImageChange, createArticle, handleError } =
+  useArticleForm()
 
 const onSubmit = handleSubmit(async (values) => {
   try {

@@ -2,9 +2,9 @@
   <article
     class="group border rounded-xl bg-card text-card-foreground shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col overflow-hidden hover:border-primary/20"
   >
-    <div v-if="imageUrl" class="relative h-48 overflow-hidden">
+    <div v-if="image?.url" class="relative h-48 overflow-hidden">
       <NuxtImg
-        :src="imageUrl"
+        :src="image.url"
         :alt="title"
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         width="800"
@@ -65,13 +65,13 @@ interface Props {
   author: string
   publishedAt: string
   game: string
-  imageUrl?: string | null
+  image?: { url: string } | null
   slug: string
   readingTime?: number
   category?: string
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const getCategoryVariant = (category?: string) => {
   if (!category) return 'default'

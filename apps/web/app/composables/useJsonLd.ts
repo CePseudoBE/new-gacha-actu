@@ -13,7 +13,7 @@ export function useJsonLd() {
     author: string
     publishedAt: string
     updatedAt?: string
-    imageUrl?: string | null
+    image?: { url: string } | null
     slug: string
     game?: { name: string }
     tags?: Array<{ name: string }>
@@ -25,7 +25,7 @@ export function useJsonLd() {
       '@type': 'Article',
       headline: article.title,
       description: article.summary,
-      image: article.imageUrl || `${siteUrl}/og-image.jpg`,
+      image: article.image?.url || `${siteUrl}/og-image.jpg`,
       datePublished: article.publishedAt,
       dateModified: article.updatedAt || article.publishedAt,
       author: {
@@ -55,7 +55,7 @@ export function useJsonLd() {
   /**
    * Génère le JSON-LD pour une liste d'articles (ItemList)
    */
-  const generateArticleListJsonLd = (articles: Array<{ title: string; slug: string; imageUrl?: string | null }>) => {
+  const generateArticleListJsonLd = (articles: Array<{ title: string; slug: string; image?: { url: string } | null }>) => {
     const siteUrl = 'https://animegachapulse.com'
 
     return {
@@ -68,7 +68,7 @@ export function useJsonLd() {
           '@type': 'Article',
           headline: article.title,
           url: `${siteUrl}/article/${article.slug}`,
-          image: article.imageUrl
+          image: article.image?.url
         }
       }))
     }

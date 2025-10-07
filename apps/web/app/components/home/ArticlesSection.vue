@@ -17,7 +17,7 @@
           :author="article.author"
           :published-at="formatDate(article.publishedAt)"
           :game="article.game?.name || 'Unknown Game'"
-          :image-url="article.imageUrl"
+          :image="article.image"
           :slug="article.slug"
           :reading-time="article.readingTime ?? undefined"
           :category="article.category?.name ?? undefined"

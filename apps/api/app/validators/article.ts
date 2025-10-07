@@ -7,7 +7,6 @@ export const createArticleValidator = vine.compile(
     summary: vine.string().trim().minLength(10).maxLength(500),
     author: vine.string().trim().minLength(2).maxLength(100),
     publishedAt: vine.date({ formats: ['YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DD'] }),
-    imageUrl: vine.string().trim().url().optional(),
     image: vine
       .file({
         size: '2mb',
@@ -39,7 +38,6 @@ const updateArticleValidatorBase = vine.compile(
     summary: vine.string().trim().minLength(10).maxLength(500).optional(),
     author: vine.string().trim().minLength(2).maxLength(100).optional(),
     publishedAt: vine.date({ formats: ['YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DD'] }).optional(),
-    imageUrl: vine.string().trim().url().optional(),
     image: vine
       .file({
         size: '2mb',

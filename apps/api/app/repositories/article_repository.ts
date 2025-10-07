@@ -7,7 +7,6 @@ export interface ArticleCreateData {
   author: string
   publishedAt: Date
   slug?: string
-  imageUrl?: string
   imageId?: number
   content: string
   metaDescription?: string
@@ -25,7 +24,6 @@ export interface ArticleUpdateData {
   author?: string
   publishedAt?: Date
   slug?: string
-  imageUrl?: string
   imageId?: number
   content?: string
   metaDescription?: string
@@ -44,6 +42,7 @@ export default class ArticleRepository {
       .preload('category')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .orderBy('publishedAt', 'desc')
   }
 
@@ -76,6 +75,7 @@ export default class ArticleRepository {
       .preload('category')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .orderBy('publishedAt', 'desc')
   }
 
@@ -86,6 +86,7 @@ export default class ArticleRepository {
       .preload('category')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .orderBy('publishedAt', 'desc')
   }
 
@@ -96,6 +97,7 @@ export default class ArticleRepository {
       .preload('category')
       .preload('tags')
       .preload('seoKeywords')
+      .preload('image')
       .orderBy('publishedAt', 'desc')
   }
 

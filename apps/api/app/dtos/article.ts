@@ -13,7 +13,6 @@ export default class ArticleDto extends BaseModelDto {
   declare author: string
   declare publishedAt: string
   declare slug: string
-  declare imageUrl: string | null
   declare content: string
   declare metaDescription: string | null
   declare readingTime: number | null
@@ -38,7 +37,6 @@ export default class ArticleDto extends BaseModelDto {
     this.author = article.author
     this.publishedAt = article.publishedAt.toISO()!
     this.slug = article.slug
-    this.imageUrl = article.imageUrl
     this.content = article.content
     this.metaDescription = article.metaDescription
     this.readingTime = article.readingTime

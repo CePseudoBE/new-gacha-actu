@@ -1,7 +1,7 @@
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
-import { toast } from 'vue-sonner'
+import { useApiErrorHandler } from './useApiErrorHandler'
 
 const articleFormSchema = z.object({
   title: z.string().min(2, 'Le titre doit contenir au moins 2 caractères').max(200),
@@ -23,6 +23,7 @@ export type ArticleFormValues = z.infer<typeof articleFormSchema>
 
 export const useArticleForm = (initialValues?: Partial<ArticleFormValues>) => {
   const api = useApi()
+  const { handleError: apiHandleError } = useApiErrorHandler()
   const selectedImage = ref<File | null>(null)
 
   const form = useForm({
@@ -55,11 +56,23 @@ export const useArticleForm = (initialValues?: Partial<ArticleFormValues>) => {
   }
 
   const prepareFormData = (values: ArticleFormValues) => {
+    // Convert datetime-local format (YYYY-MM-DDTHH:mm) to backend format (YYYY-MM-DD HH:mm:ss)
+    const formatDateForBackend = (dateString: string) => {
+      const date = new Date(dateString)
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      const hours = String(date.getHours()).padStart(2, '0')
+      const minutes = String(date.getMinutes()).padStart(2, '0')
+      const seconds = String(date.getSeconds()).padStart(2, '0')
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+    }
+
     const payload: any = {
       title: values.title,
       summary: values.summary,
       author: values.author,
-      publishedAt: values.publishedAt,
+      publishedAt: formatDateForBackend(values.publishedAt),
       content: values.content,
       isPopular: values.isPopular,
       gameId: values.gameId,
@@ -103,26 +116,13 @@ export const useArticleForm = (initialValues?: Partial<ArticleFormValues>) => {
 
   const updateArticle = async (articleId: number, values: ArticleFormValues) => {
     const formData = prepareFormData(values)
-    const response = await api.api.admin.articles({ id: articleId }).$put(formData)
+    const response = await api.api.admin.articles[articleId].$put(formData)
 
     if (response?.error || response?.status >= 400) {
       throw response
     }
 
     return response
-  }
-
-  const handleError = (error: any) => {
-    const errorData = error?.error?.value
-
-    if (errorData?.errors && Array.isArray(errorData.errors)) {
-      errorData.errors.forEach((err: any) => {
-        toast.error(err.message || 'Erreur de validation')
-      })
-    } else {
-      const message = errorData?.message || 'Une erreur est survenue'
-      toast.error(message)
-    }
   }
 
   return {
@@ -137,6 +137,6 @@ export const useArticleForm = (initialValues?: Partial<ArticleFormValues>) => {
     handleImageChange,
     createArticle,
     updateArticle,
-    handleError,
+    handleError: apiHandleError,
   }
 }

@@ -35,9 +35,6 @@ export default class Guide extends BaseModel {
   declare slug: string
 
   @column()
-  declare imageUrl: string | null
-
-  @column()
   declare imageId: number | null
 
   @column()

@@ -235,12 +235,14 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { toast } from 'vue-sonner'
 
 definePageMeta({
   layout: 'admin',
 })
 
 const api = useApi()
+const { handleApiCall } = useApiErrorHandler()
 
 // Fetch all reference data
 const { data: genres, refresh: refreshGenres } = await useAsyncData('admin-genres', async () => {
@@ -321,92 +323,92 @@ const openDifficultyDialog = () => {
 
 const handleDialogSubmit = async () => {
   isSubmitting.value = true
-  try {
-    const body: any = { name: formData.value.name }
-    if (showDescription.value && formData.value.description) {
-      body.description = formData.value.description
-    }
-
-    switch (dialogType.value) {
-      case 'genre':
-        await api.api.admin.genres.$post({ body })
-        await refreshGenres()
-        break
-      case 'platform':
-        await api.api.admin.platforms.$post({ body })
-        await refreshPlatforms()
-        break
-      case 'tag':
-        await api.api.admin.tags.$post({ body })
-        await refreshTags()
-        break
-      case 'guide-type':
-        await api.api.admin['guide-types'].$post({ body })
-        await refreshGuideTypes()
-        break
-      case 'difficulty':
-        await api.api.admin['difficulty-levels'].$post({ body })
-        await refreshDifficultyLevels()
-        break
-    }
-
-    dialogOpen.value = false
-  } catch (error: any) {
-    console.error('Error creating item:', error)
-    alert(error?.data?.message || 'Erreur lors de la création')
-  } finally {
-    isSubmitting.value = false
+  const body: any = { name: formData.value.name }
+  if (showDescription.value && formData.value.description) {
+    body.description = formData.value.description
   }
+
+  const apiCalls: Record<string, { call: () => Promise<any>; refresh: () => Promise<any> }> = {
+    genre: {
+      call: () => api.api.admin.genres.$post({ body }),
+      refresh: refreshGenres,
+    },
+    platform: {
+      call: () => api.api.admin.platforms.$post({ body }),
+      refresh: refreshPlatforms,
+    },
+    tag: {
+      call: () => api.api.admin.tags.$post({ body }),
+      refresh: refreshTags,
+    },
+    'guide-type': {
+      call: () => api.api.admin['guide-types'].$post({ body }),
+      refresh: refreshGuideTypes,
+    },
+    difficulty: {
+      call: () => api.api.admin['difficulty-levels'].$post({ body }),
+      refresh: refreshDifficultyLevels,
+    },
+  }
+
+  const selected = apiCalls[dialogType.value]
+  if (selected) {
+    await handleApiCall(selected.call, {
+      successMessage: 'Élément créé avec succès',
+      errorMessage: 'Erreur lors de la création',
+      onSuccess: async () => {
+        await selected.refresh()
+        dialogOpen.value = false
+      },
+    })
+  }
+
+  isSubmitting.value = false
 }
 
 const deleteGenre = async (id: number) => {
   if (!confirm('Êtes-vous sûr ?')) return
-  try {
-    await api.api.admin.genres({ id }).$delete()
-    await refreshGenres()
-  } catch (error: any) {
-    alert(error?.data?.message || 'Erreur lors de la suppression')
-  }
+  await handleApiCall(() => api.api.admin.genres({ id }).$delete(), {
+    successMessage: 'Genre supprimé',
+    errorMessage: 'Erreur lors de la suppression',
+    onSuccess: refreshGenres,
+  })
 }
 
 const deletePlatform = async (id: number) => {
   if (!confirm('Êtes-vous sûr ?')) return
-  try {
-    await api.api.admin.platforms({ id }).$delete()
-    await refreshPlatforms()
-  } catch (error: any) {
-    alert(error?.data?.message || 'Erreur lors de la suppression')
-  }
+  await handleApiCall(() => api.api.admin.platforms({ id }).$delete(), {
+    successMessage: 'Plateforme supprimée',
+    errorMessage: 'Erreur lors de la suppression',
+    onSuccess: refreshPlatforms,
+  })
 }
 
 const deleteTag = async (id: number) => {
   if (!confirm('Êtes-vous sûr ?')) return
-  try {
-    await api.api.admin.tags({ id }).$delete()
-    await refreshTags()
-  } catch (error: any) {
-    alert(error?.data?.message || 'Erreur lors de la suppression')
-  }
+  await handleApiCall(() => api.api.admin.tags({ id }).$delete(), {
+    successMessage: 'Tag supprimé',
+    errorMessage: 'Erreur lors de la suppression',
+    onSuccess: refreshTags,
+  })
 }
 
 const deleteGuideType = async (id: number) => {
   if (!confirm('Êtes-vous sûr ?')) return
-  try {
-    await api.api.admin['guide-types']({ id }).$delete()
-    await refreshGuideTypes()
-  } catch (error: any) {
-    alert(error?.data?.message || 'Erreur lors de la suppression')
-  }
+  await handleApiCall(() => api.api.admin['guide-types']({ id }).$delete(), {
+    successMessage: 'Type de guide supprimé',
+    errorMessage: 'Erreur lors de la suppression',
+    onSuccess: refreshGuideTypes,
+  })
 }
 
 const deleteDifficultyLevel = async (id: number) => {
   if (!confirm('Êtes-vous sûr ?')) return
-  try {
-    await api.api.admin['difficulty-levels']({ id }).$delete()
-    await refreshDifficultyLevels()
-  } catch (error: any) {
-    alert(error?.data?.message || 'Erreur lors de la suppression')
-  }
+  await handleApiCall(() => api.api.admin['difficulty-levels']({ id }).$delete(), {
+    successMessage: 'Niveau de difficulté supprimé',
+    errorMessage: 'Erreur lors de la suppression',
+    onSuccess: refreshDifficultyLevels,
+  })
 }
 
 useHead({

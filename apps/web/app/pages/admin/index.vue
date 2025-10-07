@@ -137,26 +137,6 @@
           </CardContent>
         </Card>
 
-        <Card class="group hover:shadow-lg transition-shadow cursor-pointer" @click="navigateTo('/admin/tags')">
-          <CardHeader>
-            <div class="flex items-center gap-3">
-              <div class="p-3 rounded-lg bg-primary/10">
-                <IconTag class="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <CardTitle>Gérer les Tags</CardTitle>
-                <p class="text-sm text-muted-foreground">Tags et catégories</p>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Button class="w-full" variant="outline">
-              Accéder
-              <IconArrowRight class="w-4 h-4 ml-2" />
-            </Button>
-          </CardContent>
-        </Card>
-
         <Card class="group hover:shadow-lg transition-shadow cursor-pointer" @click="navigateTo('/admin/settings')">
           <CardHeader>
             <div class="flex items-center gap-3">
@@ -165,7 +145,7 @@
               </div>
               <div>
                 <CardTitle>Paramètres</CardTitle>
-                <p class="text-sm text-muted-foreground">Configuration du site</p>
+                <p class="text-sm text-muted-foreground">Tags, catégories, SEO...</p>
               </div>
             </div>
           </CardHeader>
@@ -178,29 +158,29 @@
         </Card>
       </div>
     </div>
+
+    <!-- Maintenance Mode -->
+    <MaintenanceSettings />
   </div>
 </template>
 
 <script setup lang="ts">
 import {
-  LayoutDashboard as IconLayoutDashboard,
-  LogOut as IconLogOut,
   FileText as IconFileText,
   Gamepad2 as IconGamepad,
   Book as IconBook,
   Video as IconVideo,
-  Tag as IconTag,
   Settings as IconSettings,
-  ArrowRight as IconArrowRight
+  ArrowRight as IconArrowRight,
 } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 definePageMeta({
-  layout: 'admin'
+  layout: 'admin',
 })
 
 useHead({
-  title: 'Admin Dashboard - Anime Gacha Pulse'
+  title: 'Admin Dashboard - Anime Gacha Pulse',
 })
 </script>

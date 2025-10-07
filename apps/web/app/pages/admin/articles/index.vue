@@ -80,8 +80,8 @@
             >
               <div class="col-span-5 flex items-center gap-3">
                 <NuxtImg
-                  v-if="article.imageUrl"
-                  :src="article.imageUrl"
+                  v-if="article.image?.url"
+                  :src="article.image.url"
                   :alt="article.title"
                   class="w-16 h-10 object-cover rounded"
                   width="64"
@@ -107,7 +107,7 @@
                 <Button
                   variant="ghost"
                   size="icon"
-                  @click="navigateTo(`/admin/articles/${article.slug}/edit`)"
+                  @click="navigateTo(`/admin/articles/${article.id}`)"
                 >
                   <IconEdit class="w-4 h-4" />
                 </Button>

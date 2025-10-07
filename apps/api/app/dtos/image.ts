@@ -1,5 +1,6 @@
 import { BaseModelDto } from '@adocasts.com/dto/base'
 import Image from '#models/image'
+import env from '#start/env'
 
 export default class ImageDto extends BaseModelDto {
   declare id: number
@@ -22,7 +23,13 @@ export default class ImageDto extends BaseModelDto {
     this.mimeType = image.mimeType
     this.size = image.size
     this.altText = image.altText
-    this.url = `/uploads/${image.path}`
+
+    // Generate full URL with host and port for frontend consumption
+    const host = env.get('HOST', 'localhost')
+    const port = env.get('PORT', 3333)
+    const baseUrl = `http://${host}:${port}`
+    this.url = `${baseUrl}/uploads/${image.path}`
+
     this.createdAt = image.createdAt.toISO()!
     this.updatedAt = image.updatedAt.toISO()!
   }
