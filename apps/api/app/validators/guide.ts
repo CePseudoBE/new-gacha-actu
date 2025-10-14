@@ -2,16 +2,12 @@ import vine from '@vinejs/vine'
 import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
 // Guide Section Validator
+// Note: Images for sections should be uploaded separately via the guide_sections endpoint
+// This schema is for creating sections as part of the guide creation/update payload
 const guideSectionSchema = vine.object({
   title: vine.string().trim().minLength(1).maxLength(200),
   content: vine.string().trim().minLength(10).maxLength(10000),
   order: vine.number().min(0),
-  image: vine
-    .file({
-      size: '2mb',
-      extnames: ['jpg', 'jpeg', 'png', 'webp'],
-    })
-    .optional(),
 })
 
 // Guide Prerequisite Validator

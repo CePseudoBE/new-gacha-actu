@@ -11,77 +11,134 @@
       </p>
     </div>
 
-    <!-- Coming soon -->
-    <div class="max-w-3xl mx-auto">
-      <Card class="border-2 border-dashed">
-        <CardContent class="py-16 text-center">
-          <div class="mb-6">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-4">
-              <IconBookOpen class="w-10 h-10 text-primary" />
-            </div>
-          </div>
-          <h2 class="text-2xl font-bold mb-3">Guides en préparation</h2>
-          <p class="text-muted-foreground mb-6 max-w-md mx-auto">
-            Notre équipe rédige des guides détaillés pour vous aider à exceller. Prochainement disponibles :
-          </p>
+    <!-- Filters -->
+    <div class="mb-8 flex flex-wrap gap-4">
+      <Select v-model="selectedGame">
+        <SelectTrigger class="w-[200px]">
+          <SelectValue placeholder="Tous les jeux" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Tous les jeux</SelectItem>
+          <SelectItem v-for="game in games" :key="game.id" :value="game.slug">
+            {{ game.name }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
 
-          <div class="grid md:grid-cols-2 gap-4 mt-8 text-left">
-            <div class="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
-              <IconSword class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-              <div>
-                <h3 class="font-semibold mb-1">Builds de personnages</h3>
-                <p class="text-sm text-muted-foreground">Équipements, artefacts et talents optimaux</p>
-              </div>
-            </div>
+      <Select v-model="selectedDifficulty">
+        <SelectTrigger class="w-[180px]">
+          <SelectValue placeholder="Difficulté" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Toutes</SelectItem>
+          <SelectItem v-for="diff in difficultyLevels" :key="diff.id" :value="diff.id.toString()">
+            {{ diff.name }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
 
-            <div class="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
-              <IconUsers class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-              <div>
-                <h3 class="font-semibold mb-1">Compositions d'équipe</h3>
-                <p class="text-sm text-muted-foreground">Synergies et stratégies gagnantes</p>
-              </div>
-            </div>
+      <Select v-model="selectedType">
+        <SelectTrigger class="w-[180px]">
+          <SelectValue placeholder="Type de guide" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Tous les types</SelectItem>
+          <SelectItem v-for="type in guideTypes" :key="type.id" :value="type.id.toString()">
+            {{ type.name }}
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
 
-            <div class="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
-              <IconMap class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-              <div>
-                <h3 class="font-semibold mb-1">Progression</h3>
-                <p class="text-sm text-muted-foreground">Parcours débutant à expert</p>
-              </div>
-            </div>
+    <!-- Guides Grid -->
+    <div v-if="guides && guides.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <GuideCard
+        v-for="guide in guides"
+        :key="guide.id"
+        :title="guide.title"
+        :summary="guide.summary"
+        :author="guide.author"
+        :game="guide.game?.name || 'Unknown Game'"
+        :image="guide.image"
+        :slug="guide.slug"
+        :reading-time="guide.readingTime ?? undefined"
+        :guide-type="guide.guideType?.name ?? undefined"
+        :difficulty="guide.difficulty?.name ?? undefined"
+        :view-count="guide.viewCount ?? 0"
+      />
+    </div>
 
-            <div class="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
-              <IconTarget class="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-              <div>
-                <h3 class="font-semibold mb-1">Contenu end-game</h3>
-                <p class="text-sm text-muted-foreground">Raids, abyss et challenges</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-8 pt-8 border-t">
-            <p class="text-sm text-muted-foreground mb-4">Découvrez nos autres contenus :</p>
-            <div class="flex flex-wrap gap-3 justify-center">
-              <Button variant="outline" as-child>
-                <NuxtLink to="/news">Actualités</NuxtLink>
-              </Button>
-              <Button variant="outline" as-child>
-                <NuxtLink to="/tier-lists">Tier Lists</NuxtLink>
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <!-- Empty state -->
+    <div v-else class="text-center py-20">
+      <IconBookOpen class="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+      <h2 class="text-2xl font-bold mb-2">Aucun guide disponible</h2>
+      <p class="text-muted-foreground">Nos guides sont en cours de préparation. Revenez bientôt !</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Book as IconBook, BookOpen as IconBookOpen, Sword as IconSword, Users as IconUsers, Map as IconMap, Target as IconTarget } from 'lucide-vue-next'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Book as IconBook, BookOpen as IconBookOpen } from 'lucide-vue-next'
+import GuideCard from '@/components/GuideCard.vue'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+
+const api = useApi()
+
+// Filters
+const selectedGame = ref('all')
+const selectedDifficulty = ref('all')
+const selectedType = ref('all')
+
+// Build query params
+const queryParams = computed(() => {
+  const params: any = {}
+  if (selectedGame.value !== 'all') params.game = selectedGame.value
+  if (selectedDifficulty.value !== 'all') params.difficultyId = selectedDifficulty.value
+  if (selectedType.value !== 'all') params.guideTypeId = selectedType.value
+  return params
+})
+
+// Fetch guides with filters
+const {
+  data: guides,
+  refresh,
+} = await useAsyncData(
+  'guides-list',
+  async () => {
+    const response = await api.api.guides.$get({ query: queryParams.value })
+    return response.data?.data || []
+  },
+  {
+    watch: [queryParams],
+  }
+)
+
+// Fetch filter data
+const { data: games } = await useAsyncData('games-list', async () => {
+  const response = await api.api.games.$get()
+  return response.data?.data || []
+})
+
+const { data: difficultyLevels } = await useAsyncData('difficulty-levels', async () => {
+  const response = await api.api['difficulty-levels'].$get()
+  return response.data?.data || []
+})
+
+const { data: guideTypes } = await useAsyncData('guide-types', async () => {
+  const response = await api.api['guide-types'].$get()
+  return response.data?.data || []
+})
+
+useSeoMeta({
+  title: 'Guides',
+  description:
+    'Découvrez nos guides complets pour maîtriser tous vos jeux Gacha : builds, stratégies, tier lists et astuces par des experts.',
+  ogTitle: 'Guides - Anime Gacha Pulse',
+  ogDescription: 'Guides experts pour tous les jeux Gacha',
+  ogType: 'website',
+})
 
 useHead({
-  title: 'Guides - Anime Gacha Pulse'
+  title: 'Guides - Anime Gacha Pulse',
 })
 </script>

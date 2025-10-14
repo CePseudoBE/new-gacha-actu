@@ -97,7 +97,12 @@ export default class GuideSectionsController {
       throw new NotFoundException('Section non trouvée')
     }
 
-    let updateData: any = {}
+    const updateData: Partial<{
+      title: string
+      content: string
+      order: number
+      imageId: number | null
+    }> = {}
 
     if (payload.title !== undefined) updateData.title = payload.title
     if (payload.content !== undefined) updateData.content = payload.content

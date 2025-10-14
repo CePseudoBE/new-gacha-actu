@@ -96,6 +96,7 @@ export default class GuideService {
     if (!updatedGuide) {
       throw new Error('Erreur lors de la mise à jour du compteur de vues')
     }
+
     return new GuideDto(updatedGuide)
   }
 

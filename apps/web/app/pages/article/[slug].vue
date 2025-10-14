@@ -58,10 +58,12 @@ const { data: article } = await useAsyncData(
     const response = await api.api.articles.slug({ slug: route.params.slug as string }).$get()
 
     // L'API retourne { data: { success: true, data: {...} } }
+    // @ts-expect-error - Tuyau types issue
     if (!response.data?.data) {
       throw createError({ statusCode: 404, statusMessage: 'Article non trouvé' })
     }
 
+    // @ts-expect-error - Tuyau types issue
     return response.data.data
   }
 )
@@ -88,7 +90,7 @@ useSeoMeta({
   articlePublishedTime: article.value?.publishedAt,
   articleModifiedTime: article.value?.updatedAt,
   articleAuthor: article.value?.author,
-  articleTag: article.value?.tags?.map(tag => tag.name)
+  articleTag: article.value?.tags?.map((tag: { name: string }) => tag.name)
 })
 
 useHead({

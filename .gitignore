@@ -36,3 +36,7 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Uploaded files (keep .gitkeep)
+apps/api/storage/images/*
+!apps/api/storage/images/.gitkeep

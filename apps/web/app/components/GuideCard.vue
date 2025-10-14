@@ -19,15 +19,20 @@
           {{ game }}
         </Badge>
       </div>
-      <div v-if="category" class="absolute top-3 right-3">
-        <Badge :variant="getCategoryVariant(category)" class="backdrop-blur">
-          {{ getCategoryLabel(category) }}
+      <div v-if="guideType" class="absolute top-3 right-3">
+        <Badge variant="outline" class="backdrop-blur bg-background/80">
+          {{ guideType }}
+        </Badge>
+      </div>
+      <div v-if="difficulty" class="absolute bottom-3 right-3">
+        <Badge :variant="getDifficultyVariant(difficulty)" class="backdrop-blur">
+          {{ difficulty }}
         </Badge>
       </div>
     </div>
 
     <div class="p-6 space-y-4 flex-1 flex flex-col">
-      <NuxtLink :to="`/article/${slug}`" class="block">
+      <NuxtLink :to="`/guides/${slug}`" class="block">
         <h3
           class="text-lg font-semibold leading-tight group-hover:text-primary transition-colors line-clamp-2 mb-2"
         >
@@ -50,8 +55,8 @@
             <span>{{ readingTime }} min</span>
           </div>
           <div class="flex items-center gap-1">
-            <IconCalendar class="h-4 w-4" />
-            <span>{{ publishedAt }}</span>
+            <IconEye class="h-4 w-4" />
+            <span>{{ viewCount || 0 }}</span>
           </div>
         </div>
       </div>
@@ -60,39 +65,41 @@
 </template>
 
 <script setup lang="ts">
-import { User as IconUser, Clock as IconClock, Calendar as IconCalendar, ImageIcon } from 'lucide-vue-next'
+import {
+  User as IconUser,
+  Clock as IconClock,
+  Eye as IconEye,
+  ImageIcon,
+} from 'lucide-vue-next'
 import { Badge } from '@/components/ui/badge'
 
 interface Props {
   title: string
   summary: string
   author: string
-  publishedAt: string
   game: string
   image?: { url: string } | null
   slug: string
   readingTime?: number
-  category?: string
+  guideType?: string
+  difficulty?: string
+  viewCount?: number
 }
 
 const props = defineProps<Props>()
 
-const getCategoryVariant = (category?: string) => {
-  if (!category) return 'default'
-  const upperCategory = category.toUpperCase()
+const getDifficultyVariant = (difficulty?: string) => {
+  if (!difficulty) return 'default'
+  const upperDifficulty = difficulty.toUpperCase()
   const variants: Record<string, any> = {
-    NEWS: 'default',
-    GUIDE: 'secondary',
-    'TIER LIST': 'destructive',
-    'TIER_LIST': 'destructive',
-    EVENT: 'outline',
-    EVENEMENT: 'outline',
-    ÉVÉNEMENT: 'outline'
+    FACILE: 'default',
+    EASY: 'default',
+    MOYEN: 'secondary',
+    MEDIUM: 'secondary',
+    DIFFICILE: 'destructive',
+    HARD: 'destructive',
+    EXPERT: 'destructive',
   }
-  return variants[upperCategory] || 'default'
-}
-
-const getCategoryLabel = (category?: string) => {
-  return category || 'Article'
+  return variants[upperDifficulty] || 'default'
 }
 </script>

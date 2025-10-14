@@ -129,7 +129,20 @@ export default class ArticleRepository {
 
     const { tagIds, seoKeywordIds, ...updateData } = data
 
-    const mergeData: any = {
+    const mergeData: Partial<{
+      title: string
+      summary: string
+      author: string
+      publishedAt: DateTime
+      slug: string
+      imageId: number
+      content: string
+      metaDescription: string
+      readingTime: number
+      categoryId: number
+      isPopular: boolean
+      gameId: number
+    }> = {
       ...updateData,
     }
 

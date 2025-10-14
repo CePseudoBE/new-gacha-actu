@@ -43,8 +43,26 @@ export const useGameForm = (initialValues?: Partial<GameFormValues>) => {
   const handleImageChange = (event: Event) => {
     const target = event.target as HTMLInputElement
     if (target.files && target.files[0]) {
-      selectedImage.value = target.files[0]
-      setFieldValue('image', target.files[0])
+      const file = target.files[0]
+
+      // Validation type MIME
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+      if (!validTypes.includes(file.type)) {
+        toast.error('Format de fichier invalide. Utilisez JPG, PNG, WEBP ou GIF.')
+        target.value = ''
+        return
+      }
+
+      // Validation taille (2MB max)
+      const maxSize = 2 * 1024 * 1024 // 2MB
+      if (file.size > maxSize) {
+        toast.error('L\'image est trop volumineuse. Taille maximale : 2MB.')
+        target.value = ''
+        return
+      }
+
+      selectedImage.value = file
+      setFieldValue('image', file)
     }
   }
 

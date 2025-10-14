@@ -2,6 +2,8 @@ import Guide from '#models/guide'
 import GuideSection from '#models/guide_section'
 import GuidePrerequisite from '#models/guide_prerequisite'
 import { DateTime } from 'luxon'
+import { inject } from '@adonisjs/core'
+import ImageService from '#services/image_service'
 
 export interface GuideSectionData {
   title: string
@@ -61,9 +63,12 @@ export interface GuideFilters {
   page?: number
 }
 
+@inject()
 export default class GuideRepository {
+  constructor(private imageService: ImageService) {}
   async findAll(): Promise<Guide[]> {
     return Guide.query()
+      .whereNotNull('gameId') // Ignore guides without gameId
       .preload('game')
       .preload('guideType')
       .preload('difficulty')
@@ -102,8 +107,14 @@ export default class GuideRepository {
       query.where('isPopular', filters.isPopular)
     }
 
-    // Preload relations
+    // Count for pagination AVANT les preloads
+    const countQuery = query.clone()
+    const total = await countQuery.count('* as total')
+    const totalCount = Number((total[0] as any).total)
+
+    // Preload relations APRÈS le count
     query
+      .whereNotNull('gameId')
       .preload('game')
       .preload('guideType')
       .preload('difficulty')
@@ -112,11 +123,6 @@ export default class GuideRepository {
       .preload('sections', (sectionQuery) => {
         sectionQuery.preload('image').orderBy('order', 'asc')
       })
-
-    // Count for pagination
-    const countQuery = query.clone()
-    const total = await countQuery.count('* as total')
-    const totalCount = Number((total[0] as any).total)
 
     // Pagination
     const page = filters.page || 1
@@ -249,7 +255,20 @@ export default class GuideRepository {
 
     const { sections, prerequisites, tagIds, seoKeywordIds, ...updateData } = data
 
-    const mergeData: any = {
+    const mergeData: Partial<{
+      title: string
+      summary: string
+      author: string
+      publishedAt: DateTime
+      slug: string
+      readingTime: number | null
+      difficultyId: number
+      guideTypeId: number
+      isPopular: boolean
+      gameId: number
+      metaDescription: string | null
+      imageId: number
+    }> = {
       ...updateData,
     }
 
@@ -262,8 +281,26 @@ export default class GuideRepository {
 
     // Update sections if provided
     if (sections !== undefined) {
-      // Delete existing sections
+      // Get existing sections with images to cleanup orphaned images
+      const existingSections = await GuideSection.query()
+        .where('guideId', guide.id)
+        .whereNotNull('imageId')
+
+      const orphanedImageIds = existingSections.map((s) => s.imageId).filter(Boolean) as number[]
+
+      // Delete existing sections (CASCADE will handle DB cleanup)
       await GuideSection.query().where('guideId', guide.id).delete()
+
+      // Delete orphaned images from storage
+
+      for (const imageId of orphanedImageIds) {
+        try {
+          await this.imageService.deleteImage(imageId)
+        } catch (error) {
+          // Log but don't fail if image deletion fails
+          console.warn(`Failed to delete orphaned image ${imageId}:`, error)
+        }
+      }
 
       // Create new sections
       if (sections.length > 0) {
@@ -312,7 +349,8 @@ export default class GuideRepository {
     guide.viewCount = guide.viewCount + 1
     await guide.save()
 
-    return guide
+    // Recharger le guide avec toutes les relations
+    return this.findById(id)
   }
 
   async delete(id: number): Promise<boolean> {

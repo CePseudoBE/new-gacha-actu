@@ -184,7 +184,6 @@ const getCategoryVariant = (category?: string) => {
 
 const deleteArticle = (id: number) => {
   // TODO: Implement delete with confirmation dialog
-  console.log('Delete article:', id)
 }
 
 useHead({

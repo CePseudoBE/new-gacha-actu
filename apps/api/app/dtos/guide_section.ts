@@ -23,6 +23,6 @@ export default class GuideSectionDto extends BaseModelDto {
     this.guideId = guideSection.guideId
     this.createdAt = guideSection.createdAt.toISO()!
     this.updatedAt = guideSection.updatedAt.toISO()!
-    this.image = guideSection.image && new ImageDto(guideSection.image)
+    this.image = guideSection.image !== undefined ? new ImageDto(guideSection.image) : null
   }
 }

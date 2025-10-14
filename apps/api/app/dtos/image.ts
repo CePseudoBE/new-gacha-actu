@@ -24,10 +24,9 @@ export default class ImageDto extends BaseModelDto {
     this.size = image.size
     this.altText = image.altText
 
-    // Generate full URL with host and port for frontend consumption
-    const host = env.get('HOST', 'localhost')
-    const port = env.get('PORT', 3333)
-    const baseUrl = `http://${host}:${port}`
+    // Generate full URL using APP_URL or fallback to HOST:PORT
+    const appUrl = env.get('APP_URL')
+    const baseUrl = appUrl || `http://${env.get('HOST', 'localhost')}:${env.get('PORT', 3333)}`
     this.url = `${baseUrl}/uploads/${image.path}`
 
     this.createdAt = image.createdAt.toISO()!
