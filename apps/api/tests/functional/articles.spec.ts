@@ -42,7 +42,6 @@ test.group('Articles CRUD', () => {
       summary: 'Un guide détaillé pour bien commencer le jeu avec toutes les astuces nécessaires.',
       author: 'TestAuthor',
       publishedAt: '2024-01-15 10:00:00',
-      imageUrl: 'https://example.com/image.jpg',
       content:
         "Contenu détaillé de l'article avec plus de 50 caractères pour respecter la validation minimale requise.",
       metaDescription: 'Guide complet pour les nouveaux joueurs',

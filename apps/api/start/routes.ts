@@ -34,6 +34,14 @@ const ArticlesController = () => import('#controllers/articles_controller')
 const ImagesController = () => import('#controllers/images_controller')
 const GuideSectionsController = () => import('#controllers/guide_sections_controller')
 const MaintenanceSettingsController = () => import('#controllers/maintenance_settings_controller')
+const AuthController = () => import('#controllers/auth_controller')
+
+/*
+|--------------------------------------------------------------------------
+| Middleware
+|--------------------------------------------------------------------------
+*/
+import { middleware } from '#start/kernel'
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +50,17 @@ const MaintenanceSettingsController = () => import('#controllers/maintenance_set
 */
 router
   .group(() => {
+    // Authentication
+    router
+      .group(() => {
+        router.post('/register', [AuthController, 'register'])
+        router.post('/login', [AuthController, 'login'])
+        router.post('/logout', [AuthController, 'logout']).use(middleware.auth())
+        router.get('/me', [AuthController, 'me']).use(middleware.auth())
+        router.post('/change-password', [AuthController, 'changePassword']).use(middleware.auth())
+      })
+      .prefix('auth')
+
     // Games
     router
       .group(() => {
@@ -279,4 +298,4 @@ router
       .prefix('maintenance')
   })
   .prefix('/api/admin')
-// TODO: Ajouter middleware auth admin
+  .use([middleware.auth(), middleware.role({ roles: ['admin', 'editor'] })])

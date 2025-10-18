@@ -15,7 +15,7 @@ export default class extends BaseSeeder {
   }
 
   async run() {
-    await this.seed(await import('#database/seeders/1_user_seeder'))
+    await this.seed(await import('#database/seeders/0_role_seeder'))
     await this.seed(await import('#database/seeders/2_genre_seeder'))
     await this.seed(await import('#database/seeders/3_platform_seeder'))
     await this.seed(await import('#database/seeders/4_tag_seeder'))
@@ -25,5 +25,6 @@ export default class extends BaseSeeder {
     await this.seed(await import('#database/seeders/6_game_seeder'))
     await this.seed(await import('#database/seeders/7_article_seeder'))
     await this.seed(await import('#database/seeders/10_youtube_video_seeder'))
+    await this.seed(await import('#database/seeders/11_user_auth_seeder'))
   }
 }

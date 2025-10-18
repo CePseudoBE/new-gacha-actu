@@ -11,7 +11,6 @@ export const GuideFactory = factory
       publishedAt: DateTime.fromJSDate(
         faker.date.between({ from: '2024-01-01', to: '2025-01-01' })
       ),
-      imageUrl: faker.image.url(),
       readingTime: faker.number.int({ min: 5, max: 20 }),
       isPopular: faker.datatype.boolean({ probability: 0.25 }),
       viewCount: faker.number.int({ min: 100, max: 10000 }),

@@ -22,7 +22,6 @@ export default class extends BaseSeeder {
           'Découvrez le classement complet des personnages de Genshin Impact mis à jour pour 2025. Analysez les meta picks et optimisez votre équipe.',
         author: 'Équipe Anime Gacha Pulse',
         publishedAt: DateTime.fromISO('2025-01-15'),
-        imageUrl: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc',
         content: `# Introduction
 
 La meta de Genshin Impact évolue constamment avec chaque nouvelle version. Ce tier list compile les meilleures unités de janvier 2025.
@@ -64,7 +63,6 @@ Priorisez les personnages Tier S+ pour votre pity si vous souhaitez optimiser vo
           'La version 2.8 arrive avec de nouveaux personnages, événements exclusifs et mécaniques de gameplay. Voici tout ce qu\'il faut savoir.',
         author: 'Marc Dubois',
         publishedAt: DateTime.fromISO('2025-01-20'),
-        imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
         content: `# Version 2.8 : Une Mise à Jour Majeure
 
 HoYoverse dévoile une mise à jour massive pour Honkai Star Rail.
@@ -110,7 +108,6 @@ La version 2.8 promet d'enrichir l'expérience avec du contenu varié. Préparez
           'Nouveau sur Genshin Impact ? Ce guide complet vous accompagne du tutoriel aux premiers Abysses avec conseils de reroll et progression optimale.',
         author: 'Sophie Martin',
         publishedAt: DateTime.fromISO('2025-01-10'),
-        imageUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420',
         content: `# Débuter sur Genshin Impact
 
 Bienvenue dans le monde de Teyvat ! Ce guide vous aidera à bien démarrer.

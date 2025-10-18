@@ -11,7 +11,6 @@ export const ArticleFactory = factory
       publishedAt: DateTime.fromJSDate(
         faker.date.between({ from: '2024-01-01', to: '2025-01-01' })
       ),
-      imageUrl: faker.image.url(),
       content: faker.lorem.paragraphs(10, '\n\n'),
       metaDescription: faker.lorem.sentence(),
       readingTime: faker.number.int({ min: 3, max: 15 }),
