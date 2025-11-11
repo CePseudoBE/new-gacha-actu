@@ -84,6 +84,14 @@ export default defineNuxtConfig({
     name: 'GachaPulse'
   },
 
+  sitemap: {
+    enabled: true,
+    cacheMaxAgeSeconds: 3600, // 1 heure
+    sources: [
+      '/api/__sitemap__/urls'
+    ]
+  },
+
   image: {
     domains: ['images.unsplash.com', 'img.youtube.com']
   },

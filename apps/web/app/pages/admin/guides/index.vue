@@ -70,7 +70,7 @@
     <!-- Delete Confirmation Dialog -->
     <DeleteDialog
       v-model:open="deleteDialogOpen"
-      :title="`Supprimer le guide \"${guideToDelete?.title}\"`"
+      :title="`Supprimer le guide &quot;${guideToDelete?.title}&quot;`"
       description="Êtes-vous sûr de vouloir supprimer ce guide ? Cette action est irréversible."
       @confirm="confirmDelete"
     />

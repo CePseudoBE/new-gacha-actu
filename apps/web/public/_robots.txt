@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://animegachapulse.com/sitemap.xml
+Sitemap: https://gachapulse.com/sitemap.xml

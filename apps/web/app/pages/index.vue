@@ -70,7 +70,7 @@ useHead({
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         name: 'Gacha Pulse',
-        url: 'https://animegachapulse.com',
+        url: 'https://gachapulse.com',
         description: 'Gacha Pulse est LE site d\'actualités pour les fans de jeux Gacha. Guides experts, tier lists, événements et dernières news.',
         inLanguage: 'fr-FR',
         publisher: {
@@ -78,7 +78,7 @@ useHead({
           name: 'Gacha Pulse',
           logo: {
             '@type': 'ImageObject',
-            url: 'https://animegachapulse.com/logo.png'
+            url: 'https://gachapulse.com/logo.png'
           }
         }
       })
