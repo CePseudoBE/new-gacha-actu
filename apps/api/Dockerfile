@@ -76,8 +76,9 @@ ENV PORT=3333
 ENV HOST=0.0.0.0
 
 # Health check (uses AdonisJS built-in health checks)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3333/health || exit 1
+# Force IPv4 to avoid IPv6 connection refused delay
+HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=5 \
+  CMD wget --quiet --tries=1 --spider --timeout=5 --prefer-family=IPv4 http://127.0.0.1:3333/health || exit 1
 
 # Run migrations and start server
 CMD ["sh", "-c", "node ace migration:run --force && node bin/server.js"]
