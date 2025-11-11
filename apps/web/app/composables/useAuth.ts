@@ -25,14 +25,21 @@ export const useAuth = () => {
    */
   const fetchUser = async (): Promise<User | null> => {
     try {
+      console.log('[useAuth] Fetching user...')
       const response: any = await $api.api.auth.me.$get()
+      console.log('[useAuth] Response:', response)
+      
       if (response?.success && response?.data) {
         user.value = response.data as User
+        console.log('[useAuth] User set:', user.value)
         return response.data as User
       }
+      
+      console.log('[useAuth] No success or data in response')
       user.value = null
       return null
     } catch (error) {
+      console.error('[useAuth] fetchUser error:', error)
       user.value = null
       return null
     }

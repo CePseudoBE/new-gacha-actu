@@ -47,11 +47,6 @@ export default class AuthController {
    * Get current authenticated user
    */
   async me(ctx: HttpContext) {
-    // DEBUG: Log session info
-    console.log('[AuthController.me] Cookie:', ctx.request.header('cookie'))
-    console.log('[AuthController.me] Session ID:', ctx.session.sessionId)
-    console.log('[AuthController.me] Auth check:', await ctx.auth.use('web').check())
-
     const user = await this.authService.getCurrentUser(ctx)
 
     ResponseService.ok(ctx, user)
