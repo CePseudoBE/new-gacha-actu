@@ -50,6 +50,9 @@ RUN pnpm turbo build --filter=api
 FROM base AS runner
 WORKDIR /app
 
+# Install wget for healthcheck
+RUN apk add --no-cache wget
+
 # Create non-root user
 RUN addgroup --system --gid 1001 adonisjs && \
     adduser --system --uid 1001 adonisjs
@@ -74,7 +77,7 @@ ENV HOST=0.0.0.0
 
 # Health check (uses AdonisJS built-in health checks)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3333/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3333/health || exit 1
 
 # Run migrations and start server
 CMD ["sh", "-c", "node ace migration:run --force && node bin/server.js"]
