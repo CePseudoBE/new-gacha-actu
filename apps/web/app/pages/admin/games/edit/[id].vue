@@ -21,7 +21,7 @@
             :genres="genres || []"
             :platforms="platforms || []"
             :tags="tags || []"
-            :current-image-url="game?.image?.url ? `http://localhost:3333${game.image.url}` : undefined"
+            :current-image-url="game?.image?.url"
             :image-to-delete="imageToDelete"
             @quick-add="openQuickAdd"
             @image-change="handleImageChange"

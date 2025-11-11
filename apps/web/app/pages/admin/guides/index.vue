@@ -66,6 +66,14 @@
         </div>
       </CardContent>
     </Card>
+
+    <!-- Delete Confirmation Dialog -->
+    <DeleteDialog
+      v-model:open="deleteDialogOpen"
+      :title="`Supprimer le guide \"${guideToDelete?.title}\"`"
+      description="Êtes-vous sûr de vouloir supprimer ce guide ? Cette action est irréversible."
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 
@@ -74,6 +82,7 @@ import { Plus as IconPlus, Edit as IconEdit, Trash as IconTrash } from 'lucide-v
 import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import DeleteDialog from '@/components/admin/DeleteDialog.vue'
 import {
   Table,
   TableBody,
@@ -114,13 +123,20 @@ const getDifficultyVariant = (difficulty?: string) => {
   return variants[upperDifficulty] || 'default'
 }
 
-const handleDelete = async (id: number, title: string) => {
-  if (!confirm(`Êtes-vous sûr de vouloir supprimer le guide "${title}" ?`)) {
-    return
-  }
+// Delete dialog state
+const deleteDialogOpen = ref(false)
+const guideToDelete = ref<{ id: number; title: string } | null>(null)
+
+const openDeleteDialog = (id: number, title: string) => {
+  guideToDelete.value = { id, title }
+  deleteDialogOpen.value = true
+}
+
+const confirmDelete = async () => {
+  if (!guideToDelete.value) return
 
   try {
-    await api.api.admin.guides[id].$delete()
+    await api.api.admin.guides[guideToDelete.value.id].$delete()
     toast.success('Guide supprimé avec succès')
 
     // Clear cache and refresh
@@ -131,6 +147,9 @@ const handleDelete = async (id: number, title: string) => {
     toast.error('Erreur lors de la suppression du guide')
   }
 }
+
+// Legacy function for backward compatibility
+const handleDelete = (id: number, title: string) => openDeleteDialog(id, title)
 
 useHead({
   title: 'Gestion des Guides - Admin',

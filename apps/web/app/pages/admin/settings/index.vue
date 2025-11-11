@@ -40,7 +40,7 @@
                   <TableCell class="font-medium">{{ genre.name }}</TableCell>
                   <TableCell>{{ genre.description }}</TableCell>
                   <TableCell class="text-right">
-                    <Button variant="ghost" size="sm" @click="deleteGenre(genre.id)">
+                    <Button variant="ghost" size="sm" @click="deleteGenre(genre.id, genre.name)">
                       <Trash class="w-4 h-4" />
                     </Button>
                   </TableCell>
@@ -75,7 +75,7 @@
                 <TableRow v-for="platform in platforms" :key="platform.id">
                   <TableCell class="font-medium">{{ platform.name }}</TableCell>
                   <TableCell class="text-right">
-                    <Button variant="ghost" size="sm" @click="deletePlatform(platform.id)">
+                    <Button variant="ghost" size="sm" @click="deletePlatform(platform.id, platform.name)">
                       <Trash class="w-4 h-4" />
                     </Button>
                   </TableCell>
@@ -110,7 +110,7 @@
                 <TableRow v-for="tag in tags" :key="tag.id">
                   <TableCell class="font-medium">{{ tag.name }}</TableCell>
                   <TableCell class="text-right">
-                    <Button variant="ghost" size="sm" @click="deleteTag(tag.id)">
+                    <Button variant="ghost" size="sm" @click="deleteTag(tag.id, tag.name)">
                       <Trash class="w-4 h-4" />
                     </Button>
                   </TableCell>
@@ -147,7 +147,7 @@
                   <TableCell class="font-medium">{{ type.name }}</TableCell>
                   <TableCell>{{ type.description }}</TableCell>
                   <TableCell class="text-right">
-                    <Button variant="ghost" size="sm" @click="deleteGuideType(type.id)">
+                    <Button variant="ghost" size="sm" @click="deleteGuideType(type.id, type.name)">
                       <Trash class="w-4 h-4" />
                     </Button>
                   </TableCell>
@@ -184,7 +184,7 @@
                   <TableCell class="font-medium">{{ level.name }}</TableCell>
                   <TableCell>{{ level.description }}</TableCell>
                   <TableCell class="text-right">
-                    <Button variant="ghost" size="sm" @click="deleteDifficultyLevel(level.id)">
+                    <Button variant="ghost" size="sm" @click="deleteDifficultyLevel(level.id, level.name)">
                       <Trash class="w-4 h-4" />
                     </Button>
                   </TableCell>
@@ -222,6 +222,14 @@
         </form>
       </DialogContent>
     </Dialog>
+
+    <!-- Delete Confirmation Dialog -->
+    <DeleteDialog
+      v-model:open="deleteDialogOpen"
+      :title="`Supprimer ${deleteItem?.name || 'cet élément'}`"
+      description="Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible."
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 
@@ -236,6 +244,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { toast } from 'vue-sonner'
+import DeleteDialog from '@/components/admin/DeleteDialog.vue'
 
 definePageMeta({
   layout: 'admin',
@@ -281,6 +290,10 @@ const formData = ref({
   name: '',
   description: '',
 })
+
+// Delete dialog state
+const deleteDialogOpen = ref(false)
+const deleteItem = ref<{ id: number; name: string; type: string } | null>(null)
 
 const openGenreDialog = () => {
   dialogTitle.value = 'Ajouter un genre'
@@ -367,50 +380,62 @@ const handleDialogSubmit = async () => {
   isSubmitting.value = false
 }
 
-const deleteGenre = async (id: number) => {
-  if (!confirm('Êtes-vous sûr ?')) return
-  await handleApiCall(() => api.api.admin.genres({ id }).$delete(), {
-    successMessage: 'Genre supprimé',
-    errorMessage: 'Erreur lors de la suppression',
-    onSuccess: refreshGenres,
-  })
+// Open delete dialog with item info
+const openDeleteDialog = (id: number, name: string, type: string) => {
+  deleteItem.value = { id, name, type }
+  deleteDialogOpen.value = true
 }
 
-const deletePlatform = async (id: number) => {
-  if (!confirm('Êtes-vous sûr ?')) return
-  await handleApiCall(() => api.api.admin.platforms({ id }).$delete(), {
-    successMessage: 'Plateforme supprimée',
-    errorMessage: 'Erreur lors de la suppression',
-    onSuccess: refreshPlatforms,
-  })
+// Confirm deletion
+const confirmDelete = async () => {
+  if (!deleteItem.value) return
+
+  const { id, type } = deleteItem.value
+
+  const deleteActions: Record<string, { call: () => Promise<any>; refresh: () => Promise<any>; message: string }> = {
+    genre: {
+      call: () => api.api.admin.genres({ id }).$delete(),
+      refresh: refreshGenres,
+      message: 'Genre supprimé',
+    },
+    platform: {
+      call: () => api.api.admin.platforms({ id }).$delete(),
+      refresh: refreshPlatforms,
+      message: 'Plateforme supprimée',
+    },
+    tag: {
+      call: () => api.api.admin.tags({ id }).$delete(),
+      refresh: refreshTags,
+      message: 'Tag supprimé',
+    },
+    'guide-type': {
+      call: () => api.api.admin['guide-types']({ id }).$delete(),
+      refresh: refreshGuideTypes,
+      message: 'Type de guide supprimé',
+    },
+    difficulty: {
+      call: () => api.api.admin['difficulty-levels']({ id }).$delete(),
+      refresh: refreshDifficultyLevels,
+      message: 'Niveau de difficulté supprimé',
+    },
+  }
+
+  const action = deleteActions[type]
+  if (action) {
+    await handleApiCall(action.call, {
+      successMessage: action.message,
+      errorMessage: 'Erreur lors de la suppression',
+      onSuccess: action.refresh,
+    })
+  }
 }
 
-const deleteTag = async (id: number) => {
-  if (!confirm('Êtes-vous sûr ?')) return
-  await handleApiCall(() => api.api.admin.tags({ id }).$delete(), {
-    successMessage: 'Tag supprimé',
-    errorMessage: 'Erreur lors de la suppression',
-    onSuccess: refreshTags,
-  })
-}
-
-const deleteGuideType = async (id: number) => {
-  if (!confirm('Êtes-vous sûr ?')) return
-  await handleApiCall(() => api.api.admin['guide-types']({ id }).$delete(), {
-    successMessage: 'Type de guide supprimé',
-    errorMessage: 'Erreur lors de la suppression',
-    onSuccess: refreshGuideTypes,
-  })
-}
-
-const deleteDifficultyLevel = async (id: number) => {
-  if (!confirm('Êtes-vous sûr ?')) return
-  await handleApiCall(() => api.api.admin['difficulty-levels']({ id }).$delete(), {
-    successMessage: 'Niveau de difficulté supprimé',
-    errorMessage: 'Erreur lors de la suppression',
-    onSuccess: refreshDifficultyLevels,
-  })
-}
+// Legacy functions (for backward compatibility - call openDeleteDialog)
+const deleteGenre = (id: number, name: string = '') => openDeleteDialog(id, name, 'genre')
+const deletePlatform = (id: number, name: string = '') => openDeleteDialog(id, name, 'platform')
+const deleteTag = (id: number, name: string = '') => openDeleteDialog(id, name, 'tag')
+const deleteGuideType = (id: number, name: string = '') => openDeleteDialog(id, name, 'guide-type')
+const deleteDifficultyLevel = (id: number, name: string = '') => openDeleteDialog(id, name, 'difficulty')
 
 useHead({
   title: 'Paramètres - Admin',
