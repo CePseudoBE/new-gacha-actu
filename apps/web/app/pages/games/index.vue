@@ -21,8 +21,8 @@
         <Card class="overflow-hidden hover:shadow-xl hover:border-primary/20 transition-all duration-300 h-full">
           <div class="aspect-video relative overflow-hidden bg-muted">
             <NuxtImg
-              v-if="game.imageUrl"
-              :src="game.imageUrl"
+              v-if="game.image?.url"
+              :src="game.image.url"
               :alt="game.name"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               width="400"
