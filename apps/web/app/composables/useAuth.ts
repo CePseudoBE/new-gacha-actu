@@ -36,7 +36,6 @@ export const useAuth = () => {
       user.value = null
       return null
     } catch (error) {
-      console.error('[useAuth] fetchUser error:', error)
       user.value = null
       return null
     }
@@ -60,7 +59,6 @@ export const useAuth = () => {
         error: (response?.data?.message as string) || 'Échec de la connexion'
       }
     } catch (error: any) {
-      console.error('Login error:', error)
       return {
         success: false,
         error: error?.data?.message || error?.message || 'Une erreur est survenue lors de la connexion'
@@ -85,7 +83,6 @@ export const useAuth = () => {
         error: (response?.data?.message as string) || 'Échec de l\'inscription'
       }
     } catch (error: any) {
-      console.error('Register error:', error)
       return {
         success: false,
         error: error?.data?.message || error?.message || 'Une erreur est survenue lors de l\'inscription'
@@ -100,7 +97,7 @@ export const useAuth = () => {
     try {
       await $api.api.auth.logout.$post()
     } catch (error) {
-      console.error('Logout error:', error)
+      // Silent error
     } finally {
       user.value = null
     }
@@ -126,7 +123,6 @@ export const useAuth = () => {
         error: (response?.data?.message as string) || 'Échec du changement de mot de passe'
       }
     } catch (error: any) {
-      console.error('Change password error:', error)
       return {
         success: false,
         error: error?.data?.message || error?.message || 'Une erreur est survenue lors du changement de mot de passe'
