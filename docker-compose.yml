@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_DATABASE:-gachapulse}
       POSTGRES_USER: ${DB_USER:-gachapulse}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:?ERROR: DB_PASSWORD not set in .env file}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?ERROR DB_PASSWORD not set in .env file}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -57,11 +57,11 @@ services:
       PORT: 3333
       HOST: 0.0.0.0
       LOG_LEVEL: info
-      APP_KEY: ${APP_KEY:?ERROR: APP_KEY not set in .env file}
+      APP_KEY: ${APP_KEY:?ERROR APP_KEY not set in .env file}
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USER: ${DB_USER:-gachapulse}
-      DB_PASSWORD: ${DB_PASSWORD:?ERROR: DB_PASSWORD not set}
+      DB_PASSWORD: ${DB_PASSWORD:?ERROR DB_PASSWORD not set}
       DB_DATABASE: ${DB_DATABASE:-gachapulse}
       REDIS_HOST: redis
       REDIS_PORT: 6379
