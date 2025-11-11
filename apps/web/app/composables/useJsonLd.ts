@@ -18,7 +18,7 @@ export function useJsonLd() {
     game?: { name: string }
     tags?: Array<{ name: string }>
   }) => {
-    const siteUrl = 'https://animegachapulse.com'
+    const siteUrl = 'https://gachapulse.com'
 
     return {
       '@context': 'https://schema.org',
@@ -56,7 +56,7 @@ export function useJsonLd() {
    * Génère le JSON-LD pour une liste d'articles (ItemList)
    */
   const generateArticleListJsonLd = (articles: Array<{ title: string; slug: string; image?: { url: string } | null }>) => {
-    const siteUrl = 'https://animegachapulse.com'
+    const siteUrl = 'https://gachapulse.com'
 
     return {
       '@context': 'https://schema.org',
@@ -78,7 +78,7 @@ export function useJsonLd() {
    * Génère le JSON-LD pour le site web (WebSite + SearchAction)
    */
   const generateWebsiteJsonLd = () => {
-    const siteUrl = 'https://animegachapulse.com'
+    const siteUrl = 'https://gachapulse.com'
 
     return {
       '@context': 'https://schema.org',
