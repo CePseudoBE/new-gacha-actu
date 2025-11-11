@@ -107,6 +107,21 @@ export default defineNuxtConfig({
     domains: ['images.unsplash.com', 'img.youtube.com']
   },
 
+  // Optimisations de performance
+  router: {
+    options: {
+      // Précharger les liens pour une navigation plus rapide
+      linkPrefetchedClass: 'nuxt-link-prefetched'
+    }
+  },
+
+  experimental: {
+    // Améliore les performances de navigation
+    payloadExtraction: false,
+    renderJsonPayloads: true,
+    typedPages: true
+  },
+
   modules: [
     '@nuxt/image',
     '@nuxtjs/seo'
