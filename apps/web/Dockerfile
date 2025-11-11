@@ -63,6 +63,10 @@ RUN addgroup --system --gid 1001 nuxtjs && \
 # Copy built application
 COPY --from=builder --chown=nuxtjs:nuxtjs /app/apps/web/.output ./
 
+# Copy node_modules (needed for runtime dependencies)
+COPY --from=builder --chown=nuxtjs:nuxtjs /app/node_modules ./node_modules
+COPY --from=builder --chown=nuxtjs:nuxtjs /app/apps/web/node_modules ./apps/web/node_modules
+
 # Switch to non-root user
 USER nuxtjs
 
