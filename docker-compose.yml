@@ -101,18 +101,14 @@ services:
       NODE_ENV: production
       NITRO_PORT: 3000
       NITRO_HOST: 0.0.0.0
-      NUXT_PUBLIC_API_URL: https://gachapulse.com/api
+      # Use internal Docker network for SSR API calls (faster, no external DNS/SSL)
+      NUXT_PUBLIC_API_URL: http://api:3333/api
       NUXT_PUBLIC_SITE_URL: https://gachapulse.com
     ports:
       - "3000:3000"
     networks:
       - gachapulse-network
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+    # Healthcheck defined in Dockerfile (Node.js-based, no wget needed)
 
   # Nginx Reverse Proxy
   nginx:
