@@ -48,6 +48,5 @@ export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
   role: () => import('#middleware/role_middleware'),
   silentAuth: () => import('#middleware/silent_auth_middleware'),
-  // @ts-ignore - limiter module path
-  throttle: () => import('@adonisjs/limiter/plugins/throttle_middleware'),
+  throttle: () => import('#start/limiter'),
 })
