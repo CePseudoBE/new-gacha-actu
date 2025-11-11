@@ -7,26 +7,29 @@ export default defineNuxtPlugin(() => {
   const tuyau = createTuyau({
     api,
     baseUrl: config.public.apiUrl,
-    // Utiliser $fetch de Nuxt au lieu de ky pour bénéficier des optimisations SSR
     fetch: (url: string, options?: any) => {
-      // SSR: Capturer les cookies de la requête initiale et les transmettre
-      const headers: HeadersInit = { ...options?.headers }
+      const headers: Record<string, string> = { ...(options?.headers || {}) }
 
-      if (import.meta.server) {
-        // Récupérer les headers de la requête SSR
-        const event = useRequestEvent()
-        const cookieHeader = event?.node.req.headers.cookie
+      if (process.server) {
+        try {
+          const event = useRequestEvent()
+          const cookieHeader = event?.node.req.headers.cookie
 
-        // Transmettre le cookie au backend
-        if (cookieHeader) {
-          headers.cookie = cookieHeader
+          console.log('[Tuyau SSR] Request URL:', url)
+          console.log('[Tuyau SSR] Cookie from request:', cookieHeader ? 'Present' : 'Missing')
+
+          if (cookieHeader) {
+            headers['cookie'] = cookieHeader
+            console.log('[Tuyau SSR] Cookie forwarded to API')
+          }
+        } catch (error) {
+          console.error('[Tuyau SSR] Error forwarding cookies:', error)
         }
       }
 
       return $fetch(url, {
         ...options,
         headers,
-        // Important: envoyer les credentials (cookies) pour les sessions côté client
         credentials: 'include',
       })
     },
