@@ -15,6 +15,10 @@ router.get('/', async () => {
   }
 })
 
+// Health check endpoint
+const HealthChecksController = () => import('#controllers/health_checks_controller')
+router.get('/health', [HealthChecksController])
+
 /*
 |--------------------------------------------------------------------------
 | Controllers

@@ -54,12 +54,12 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 adonisjs && \
     adduser --system --uid 1001 adonisjs
 
-# Copy built application
+# Copy built application (includes package.json)
 COPY --from=builder --chown=adonisjs:adonisjs /app/apps/api/build ./
 
-# Install production dependencies
+# Install production dependencies (no frozen-lockfile needed for standalone build)
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --prod --frozen-lockfile
+    pnpm install --prod
 
 # Switch to non-root user
 USER adonisjs
@@ -72,9 +72,9 @@ ENV NODE_ENV=production
 ENV PORT=3333
 ENV HOST=0.0.0.0
 
-# Health check
+# Health check (uses AdonisJS built-in health checks)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3333/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+  CMD node -e "require('http').get('http://localhost:3333/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
 
 # Run migrations and start server
 CMD ["sh", "-c", "node ace migration:run --force && node bin/server.js"]

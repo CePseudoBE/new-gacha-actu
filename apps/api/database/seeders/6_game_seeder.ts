@@ -1,13 +1,12 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
-import Game from '#models/game'
-import Genre from '#models/genre'
-import Platform from '#models/platform'
-import Tag from '#models/tag'
-import { DateTime } from 'luxon'
 
 export default class extends BaseSeeder {
   async run() {
-    // Create games
+    // Production: No fake game data
+    // Games will be added manually through the admin interface
+    console.log('✅ Game seeder skipped (production mode - add games via admin interface)')
+
+    /* DEV ONLY: Uncomment for development seeding
     const genshin = await Game.updateOrCreate(
       { name: 'Genshin Impact' },
       {
@@ -129,5 +128,6 @@ export default class extends BaseSeeder {
     await honkai.related('tags').sync([metaTag.id, f2pTag.id, stratTag.id])
     await fireEmblem.related('tags').sync([stratTag.id])
     await arknights.related('tags').sync([stratTag.id, f2pTag.id])
+    */
   }
 }

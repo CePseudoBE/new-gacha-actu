@@ -1,10 +1,16 @@
-# Dependencies
+# Dependencies (ignore all node_modules, including symlinks)
+**/node_modules
 node_modules
 npm-debug.log
 yarn-error.log
 pnpm-debug.log
 
 # Build outputs
+**/dist
+**/build
+**/.output
+**/.nuxt
+**/.next
 dist
 build
 .output

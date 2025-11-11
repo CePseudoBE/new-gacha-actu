@@ -1,12 +1,12 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
-import Article from '#models/article'
-import Game from '#models/game'
-import ArticleCategory from '#models/article_category'
-import Tag from '#models/tag'
-import { DateTime } from 'luxon'
 
 export default class extends BaseSeeder {
   async run() {
+    // Production: No fake article data
+    // Articles will be added manually through the admin interface
+    console.log('✅ Article seeder skipped (production mode - add articles via admin interface)')
+
+    /* DEV ONLY: Uncomment for development seeding
     const genshin = await Game.findByOrFail('name', 'Genshin Impact')
     const honkai = await Game.findByOrFail('name', 'Honkai Star Rail')
     const newsCategory = await ArticleCategory.findByOrFail('name', 'Actualités')
@@ -175,5 +175,6 @@ Prenez votre temps, explorez et profitez de l'aventure !`,
     await article1.related('tags').sync([tierListTag.id, metaTag.id])
     await article2.related('tags').sync([nouveauteTag.id, patchNotesTag.id])
     await article3.related('tags').sync([guideDebutantTag.id, rerollTag.id])
+    */
   }
 }

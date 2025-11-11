@@ -1,10 +1,14 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
-import YoutubeVideo from '#models/youtube_video'
-import Game from '#models/game'
-import { DateTime } from 'luxon'
 
 export default class extends BaseSeeder {
   async run() {
+    // Production: No fake YouTube video data
+    // YouTube videos will be added manually through the admin interface
+    console.log(
+      '✅ YouTube video seeder skipped (production mode - add videos via admin interface)'
+    )
+
+    /* DEV ONLY: Uncomment for development seeding
     const genshin = await Game.findByOrFail('name', 'Genshin Impact')
     const honkai = await Game.findByOrFail('name', 'Honkai Star Rail')
 
@@ -73,5 +77,6 @@ export default class extends BaseSeeder {
         gameId: genshin.id,
       },
     ])
+    */
   }
 }
