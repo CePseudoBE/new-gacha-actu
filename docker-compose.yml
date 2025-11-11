@@ -101,8 +101,8 @@ services:
       NODE_ENV: production
       NITRO_PORT: 3000
       NITRO_HOST: 0.0.0.0
-      # Use internal Docker network for SSR API calls (faster, no external DNS/SSL)
-      NUXT_PUBLIC_API_URL: http://api:3333/api
+      # Public URL for client-side (browser) - HTTPS required
+      NUXT_PUBLIC_API_URL: https://gachapulse.com/api
       NUXT_PUBLIC_SITE_URL: https://gachapulse.com
     ports:
       - "3000:3000"
