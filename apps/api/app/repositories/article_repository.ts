@@ -127,7 +127,7 @@ export default class ArticleRepository {
       return null
     }
 
-    const { tagIds, seoKeywordIds, ...updateData } = data
+    const { tagIds, seoKeywordIds, publishedAt, ...updateData } = data
 
     const mergeData: Partial<{
       title: string
@@ -146,8 +146,8 @@ export default class ArticleRepository {
       ...updateData,
     }
 
-    if (data.publishedAt) {
-      mergeData.publishedAt = DateTime.fromJSDate(data.publishedAt as Date)
+    if (publishedAt) {
+      mergeData.publishedAt = DateTime.fromJSDate(publishedAt as Date)
     }
 
     article.merge(mergeData)

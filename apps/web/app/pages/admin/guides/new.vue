@@ -47,6 +47,7 @@ import { useGuideFormData } from '@/composables/useGuideFormData'
 
 definePageMeta({
   layout: 'admin',
+  middleware: 'admin',
 })
 
 const router = useRouter()

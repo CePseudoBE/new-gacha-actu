@@ -79,7 +79,7 @@ export default class CacheService {
    * Invalide tous les caches liés aux articles
    */
   static async invalidateArticleCaches(gameId?: number, slug?: string): Promise<void> {
-    const keys = [this.KEYS.ARTICLES_ALL, this.KEYS.ARTICLES_POPULAR]
+    const keys: string[] = [this.KEYS.ARTICLES_ALL, this.KEYS.ARTICLES_POPULAR]
 
     if (gameId) {
       keys.push(this.KEYS.ARTICLES_BY_GAME(gameId))

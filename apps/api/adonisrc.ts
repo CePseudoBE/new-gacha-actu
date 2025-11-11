@@ -57,7 +57,9 @@ export default defineConfig({
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/cache/cache_provider'),
     () => import('@adonisjs/drive/drive_provider'),
-    () => import('@tuyau/core/tuyau_provider')
+    () => import('@tuyau/core/tuyau_provider'),
+    () => import('@adonisjs/limiter/limiter_provider'),
+    () => import('@adonisjs/redis/redis_provider')
   ],
 
   /*

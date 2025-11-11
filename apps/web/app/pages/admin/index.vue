@@ -178,6 +178,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 definePageMeta({
   layout: 'admin',
+  middleware: 'admin',
 })
 
 useHead({

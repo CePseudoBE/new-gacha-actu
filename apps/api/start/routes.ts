@@ -53,11 +53,17 @@ router
     // Authentication
     router
       .group(() => {
-        router.post('/register', [AuthController, 'register'])
-        router.post('/login', [AuthController, 'login'])
+        router
+          .post('/register', [AuthController, 'register'])
+          .use([middleware.guest(), middleware.throttle({ limit: 5, interval: '15 minutes' })])
+        router
+          .post('/login', [AuthController, 'login'])
+          .use([middleware.guest(), middleware.throttle({ limit: 10, interval: '15 minutes' })])
         router.post('/logout', [AuthController, 'logout']).use(middleware.auth())
         router.get('/me', [AuthController, 'me']).use(middleware.auth())
-        router.post('/change-password', [AuthController, 'changePassword']).use(middleware.auth())
+        router
+          .post('/change-password', [AuthController, 'changePassword'])
+          .use([middleware.auth(), middleware.throttle({ limit: 3, interval: '1 hour' })])
       })
       .prefix('auth')
 

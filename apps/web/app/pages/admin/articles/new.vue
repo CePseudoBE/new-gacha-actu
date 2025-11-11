@@ -44,6 +44,7 @@ import { useQuickAdd } from '@/composables/useQuickAdd'
 
 definePageMeta({
   layout: 'admin',
+  middleware: 'admin',
 })
 
 // Load form data

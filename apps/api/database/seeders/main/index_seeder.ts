@@ -7,7 +7,7 @@ export default class extends BaseSeeder {
      * Do not run when not in development mode and seeder
      * is not explicitly running in production
      */
-    if (!app.inDev && !this.environment) {
+    if (!app.inDev && !BaseSeeder.environment) {
       return
     }
 

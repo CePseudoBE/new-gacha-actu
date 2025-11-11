@@ -8,8 +8,12 @@ export default defineNuxtPlugin(() => {
     api,
     baseUrl: config.public.apiUrl,
     // Utiliser $fetch de Nuxt au lieu de ky pour bénéficier des optimisations SSR
-    fetcher: (url, options) => {
-      return $fetch(url, options)
+    fetch: (url: string, options?: any) => {
+      return $fetch(url, {
+        ...options,
+        // Important: envoyer les credentials (cookies) pour les sessions
+        credentials: 'include',
+      })
     },
   })
 

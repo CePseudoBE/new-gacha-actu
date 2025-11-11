@@ -55,6 +55,7 @@ import { useImageManagement } from '@/composables/useImageManagement'
 
 definePageMeta({
   layout: 'admin',
+  middleware: 'admin',
 })
 
 const route = useRoute()

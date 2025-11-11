@@ -13,16 +13,60 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
-    if (
-      error instanceof Error &&
-      (error as any).code === 'E_NOT_FOUND' &&
-      (error as any).status === 404
-    ) {
+    const err = error as any
+
+    // 404 - Not Found
+    if (err.code === 'E_NOT_FOUND' || err.status === 404) {
       return ctx.response.notFound({
         success: false,
-        error: 'Resource not found',
+        error: 'Ressource introuvable',
         code: 'E_NOT_FOUND',
-        messages: (error as any).messages || [],
+      })
+    }
+
+    // 401 - Unauthorized
+    if (err.code === 'E_UNAUTHORIZED' || err.status === 401) {
+      return ctx.response.unauthorized({
+        success: false,
+        error: 'Non authentifié',
+        code: 'E_UNAUTHORIZED',
+      })
+    }
+
+    // 403 - Forbidden
+    if (err.code === 'E_FORBIDDEN' || err.status === 403) {
+      return ctx.response.forbidden({
+        success: false,
+        error: 'Accès refusé',
+        code: 'E_FORBIDDEN',
+      })
+    }
+
+    // 422 - Validation Error
+    if (err.code === 'E_VALIDATION_ERROR' || err.status === 422) {
+      return ctx.response.unprocessableEntity({
+        success: false,
+        error: 'Erreur de validation',
+        code: 'E_VALIDATION_ERROR',
+        messages: err.messages || [],
+      })
+    }
+
+    // 429 - Too Many Requests
+    if (err.code === 'E_TOO_MANY_REQUESTS' || err.status === 429) {
+      return ctx.response.tooManyRequests({
+        success: false,
+        error: 'Trop de requêtes',
+        code: 'E_TOO_MANY_REQUESTS',
+      })
+    }
+
+    // 500 - Server Error
+    if (!this.debug && err.status >= 500) {
+      return ctx.response.internalServerError({
+        success: false,
+        error: 'Une erreur serveur est survenue',
+        code: 'E_INTERNAL_SERVER_ERROR',
       })
     }
 

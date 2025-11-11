@@ -17,7 +17,20 @@
         <CardTitle>Liste des Jeux</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table v-if="games && games.length > 0">
+        <!-- Loading State -->
+        <div v-if="pending" class="text-center py-8">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p class="mt-2 text-muted-foreground">Chargement des jeux...</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error" class="text-center py-8 text-destructive">
+          <p class="font-semibold">Erreur de chargement</p>
+          <p class="text-sm">{{ error.message }}</p>
+        </div>
+
+        <!-- Content -->
+        <Table v-else-if="games && games.length > 0">
           <TableHeader>
             <TableRow>
               <TableHead>Nom</TableHead>
@@ -56,6 +69,8 @@
             </TableRow>
           </TableBody>
         </Table>
+
+        <!-- Empty State -->
         <div v-else class="text-center py-8 text-muted-foreground">
           Aucun jeu trouvé
         </div>
@@ -73,7 +88,6 @@
 
 <script setup lang="ts">
 import { Plus, Pencil, Trash } from 'lucide-vue-next'
-import { toast } from 'vue-sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -87,33 +101,35 @@ import {
 import { Badge } from '@/components/ui/badge'
 import DeleteDialog from '@/components/admin/DeleteDialog.vue'
 import { useDate } from '@/composables/useDate'
+import type { Game } from '@/types/models'
 
 definePageMeta({
   layout: 'admin',
+  middleware: 'admin',
 })
 
 const api = useApi()
+const { handleApiCall } = useApiErrorHandler()
 const { formatDate } = useDate()
 
 // Fetch games
-const { data: games, refresh } = await useAsyncData('admin-games', async () => {
+const { data: games, pending, error, refresh } = await useAsyncData('admin-games', async () => {
   const response = await api.api.games.$get()
   return response.data?.data || []
 })
 
 const openCreateDialog = () => {
-  // TODO: Open dialog for creating a new game
   navigateTo('/admin/games/new')
 }
 
-const editGame = (game: any) => {
+const editGame = (game: Game) => {
   navigateTo(`/admin/games/edit/${game.id}`)
 }
 
 const deleteDialogOpen = ref(false)
-const gameToDelete = ref<any>(null)
+const gameToDelete = ref<Game | null>(null)
 
-const openDeleteDialog = (game: any) => {
+const openDeleteDialog = (game: Game) => {
   gameToDelete.value = game
   deleteDialogOpen.value = true
 }
@@ -121,24 +137,17 @@ const openDeleteDialog = (game: any) => {
 const confirmDeleteGame = async () => {
   if (!gameToDelete.value) return
 
-  const response = await api.api.admin.games({ id: gameToDelete.value.id }).$delete()
-
-  if (response?.error || response?.status >= 400) {
-    const errorData = response?.error?.value
-    if (errorData?.errors && Array.isArray(errorData.errors)) {
-      errorData.errors.forEach((err: any) => {
-        toast.error(err.message || 'Erreur de validation')
-      })
-    } else {
-      const message = errorData?.message || 'Erreur lors de la suppression du jeu'
-      toast.error(message)
+  await handleApiCall(
+    () => api.api.admin.games({ id: gameToDelete.value!.id }).$delete(),
+    {
+      successMessage: 'Jeu supprimé avec succès',
+      errorMessage: 'Erreur lors de la suppression du jeu',
+      onSuccess: async () => {
+        await refresh()
+        gameToDelete.value = null
+      }
     }
-    throw response
-  }
-
-  toast.success('Jeu supprimé avec succès')
-  await refresh()
-  gameToDelete.value = null
+  )
 }
 
 useHead({

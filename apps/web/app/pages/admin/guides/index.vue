@@ -85,6 +85,11 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { useDate } from '@/composables/useDate'
 
+definePageMeta({
+  layout: 'admin',
+  middleware: 'admin',
+})
+
 const api = useApi()
 const { formatDate } = useDate()
 

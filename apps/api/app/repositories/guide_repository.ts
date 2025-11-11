@@ -253,7 +253,7 @@ export default class GuideRepository {
       return null
     }
 
-    const { sections, prerequisites, tagIds, seoKeywordIds, ...updateData } = data
+    const { sections, prerequisites, tagIds, seoKeywordIds, publishedAt, ...updateData } = data
 
     const mergeData: Partial<{
       title: string
@@ -272,8 +272,8 @@ export default class GuideRepository {
       ...updateData,
     }
 
-    if (data.publishedAt) {
-      mergeData.publishedAt = DateTime.fromJSDate(data.publishedAt as Date)
+    if (publishedAt) {
+      mergeData.publishedAt = DateTime.fromJSDate(publishedAt as Date)
     }
 
     guide.merge(mergeData)

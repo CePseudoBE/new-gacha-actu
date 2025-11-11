@@ -31,6 +31,15 @@ export default await Env.create(new URL('../', import.meta.url), {
 
   /*
   |----------------------------------------------------------
+  | Variables for configuring Redis
+  |----------------------------------------------------------
+  */
+  REDIS_HOST: Env.schema.string({ format: 'host' }),
+  REDIS_PORT: Env.schema.number(),
+  REDIS_PASSWORD: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
   | Variables for configuring session package
   |----------------------------------------------------------
   */
@@ -49,4 +58,27 @@ export default await Env.create(new URL('../', import.meta.url), {
   |----------------------------------------------------------
   */
   APP_URL: Env.schema.string.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for CORS configuration
+  |----------------------------------------------------------
+  */
+  CORS_ENABLED: Env.schema.boolean.optional(),
+  CORS_ORIGIN: Env.schema.string.optional(),
+  CORS_CREDENTIALS: Env.schema.boolean.optional(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring cache package
+  |----------------------------------------------------------
+  */
+  CACHE_STORE: Env.schema.enum(['redis', 'memory', 'file'] as const),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for configuring the limiter package
+  |----------------------------------------------------------
+  */
+  LIMITER_STORE: Env.schema.enum(['redis', 'memory'] as const)
 })

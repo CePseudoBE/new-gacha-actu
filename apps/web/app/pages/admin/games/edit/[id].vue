@@ -72,6 +72,7 @@ import { useGameForm } from '@/composables/useGameForm'
 
 definePageMeta({
   layout: 'admin',
+  middleware: 'admin',
 })
 
 const route = useRoute()

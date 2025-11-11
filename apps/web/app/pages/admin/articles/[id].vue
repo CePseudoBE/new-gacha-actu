@@ -57,6 +57,7 @@ import { useArticleInitialValues } from '@/composables/useArticleInitialValues'
 
 definePageMeta({
   layout: 'admin',
+  middleware: 'admin',
 })
 
 const route = useRoute()

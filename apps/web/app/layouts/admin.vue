@@ -32,6 +32,11 @@
                 Guides
               </NuxtLink>
             </Button>
+            <Button variant="ghost" size="sm" as-child>
+              <NuxtLink to="/admin/videos" active-class="bg-accent">
+                Vidéos
+              </NuxtLink>
+            </Button>
           </nav>
         </div>
 

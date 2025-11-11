@@ -6,7 +6,6 @@ import ResponseService from '#services/response_service'
 import {
   createGameValidator,
   gameParamsValidator,
-  gameSlugParamsValidator,
   updateGameValidator,
 } from '#validators/game'
 import { gameFiltersValidator, limitValidator } from '#validators/common'

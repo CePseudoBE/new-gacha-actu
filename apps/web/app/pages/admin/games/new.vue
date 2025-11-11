@@ -61,6 +61,7 @@ import { useGameForm } from '@/composables/useGameForm'
 
 definePageMeta({
   layout: 'admin',
+  middleware: 'admin',
 })
 
 const api = useApi()

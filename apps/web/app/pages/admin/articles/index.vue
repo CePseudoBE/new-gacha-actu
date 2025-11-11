@@ -62,7 +62,20 @@
       <!-- Articles Table -->
       <Card>
         <CardContent class="pt-6">
-          <div class="space-y-4">
+          <!-- Loading State -->
+          <div v-if="pending" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <p class="mt-2 text-muted-foreground">Chargement des articles...</p>
+          </div>
+
+          <!-- Error State -->
+          <div v-else-if="error" class="text-center py-8 text-destructive">
+            <p class="font-semibold">Erreur de chargement</p>
+            <p class="text-sm">{{ error.message }}</p>
+          </div>
+
+          <!-- Content -->
+          <div v-else class="space-y-4">
             <!-- Table Header -->
             <div class="grid grid-cols-12 gap-4 pb-3 border-b font-semibold text-sm">
               <div class="col-span-5">Titre</div>
@@ -111,7 +124,7 @@
                 >
                   <IconEdit class="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="icon" @click="deleteArticle(article.id)">
+                <Button variant="ghost" size="icon" @click="openDeleteDialog(article)">
                   <IconTrash class="w-4 h-4 text-destructive" />
                 </Button>
               </div>
@@ -120,6 +133,14 @@
         </CardContent>
       </Card>
     </div>
+
+    <!-- Delete Confirmation Dialog -->
+    <DeleteDialog
+      v-model:open="deleteDialogOpen"
+      :title="`Supprimer ${articleToDelete?.title}`"
+      description="Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible."
+      @confirm="confirmDeleteArticle"
+    />
   </div>
 </template>
 
@@ -137,13 +158,21 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
+import DeleteDialog from '@/components/admin/DeleteDialog.vue'
 import { useDate } from '@/composables/useDate'
+import type { Article } from '@/types/models'
+
+definePageMeta({
+  layout: 'admin',
+  middleware: 'admin',
+})
 
 const api = useApi()
+const { handleApiCall } = useApiErrorHandler()
 const { formatDateShort: formatDate } = useDate()
 
 // Fetch all articles from API
-const { data: articles = [] } = await useAsyncData('admin-articles', async () => {
+const { data: articles = [], pending, error, refresh } = await useAsyncData('admin-articles', async () => {
   const response = await api.api.articles.$get()
   return response.data?.data || []
 })
@@ -182,8 +211,29 @@ const getCategoryVariant = (category?: string) => {
   return variants[category] || 'default'
 }
 
-const deleteArticle = (id: number) => {
-  // TODO: Implement delete with confirmation dialog
+// Delete dialog state
+const deleteDialogOpen = ref(false)
+const articleToDelete = ref<Article | null>(null)
+
+const openDeleteDialog = (article: Article) => {
+  articleToDelete.value = article
+  deleteDialogOpen.value = true
+}
+
+const confirmDeleteArticle = async () => {
+  if (!articleToDelete.value) return
+
+  await handleApiCall(
+    () => api.api.admin.articles({ id: articleToDelete.value!.id }).$delete(),
+    {
+      successMessage: 'Article supprimé avec succès',
+      errorMessage: 'Erreur lors de la suppression de l\'article',
+      onSuccess: async () => {
+        await refresh()
+        articleToDelete.value = null
+      }
+    }
+  )
 }
 
 useHead({
