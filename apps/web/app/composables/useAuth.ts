@@ -25,17 +25,14 @@ export const useAuth = () => {
    */
   const fetchUser = async (): Promise<User | null> => {
     try {
-      console.log('[useAuth] Fetching user...')
       const response: any = await $api.api.auth.me.$get()
-      console.log('[useAuth] Response:', response)
       
-      if (response?.success && response?.data) {
-        user.value = response.data as User
-        console.log('[useAuth] User set:', user.value)
-        return response.data as User
+      // Tuyau enveloppe la réponse: { data: { success, data }, error, response, status }
+      if (response?.data?.success && response?.data?.data) {
+        user.value = response.data.data as User
+        return response.data.data as User
       }
       
-      console.log('[useAuth] No success or data in response')
       user.value = null
       return null
     } catch (error) {
@@ -52,14 +49,15 @@ export const useAuth = () => {
     try {
       const response: any = await $api.api.auth.login.$post(credentials)
 
-      if (response?.success && response?.data) {
-        user.value = response.data as User
+      // Tuyau enveloppe: response.data contient la vraie réponse API
+      if (response?.data?.success && response?.data?.data) {
+        user.value = response.data.data as User
         return { success: true }
       }
 
       return {
         success: false,
-        error: (response?.message as string) || 'Échec de la connexion'
+        error: (response?.data?.message as string) || 'Échec de la connexion'
       }
     } catch (error: any) {
       console.error('Login error:', error)
@@ -77,14 +75,14 @@ export const useAuth = () => {
     try {
       const response: any = await $api.api.auth.register.$post(data)
 
-      if (response?.success && response?.data) {
-        user.value = response.data as User
+      if (response?.data?.success && response?.data?.data) {
+        user.value = response.data.data as User
         return { success: true }
       }
 
       return {
         success: false,
-        error: (response?.message as string) || 'Échec de l\'inscription'
+        error: (response?.data?.message as string) || 'Échec de l\'inscription'
       }
     } catch (error: any) {
       console.error('Register error:', error)
@@ -119,13 +117,13 @@ export const useAuth = () => {
         newPassword_confirmation: newPasswordConfirmation,
       })
 
-      if (response?.success) {
+      if (response?.data?.success) {
         return { success: true }
       }
 
       return {
         success: false,
-        error: (response?.message as string) || 'Échec du changement de mot de passe'
+        error: (response?.data?.message as string) || 'Échec du changement de mot de passe'
       }
     } catch (error: any) {
       console.error('Change password error:', error)
