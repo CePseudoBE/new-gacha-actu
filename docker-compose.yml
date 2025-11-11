@@ -102,7 +102,8 @@ services:
       NITRO_PORT: 3000
       NITRO_HOST: 0.0.0.0
       # Public URL for client-side (browser) - HTTPS required
-      NUXT_PUBLIC_API_URL: https://gachapulse.com/api
+      # Note: Don't add /api here, Tuyau adds it automatically
+      NUXT_PUBLIC_API_URL: https://gachapulse.com
       NUXT_PUBLIC_SITE_URL: https://gachapulse.com
     ports:
       - "3000:3000"
