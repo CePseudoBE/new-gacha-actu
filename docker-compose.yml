@@ -75,7 +75,7 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@gachapulse.com}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
     volumes:
-      - ./apps/api/uploads:/app/apps/api/uploads
+      - api_storage:/app/storage
     ports:
       - "3333:3333"
     networks:
@@ -157,6 +157,8 @@ volumes:
   certbot_data:
     driver: local
   certbot_conf:
+    driver: local
+  api_storage:
     driver: local
 
 networks:
