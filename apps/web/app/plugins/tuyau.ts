@@ -4,32 +4,33 @@ import { api } from 'api/.adonisjs/api'
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
 
+  // Capturer les headers SSR AU MOMENT de l'initialisation du plugin
+  let ssrCookie: string | undefined
+
+  if (process.server) {
+    try {
+      const headers = useRequestHeaders(['cookie'])
+      ssrCookie = headers.cookie
+      console.log('[Tuyau Plugin] SSR Cookie captured:', ssrCookie ? 'YES' : 'NO')
+    } catch (error) {
+      console.error('[Tuyau Plugin] Failed to capture SSR cookie:', error)
+    }
+  }
+
   const tuyau = createTuyau({
     api,
     baseUrl: config.public.apiUrl,
     hooks: {
       beforeRequest: [
         (request) => {
-          // SSR: Forward cookies from the original request
-          if (process.server) {
-            try {
-              // Utiliser useRequestHeaders() pour récupérer les cookies
-              const headers = useRequestHeaders(['cookie'])
-              
-              if (headers.cookie) {
-                request.headers.set('cookie', headers.cookie)
-                console.log('[Tuyau SSR] Cookie forwarded to API')
-              } else {
-                console.log('[Tuyau SSR] No cookie in request headers')
-              }
-            } catch (error) {
-              console.error('[Tuyau SSR] Error forwarding cookies:', error)
-            }
+          // SSR: Utiliser le cookie capturé lors de l'init
+          if (process.server && ssrCookie) {
+            request.headers.set('cookie', ssrCookie)
+            console.log('[Tuyau Hook] Cookie forwarded')
           }
         }
       ]
     },
-    // Credentials pour le client-side
     credentials: 'include',
   })
 
