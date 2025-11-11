@@ -34,7 +34,7 @@ export function useJsonLd() {
       },
       publisher: {
         '@type': 'Organization',
-        name: 'Anime Gacha Pulse',
+        name: 'Gacha Pulse',
         logo: {
           '@type': 'ImageObject',
           url: `${siteUrl}/logo.png`
@@ -83,7 +83,7 @@ export function useJsonLd() {
     return {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
-      name: 'Anime Gacha Pulse',
+      name: 'Gacha Pulse',
       url: siteUrl,
       description: 'L\'actualité des jeux Gacha par des passionnés',
       potentialAction: {

@@ -19,7 +19,7 @@ export const getNavigationConfig = async () => {
 
   return {
     logo: {
-      text: 'Anime Gacha Pulse',
+      text: 'Gacha Pulse',
       href: '/'
     },
     items: [
@@ -59,19 +59,19 @@ export const getNavigationConfig = async () => {
       {
         id: 'discord',
         name: 'Discord',
-        href: 'https://discord.gg/animegachapulse',
+        href: 'https://discord.gg/t2tFyNzVRv',
         ariaLabel: 'Rejoignez notre Discord'
       },
       {
         id: 'twitter',
         name: 'Twitter',
-        href: '#',
+        href: 'https://x.com/BLEACH_SR_FR',
         ariaLabel: 'Suivez-nous sur Twitter'
       },
       {
         id: 'youtube',
         name: 'YouTube',
-        href: '#',
+        href: 'https://www.youtube.com/channel/UCcQUMlxwLGXLt911wYBk51g',
         ariaLabel: 'Abonnez-vous à notre chaîne YouTube'
       }
     ]

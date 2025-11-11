@@ -155,6 +155,6 @@ const handleRegister = async () => {
 }
 
 useHead({
-  title: 'Inscription - Anime Gacha Pulse',
+  title: 'Inscription - Gacha Pulse',
 })
 </script>

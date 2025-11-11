@@ -1,5 +1,5 @@
 export const heroConfig = {
-  title: "Anime Gacha Pulse",
+  title: "Gacha Pulse",
   subtitle:
     "Par un fan, pour les fans. Plongez dans l'univers des jeux Gacha avec des guides experts, des tier lists à jour et toute l'actualité de vos jeux préférés.",
   buttons: [

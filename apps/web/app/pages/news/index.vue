@@ -35,6 +35,6 @@ const { data: articles = [] } = await useAsyncData('all-articles', async () => {
 })
 
 useHead({
-  title: 'Actualités - Anime Gacha Pulse'
+  title: 'Actualités - Gacha Pulse'
 })
 </script>

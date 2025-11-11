@@ -133,12 +133,12 @@ useSeoMeta({
   title: 'Guides',
   description:
     'Découvrez nos guides complets pour maîtriser tous vos jeux Gacha : builds, stratégies, tier lists et astuces par des experts.',
-  ogTitle: 'Guides - Anime Gacha Pulse',
+  ogTitle: 'Guides - Gacha Pulse',
   ogDescription: 'Guides experts pour tous les jeux Gacha',
   ogType: 'website',
 })
 
 useHead({
-  title: 'Guides - Anime Gacha Pulse',
+  title: 'Guides - Gacha Pulse',
 })
 </script>

@@ -1,8 +1,8 @@
 .PHONY: help build up down restart logs clean dev prod
 
 help:
-	@echo "GachaActu Docker Commands"
-	@echo "========================="
+	@echo "Gacha Pulse Docker Commands"
+	@echo "============================"
 	@echo "make build    - Build all Docker images"
 	@echo "make up       - Start all services"
 	@echo "make down     - Stop all services"

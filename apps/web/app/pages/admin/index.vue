@@ -182,6 +182,6 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Admin Dashboard - Anime Gacha Pulse',
+  title: 'Admin Dashboard - Gacha Pulse',
 })
 </script>

@@ -110,6 +110,6 @@ const handleLogin = async () => {
 }
 
 useHead({
-  title: 'Admin Login - Anime Gacha Pulse',
+  title: 'Admin Login - Gacha Pulse',
 })
 </script>

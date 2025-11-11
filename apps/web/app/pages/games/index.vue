@@ -60,6 +60,6 @@ const { data: games = [] } = await useAsyncData('all-games', async () => {
 })
 
 useHead({
-  title: 'Jeux - Anime Gacha Pulse'
+  title: 'Jeux - Gacha Pulse'
 })
 </script>

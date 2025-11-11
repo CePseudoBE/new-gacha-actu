@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "🚀 GachaActu - Setup Script"
-echo "============================"
+echo "🚀 Gacha Pulse - Setup Script"
+echo "=============================="
 echo ""
 
 # Couleurs

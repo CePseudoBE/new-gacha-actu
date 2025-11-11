@@ -135,7 +135,7 @@
           class="rounded-full text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
           as-child
         >
-          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.youtube.com/channel/UCcQUMlxwLGXLt911wYBk51g" target="_blank" rel="noopener noreferrer">
             <Youtube class="w-4 h-4 mr-2" />
             Voir plus sur YouTube
           </a>

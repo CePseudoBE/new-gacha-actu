@@ -15,8 +15,8 @@
       <div class="container mx-auto px-4">
         <div class="max-w-md mx-auto">
           <SocialSection
-            twitter-username="votrecompte"
-            discord-invite="https://discord.gg/animegachapulse"
+            twitter-username="BLEACH_SR_FR"
+            discord-invite="https://discord.gg/t2tFyNzVRv"
             custom-message="Rejoignez notre communauté de passionnés de jeux Gacha !"
           />
         </div>
@@ -52,12 +52,12 @@ const { data: youtubeVideos = [] } = await useAsyncData(
 useSeoMeta({
   title: 'Accueil',
   description: 'Découvrez les dernières actualités, guides experts et tier lists des meilleurs jeux Gacha : Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et plus encore !',
-  ogTitle: 'Anime Gacha Pulse - Toute l\'actualité des jeux Gacha',
+  ogTitle: 'Gacha Pulse - Toute l\'actualité des jeux Gacha',
   ogDescription: 'Derniers guides, tier lists et événements de l\'univers Gacha. Par des passionnés, pour les passionnés.',
   ogType: 'website',
   ogImage: '/og-image.jpg',
   twitterCard: 'summary_large_image',
-  twitterTitle: 'Anime Gacha Pulse - Toute l\'actualité des jeux Gacha',
+  twitterTitle: 'Gacha Pulse - Toute l\'actualité des jeux Gacha',
   twitterDescription: 'Derniers guides, tier lists et événements de l\'univers Gacha'
 })
 
@@ -69,13 +69,13 @@ useHead({
       children: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'WebSite',
-        name: 'Anime Gacha Pulse',
+        name: 'Gacha Pulse',
         url: 'https://animegachapulse.com',
-        description: 'Anime Gacha Pulse est LE site d\'actualités pour les fans de jeux Gacha. Guides experts, tier lists, événements et dernières news.',
+        description: 'Gacha Pulse est LE site d\'actualités pour les fans de jeux Gacha. Guides experts, tier lists, événements et dernières news.',
         inLanguage: 'fr-FR',
         publisher: {
           '@type': 'Organization',
-          name: 'Anime Gacha Pulse',
+          name: 'Gacha Pulse',
           logo: {
             '@type': 'ImageObject',
             url: 'https://animegachapulse.com/logo.png'

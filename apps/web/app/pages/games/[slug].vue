@@ -53,6 +53,6 @@ const { data: game } = await useAsyncData(`game-${route.params.slug}`, async () 
 const gameArticles = computed(() => game.value?.articles || [])
 
 useHead({
-  title: game.value ? `${game.value.name} - Anime Gacha Pulse` : 'Jeu non trouvé'
+  title: game.value ? `${game.value.name} - Gacha Pulse` : 'Jeu non trouvé'
 })
 </script>

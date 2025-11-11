@@ -153,6 +153,6 @@ onUnmounted(() => {
 })
 
 useHead({
-  title: 'Maintenance en cours - Anime Gacha Pulse',
+  title: 'Maintenance en cours - Gacha Pulse',
 })
 </script>

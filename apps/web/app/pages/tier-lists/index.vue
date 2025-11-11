@@ -82,6 +82,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 
 useHead({
-  title: 'Tier Lists - Anime Gacha Pulse'
+  title: 'Tier Lists - Gacha Pulse'
 })
 </script>

@@ -9,7 +9,7 @@
             <span
               class="font-bold text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
             >
-              GachaActu
+              Gacha Pulse
             </span>
           </div>
           <p class="text-sm text-muted-foreground">
@@ -130,7 +130,7 @@
             <h4 class="font-medium mb-3">Communauté</h4>
             <div class="flex items-center gap-3">
               <NuxtLink
-                to="https://discord.gg/ton-discord"
+                to="https://discord.gg/t2tFyNzVRv"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-muted-foreground hover:text-foreground transition-colors"
@@ -139,14 +139,18 @@
                 <IconDiscord class="h-5 w-5" />
               </NuxtLink>
               <NuxtLink
-                to="#"
+                to="https://x.com/BLEACH_SR_FR"
+                target="_blank"
+                rel="noopener noreferrer"
                 class="text-muted-foreground hover:text-foreground transition-colors"
                 title="Twitter"
               >
                 <IconTwitter class="h-5 w-5" />
               </NuxtLink>
               <NuxtLink
-                to="#"
+                to="https://www.youtube.com/channel/UCcQUMlxwLGXLt911wYBk51g"
+                target="_blank"
+                rel="noopener noreferrer"
                 class="text-muted-foreground hover:text-foreground transition-colors"
                 title="YouTube"
               >
@@ -159,7 +163,7 @@
 
       <!-- Copyright -->
       <div class="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-        <p>© 2025 GachaActu. Tous droits réservés. Fait avec passion pour la communauté Gacha.</p>
+        <p>© 2025 Gacha Pulse. Tous droits réservés. Fait avec passion pour la communauté Gacha.</p>
       </div>
     </div>
   </footer>

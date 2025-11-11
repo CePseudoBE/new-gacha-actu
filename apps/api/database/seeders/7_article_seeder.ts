@@ -20,7 +20,7 @@ export default class extends BaseSeeder {
         title: 'Tier List Genshin Impact : Les Meilleurs Personnages de 2025',
         summary:
           'Découvrez le classement complet des personnages de Genshin Impact mis à jour pour 2025. Analysez les meta picks et optimisez votre équipe.',
-        author: 'Équipe Anime Gacha Pulse',
+        author: 'Équipe Gacha Pulse',
         publishedAt: DateTime.fromISO('2025-01-15'),
         content: `# Introduction
 
