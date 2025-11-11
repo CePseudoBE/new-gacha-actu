@@ -56,10 +56,12 @@ export default class GameRepository {
       })
     }
 
-    query.orderBy([
-      { column: 'is_popular', order: 'desc' },
-      { column: 'name', order: 'asc' },
-    ])
+    query
+      .preload('image')
+      .orderBy([
+        { column: 'is_popular', order: 'desc' },
+        { column: 'name', order: 'asc' },
+      ])
 
     return query.paginate(page, perPage)
   }
@@ -95,6 +97,7 @@ export default class GameRepository {
   async findBySlug(slug: string): Promise<Game | null> {
     return Game.query()
       .where('slug', slug)
+      .preload('image')
       .preload('genres')
       .preload('platforms')
       .preload('tags')
@@ -202,6 +205,7 @@ export default class GameRepository {
   async findPopular(limit: number = 10): Promise<Game[]> {
     return Game.query()
       .where('isPopular', true)
+      .preload('image')
       .preload('genres')
       .preload('platforms')
       .orderBy('name', 'asc')

@@ -241,7 +241,10 @@
           </FormDescription>
         </div>
         <FormControl>
-          <Switch :checked="value" @update:checked="handleChange" />
+          <Switch
+            :checked="!!value"
+            @update:checked="(checked) => handleChange(checked)"
+          />
         </FormControl>
       </FormItem>
     </FormField>

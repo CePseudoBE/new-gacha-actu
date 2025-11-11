@@ -89,6 +89,9 @@ export const useGameForm = (initialValues?: Partial<GameFormValues>) => {
         payload[key].forEach((item: any) => {
           formData.append(`${key}[]`, item.toString())
         })
+      } else if (typeof payload[key] === 'boolean') {
+        // Pour les booleans, envoyer "1" ou "0" pour que le backend convertisse correctement
+        formData.append(key, payload[key] ? '1' : '0')
       } else {
         formData.append(key, payload[key].toString())
       }
