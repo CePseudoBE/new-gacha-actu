@@ -1,7 +1,8 @@
 import { createTuyau } from '@tuyau/client'
 import { api } from 'api/.adonisjs/api'
+import type { H3Event } from 'h3'
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
 
   const tuyau = createTuyau({
@@ -12,15 +13,15 @@ export default defineNuxtPlugin(() => {
 
       if (process.server) {
         try {
-          const event = useRequestEvent()
-          const cookieHeader = event?.node.req.headers.cookie
+          // Récupérer l'event depuis le contexte Nuxt (ssrContext)
+          const event = nuxtApp.ssrContext?.event as H3Event | undefined
 
-          console.log('[Tuyau SSR] Request URL:', url)
-          console.log('[Tuyau SSR] Cookie from request:', cookieHeader ? 'Present' : 'Missing')
-
-          if (cookieHeader) {
+          if (event?.node?.req?.headers?.cookie) {
+            const cookieHeader = event.node.req.headers.cookie
             headers['cookie'] = cookieHeader
-            console.log('[Tuyau SSR] Cookie forwarded to API')
+            console.log('[Tuyau SSR] Cookie forwarded to:', url)
+          } else {
+            console.log('[Tuyau SSR] No cookie found for:', url)
           }
         } catch (error) {
           console.error('[Tuyau SSR] Error forwarding cookies:', error)
