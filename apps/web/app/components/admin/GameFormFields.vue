@@ -242,8 +242,8 @@
         </div>
         <FormControl>
           <Switch
-            :checked="!!value"
-            @update:checked="(checked) => handleChange(checked)"
+            :model-value="!!value"
+            @update:model-value="handleChange"
           />
         </FormControl>
       </FormItem>
