@@ -331,23 +331,23 @@ const handleDialogSubmit = async () => {
 
   const apiCalls: Record<string, { call: () => Promise<any>; refresh: () => Promise<any> }> = {
     genre: {
-      call: () => api.api.admin.genres.$post({ body }),
+      call: () => api.api.admin.genres.$post(body),
       refresh: refreshGenres,
     },
     platform: {
-      call: () => api.api.admin.platforms.$post({ body }),
+      call: () => api.api.admin.platforms.$post(body),
       refresh: refreshPlatforms,
     },
     tag: {
-      call: () => api.api.admin.tags.$post({ body }),
+      call: () => api.api.admin.tags.$post(body),
       refresh: refreshTags,
     },
     'guide-type': {
-      call: () => api.api.admin['guide-types'].$post({ body }),
+      call: () => api.api.admin['guide-types'].$post(body),
       refresh: refreshGuideTypes,
     },
     difficulty: {
-      call: () => api.api.admin['difficulty-levels'].$post({ body }),
+      call: () => api.api.admin['difficulty-levels'].$post(body),
       refresh: refreshDifficultyLevels,
     },
   }

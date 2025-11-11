@@ -64,6 +64,10 @@ COPY --from=builder --chown=adonisjs:adonisjs /app/apps/api/build ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
     pnpm install --prod
 
+# Create storage directory with proper permissions
+RUN mkdir -p storage/images && \
+    chown -R adonisjs:adonisjs storage
+
 # Switch to non-root user
 USER adonisjs
 

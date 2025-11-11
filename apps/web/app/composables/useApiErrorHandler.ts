@@ -8,12 +8,16 @@ interface TuyauErrorResponse {
   error?: {
     value?: {
       message?: string
+      error?: string
       errors?: ValidationError[]
+      messages?: ValidationError[]
     }
   }
   data?: {
     message?: string
+    error?: string
     errors?: ValidationError[]
+    messages?: ValidationError[]
   }
   status?: number
   message?: string
@@ -42,15 +46,18 @@ export const useApiErrorHandler = () => {
     const errorData = errorResponse?.error?.value || errorResponse?.data
 
     // Erreurs de validation (tableau d'erreurs)
-    if (errorData?.errors && Array.isArray(errorData.errors)) {
-      errorData.errors.forEach((err: ValidationError) => {
+    // VineJS utilise 'messages' pour les erreurs de validation 422
+    const validationErrors = errorData?.messages || errorData?.errors
+    if (validationErrors && Array.isArray(validationErrors) && validationErrors.length > 0) {
+      validationErrors.forEach((err: ValidationError) => {
         toast.error(err.message || 'Erreur de validation')
       })
       return
     }
 
     // Erreur simple avec message
-    const message = errorData?.message || (error as Error)?.message || defaultMessage
+    // L'API utilise 'error' pour les messages d'erreur simples (400, 404, 409, 500)
+    const message = errorData?.error || errorData?.message || (error as Error)?.message || defaultMessage
     toast.error(message)
   }
 

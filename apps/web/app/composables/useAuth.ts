@@ -54,14 +54,28 @@ export const useAuth = () => {
         return { success: true }
       }
 
+      // Extraire le message d'erreur (l'API utilise 'error' pour les messages simples)
+      const errorMessage =
+        response?.data?.error ||
+        response?.data?.message ||
+        'Échec de la connexion'
+
       return {
         success: false,
-        error: (response?.data?.message as string) || 'Échec de la connexion'
+        error: errorMessage
       }
     } catch (error: any) {
+      // Extraire l'erreur depuis différentes sources Tuyau
+      const errorData = error?.error?.value || error?.data
+      const errorMessage =
+        errorData?.error ||
+        errorData?.message ||
+        error?.message ||
+        'Une erreur est survenue lors de la connexion'
+
       return {
         success: false,
-        error: error?.data?.message || error?.message || 'Une erreur est survenue lors de la connexion'
+        error: errorMessage
       }
     }
   }
@@ -78,14 +92,26 @@ export const useAuth = () => {
         return { success: true }
       }
 
+      const errorMessage =
+        response?.data?.error ||
+        response?.data?.message ||
+        'Échec de l\'inscription'
+
       return {
         success: false,
-        error: (response?.data?.message as string) || 'Échec de l\'inscription'
+        error: errorMessage
       }
     } catch (error: any) {
+      const errorData = error?.error?.value || error?.data
+      const errorMessage =
+        errorData?.error ||
+        errorData?.message ||
+        error?.message ||
+        'Une erreur est survenue lors de l\'inscription'
+
       return {
         success: false,
-        error: error?.data?.message || error?.message || 'Une erreur est survenue lors de l\'inscription'
+        error: errorMessage
       }
     }
   }
@@ -118,14 +144,26 @@ export const useAuth = () => {
         return { success: true }
       }
 
+      const errorMessage =
+        response?.data?.error ||
+        response?.data?.message ||
+        'Échec du changement de mot de passe'
+
       return {
         success: false,
-        error: (response?.data?.message as string) || 'Échec du changement de mot de passe'
+        error: errorMessage
       }
     } catch (error: any) {
+      const errorData = error?.error?.value || error?.data
+      const errorMessage =
+        errorData?.error ||
+        errorData?.message ||
+        error?.message ||
+        'Une erreur est survenue lors du changement de mot de passe'
+
       return {
         success: false,
-        error: error?.data?.message || error?.message || 'Une erreur est survenue lors du changement de mot de passe'
+        error: errorMessage
       }
     }
   }
