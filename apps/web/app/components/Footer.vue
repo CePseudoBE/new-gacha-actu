@@ -58,48 +58,19 @@
         <!-- Jeux populaires -->
         <div>
           <h3 class="font-semibold mb-4">Jeux populaires</h3>
-          <ul class="space-y-2 text-sm">
-            <li>
+          <ul v-if="popularGames && popularGames.length > 0" class="space-y-2 text-sm">
+            <li v-for="game in popularGames" :key="game.slug">
               <NuxtLink
-                to="/games/genshin-impact"
+                :to="`/games/${game.slug}`"
                 class="text-muted-foreground hover:text-foreground transition-colors"
               >
-                Genshin Impact
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink
-                to="/games/honkai-star-rail"
-                class="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Honkai Star Rail
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink
-                to="/games/bleach-soul-resonance"
-                class="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Bleach Soul Resonance
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink
-                to="/games/seven-deadly-sins-origins"
-                class="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Seven Deadly Sins Origins
-              </NuxtLink>
-            </li>
-            <li>
-              <NuxtLink
-                to="/games/fire-emblem-heroes"
-                class="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Fire Emblem Heroes
+                {{ game.name }}
               </NuxtLink>
             </li>
           </ul>
+          <div v-else class="text-sm text-muted-foreground">
+            Chargement des jeux...
+          </div>
         </div>
 
         <!-- Partenaires & Communauté -->
@@ -173,4 +144,42 @@
 import { Gamepad as IconGamepad, Heart as IconHeart, Youtube as IconYoutube } from 'lucide-vue-next'
 import IconDiscord from '@/components/icons/IconDiscord.vue'
 import IconTwitter from '@/components/icons/IconTwitter.vue'
+
+interface Game {
+  id: number
+  name: string
+  slug: string
+}
+
+const config = useRuntimeConfig()
+
+// Fetch popular games from API (cached and deduplicated)
+const { data: popularGames } = await useAsyncData(
+  'footer-popular-games',
+  async () => {
+    try {
+      const response = await $fetch<any>(`${config.public.apiUrl}/api/games/popular?limit=5`)
+      return response.data || []
+    } catch (error) {
+      console.error('Failed to fetch popular games for footer:', error)
+      return []
+    }
+  },
+  {
+    // Garde en cache et déduplique les requêtes
+    dedupe: 'defer',
+    // Cache pendant 5 minutes
+    getCachedData: (key) => {
+      const data = useNuxtData(key)
+      if (!data.data.value) return
+
+      const expirationDate = new Date(data._fetchedAt || 0)
+      expirationDate.setTime(expirationDate.getTime() + 5 * 60 * 1000) // 5 minutes
+      const isExpired = expirationDate.getTime() < Date.now()
+
+      if (isExpired) return
+      return data.data.value
+    }
+  }
+)
 </script>
