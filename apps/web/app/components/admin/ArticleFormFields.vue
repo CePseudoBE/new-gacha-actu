@@ -352,13 +352,15 @@ const emit = defineEmits<{
   (e: 'openImageGallery'): void
 }>()
 
-const contentTextarea = ref<HTMLTextAreaElement>()
+const contentTextarea = ref<InstanceType<typeof Textarea>>()
 
 const openImageGallery = () => {
   emit('openImageGallery')
 }
 
 defineExpose({
-  contentTextarea
+  get contentTextarea() {
+    return contentTextarea.value?.textareaRef
+  }
 })
 </script>

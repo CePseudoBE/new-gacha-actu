@@ -1,5 +1,5 @@
 import { marked } from 'marked'
-import DOMPurify from 'dompurify'
+import DOMPurify from 'isomorphic-dompurify'
 
 /**
  * Composable pour rendre le Markdown avec configuration SEO-friendly

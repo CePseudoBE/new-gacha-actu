@@ -116,13 +116,13 @@ export const useArticleImageGallery = (articleId: Ref<number | undefined>) => {
   }
 
   // Insert markdown syntax at cursor position
-  const insertImageAtCursor = (textarea: HTMLTextAreaElement) => {
-    if (!selectedImage.value) return
+  const insertImageAtCursor = (textarea: HTMLTextAreaElement | undefined) => {
+    if (!selectedImage.value || !textarea) return
 
     const markdownSyntax = `![${altText.value || 'Image'}](${selectedImage.value.url})`
-    const start = textarea.selectionStart
-    const end = textarea.selectionEnd
-    const text = textarea.value
+    const start = textarea.selectionStart || 0
+    const end = textarea.selectionEnd || 0
+    const text = textarea.value || ''
     const before = text.substring(0, start)
     const after = text.substring(end, text.length)
 

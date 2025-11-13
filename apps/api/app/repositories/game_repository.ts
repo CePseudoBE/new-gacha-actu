@@ -74,10 +74,21 @@ export default class GameRepository {
       .preload('platforms')
       .preload('tags')
       .preload('articles', (articleQuery) => {
-        articleQuery.orderBy('publishedAt', 'desc').limit(5)
+        articleQuery
+          .preload('image')
+          .preload('game')
+          .preload('category')
+          .orderBy('publishedAt', 'desc')
+          .limit(5)
       })
       .preload('guides', (guideQuery) => {
-        guideQuery.orderBy('publishedAt', 'desc').limit(5)
+        guideQuery
+          .preload('image')
+          .preload('game')
+          .preload('guideType')
+          .preload('difficulty')
+          .orderBy('publishedAt', 'desc')
+          .limit(5)
       })
       .first()
   }
@@ -102,10 +113,21 @@ export default class GameRepository {
       .preload('platforms')
       .preload('tags')
       .preload('articles', (articleQuery) => {
-        articleQuery.orderBy('publishedAt', 'desc').limit(10)
+        articleQuery
+          .preload('image')
+          .preload('game')
+          .preload('category')
+          .orderBy('publishedAt', 'desc')
+          .limit(10)
       })
       .preload('guides', (guideQuery) => {
-        guideQuery.orderBy('publishedAt', 'desc').limit(10)
+        guideQuery
+          .preload('image')
+          .preload('game')
+          .preload('guideType')
+          .preload('difficulty')
+          .orderBy('publishedAt', 'desc')
+          .limit(10)
       })
       .first()
   }
