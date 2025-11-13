@@ -7,15 +7,18 @@
   >
     <form @submit="onSubmit" class="space-y-6">
       <ArticleFormFields
+        ref="formFieldsRef"
         :games="games || []"
         :categories="categories || []"
         :tags="tags || []"
         :seo-keywords="seoKeywords || []"
         :current-image-url="currentImageUrl"
         :image-to-delete="imageToDelete"
+        :article-id="articleId"
         @quick-add="openQuickAdd"
         @image-change="handleImageChange"
         @delete-image="handleDeleteImage"
+        @open-image-gallery="imageGalleryOpen = true"
       />
 
       <FormActions
@@ -38,6 +41,12 @@
         description="Êtes-vous sûr de vouloir supprimer cette image ? Cette action est irréversible."
         @confirm="confirmDeleteImage"
       />
+
+      <ImageGalleryModal
+        v-model:open="imageGalleryOpen"
+        :article-id="articleId"
+        :textarea-ref="formFieldsRef?.contentTextarea"
+      />
     </template>
   </AdminFormLayout>
 </template>
@@ -49,6 +58,7 @@ import FormActions from '@/components/admin/FormActions.vue'
 import ArticleFormFields from '@/components/admin/ArticleFormFields.vue'
 import QuickAddDialog from '@/components/admin/QuickAddDialog.vue'
 import DeleteDialog from '@/components/admin/DeleteDialog.vue'
+import ImageGalleryModal from '@/components/admin/ImageGalleryModal.vue'
 import { useArticleForm } from '@/composables/useArticleForm'
 import { useArticleFormData } from '@/composables/useArticleFormData'
 import { useQuickAdd } from '@/composables/useQuickAdd'
@@ -63,6 +73,10 @@ definePageMeta({
 const route = useRoute()
 const api = useApi()
 const articleId = Number(route.params.id)
+
+// Image Gallery Modal
+const imageGalleryOpen = ref(false)
+const formFieldsRef = ref<InstanceType<typeof ArticleFormFields>>()
 
 // Fetch article data
 const { data: article } = await useAsyncData(`article-${articleId}`, async () => {

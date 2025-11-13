@@ -29,7 +29,19 @@
     <!-- Content with Preview -->
     <FormField v-slot="{ componentField }" name="content">
       <FormItem>
-        <FormLabel>Contenu (Markdown) *</FormLabel>
+        <div class="flex items-center justify-between mb-2">
+          <FormLabel>Contenu (Markdown) *</FormLabel>
+          <Button
+            v-if="articleId"
+            type="button"
+            variant="outline"
+            size="sm"
+            @click="openImageGallery"
+          >
+            <ImageIcon class="w-4 h-4 mr-2" />
+            Insérer une image
+          </Button>
+        </div>
         <FormControl>
           <Tabs default-value="edit" class="w-full">
             <TabsList class="grid w-full grid-cols-2">
@@ -38,6 +50,7 @@
             </TabsList>
             <TabsContent value="edit" class="mt-3">
               <Textarea
+                ref="contentTextarea"
                 placeholder="Contenu de l'article en Markdown..."
                 rows="20"
                 class="font-mono text-sm"
@@ -300,7 +313,7 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, X } from 'lucide-vue-next'
+import { Plus, X, Image as ImageIcon } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import {
   FormControl,
@@ -327,13 +340,25 @@ interface Props {
   seoKeywords: any[]
   currentImageUrl?: string
   imageToDelete?: boolean
+  articleId?: number
 }
 
 defineProps<Props>()
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'quickAdd', type: 'tag' | 'seo-keyword' | 'category'): void
   (e: 'imageChange', event: Event): void
   (e: 'deleteImage'): void
+  (e: 'openImageGallery'): void
 }>()
+
+const contentTextarea = ref<HTMLTextAreaElement>()
+
+const openImageGallery = () => {
+  emit('openImageGallery')
+}
+
+defineExpose({
+  contentTextarea
+})
 </script>
