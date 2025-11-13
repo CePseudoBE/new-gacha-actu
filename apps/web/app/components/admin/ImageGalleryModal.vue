@@ -67,7 +67,7 @@
               accept="image/jpeg,image/png,image/webp,image/jpg"
               @change="handleFileChange"
             />
-            <div class="text-center p-4" @click="$refs.fileInput?.click()">
+            <div class="text-center p-4" @click="fileInput?.click()">
               <Loader2 v-if="isUploading" class="mx-auto mb-2 w-8 h-8 animate-spin text-primary" />
               <Plus v-else class="mx-auto mb-2 w-8 h-8 text-muted-foreground" />
               <p class="text-sm text-muted-foreground">
