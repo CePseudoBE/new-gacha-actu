@@ -1,5 +1,5 @@
 import { marked } from 'marked'
-import DOMPurify from 'isomorphic-dompurify'
+import sanitizeHtml from 'sanitize-html'
 
 /**
  * Composable pour rendre le Markdown avec configuration SEO-friendly
@@ -9,7 +9,8 @@ import DOMPurify from 'isomorphic-dompurify'
  * - ### devient <h4>
  * etc.
  *
- * ⚠️ Sécurité : Sanitize le HTML avec DOMPurify pour éviter les attaques XSS
+ * ⚠️ Sécurité : Sanitize le HTML avec sanitize-html pour éviter les attaques XSS
+ * Même si le contenu vient d'admins, c'est une bonne pratique de défense en profondeur
  */
 export function useMarkdown() {
   // Configure marked renderer to shift heading levels
@@ -30,8 +31,7 @@ export function useMarkdown() {
   })
 
   /**
-   * Parse markdown content to HTML with heading level shift
-   * ⚠️ Sanitize le HTML généré pour prévenir les attaques XSS
+   * Parse markdown content to HTML with heading level shift and XSS protection
    */
   const parseMarkdown = (content: string): string => {
     if (!content) return ''
@@ -39,17 +39,39 @@ export function useMarkdown() {
     // 1. Parse markdown to HTML
     const rawHtml = marked.parse(content) as string
 
-    // 2. Sanitize HTML with DOMPurify (protection XSS)
-    const cleanHtml = DOMPurify.sanitize(rawHtml, {
-      ALLOWED_TAGS: [
+    // 2. Sanitize HTML to prevent XSS attacks
+    const cleanHtml = sanitizeHtml(rawHtml, {
+      allowedTags: [
         'h2', 'h3', 'h4', 'h5', 'h6',
         'p', 'br', 'strong', 'em', 'u', 's', 'code', 'pre',
         'a', 'ul', 'ol', 'li', 'blockquote', 'hr',
         'table', 'thead', 'tbody', 'tr', 'th', 'td',
-        'img', 'figure', 'figcaption'
+        'img', 'figure', 'figcaption', 'div', 'span'
       ],
-      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id'],
-      ALLOW_DATA_ATTR: false
+      // Prevent XSS via base tag and other dangerous tags (CVE-2025-54075)
+      disallowedTagsMode: 'discard',
+      allowedAttributes: {
+        'a': ['href', 'title', 'target', 'rel'],
+        'img': ['src', 'alt', 'title', 'width', 'height'],
+        '*': ['class', 'id']
+      },
+      allowedSchemes: ['http', 'https', 'mailto'],
+      allowedSchemesByTag: {
+        img: ['http', 'https', 'data']
+      },
+      // Additional security: enforce rel=noopener for external links
+      transformTags: {
+        'a': (tagName, attribs) => {
+          return {
+            tagName: 'a',
+            attribs: {
+              ...attribs,
+              rel: 'noopener noreferrer',
+              target: attribs.href?.startsWith('http') ? '_blank' : undefined
+            }
+          }
+        }
+      }
     })
 
     return cleanHtml
