@@ -61,10 +61,17 @@
               </FormDescription>
             </TabsContent>
             <TabsContent value="preview" class="mt-3">
-              <div class="prose prose-sm prose-invert max-w-none p-4 border rounded-md min-h-[300px] bg-muted/30 [&>div>*:first-child]:mt-0">
-                <div v-if="componentField.modelValue" v-html="parseMarkdown(componentField.modelValue)"></div>
-                <p v-else class="text-muted-foreground">Aucun contenu à prévisualiser</p>
-              </div>
+              <ClientOnly>
+                <div class="prose prose-sm prose-invert max-w-none p-4 border rounded-md min-h-[300px] bg-muted/30 [&>div>*:first-child]:mt-0">
+                  <div v-if="componentField.modelValue" v-html="parseMarkdown(componentField.modelValue)"></div>
+                  <p v-else class="text-muted-foreground">Aucun contenu à prévisualiser</p>
+                </div>
+                <template #fallback>
+                  <div class="prose prose-sm prose-invert max-w-none p-4 border rounded-md min-h-[300px] bg-muted/30 flex items-center justify-center">
+                    <p class="text-muted-foreground">Chargement de la prévisualisation...</p>
+                  </div>
+                </template>
+              </ClientOnly>
             </TabsContent>
           </Tabs>
         </FormControl>

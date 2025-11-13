@@ -93,6 +93,10 @@ export default defineNuxtConfig({
   },
 
   image: {
+    // Désactiver optimisations d'images en dev si trop lent
+    ...(process.env.NODE_ENV === 'development' && {
+      provider: 'none'
+    }),
     domains: ['images.unsplash.com', 'img.youtube.com']
   },
 
@@ -104,23 +108,6 @@ export default defineNuxtConfig({
     },
     minify: true,
     sourceMap: false // Désactiver source maps en prod pour accélérer
-  },
-
-  // Optimiser les modules (désactiver en dev si nécessaire)
-  image: {
-    // Désactiver optimisations d'images en dev si trop lent
-    ...(process.env.NODE_ENV === 'development' && {
-      provider: 'none'
-    }),
-    domains: ['images.unsplash.com', 'img.youtube.com']
-  },
-
-  // Optimisations de performance
-  router: {
-    options: {
-      // Précharger les liens pour une navigation plus rapide
-      linkPrefetchedClass: 'nuxt-link-prefetched'
-    }
   },
 
   experimental: {

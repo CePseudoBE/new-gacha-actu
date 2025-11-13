@@ -133,11 +133,22 @@ export const useArticleImageGallery = (articleId: Ref<number | undefined>) => {
     const newCursorPos = start + markdownSyntax.length
     textarea.setSelectionRange(newCursorPos, newCursorPos)
 
-    // Trigger input event to update v-model
-    textarea.dispatchEvent(new Event('input', { bubbles: true }))
+    // Trigger input event to update v-model (use InputEvent for better compatibility)
+    const inputEvent = new InputEvent('input', {
+      bubbles: true,
+      cancelable: true,
+      inputType: 'insertText',
+      data: markdownSyntax
+    })
+    textarea.dispatchEvent(inputEvent)
+
+    // Also trigger change event for vee-validate
+    textarea.dispatchEvent(new Event('change', { bubbles: true }))
 
     // Focus back on textarea
-    textarea.focus()
+    nextTick(() => {
+      textarea.focus()
+    })
 
     return markdownSyntax
   }
