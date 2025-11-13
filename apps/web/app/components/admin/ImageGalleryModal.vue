@@ -34,7 +34,7 @@
             }"
             @click="selectImage(image.id)"
           >
-            <NuxtImg :src="image.url" :alt="image.altText || 'Image'" class="w-full aspect-square object-cover" />
+            <img :src="image.url" :alt="image.altText || 'Image'" class="w-full aspect-square object-cover" />
 
             <!-- Selected Checkmark -->
             <div
@@ -85,7 +85,7 @@
         <div v-if="selectedImage" class="mt-6 p-4 border rounded-lg space-y-4">
           <div>
             <Label class="text-sm font-medium mb-2 block">Aperçu</Label>
-            <NuxtImg
+            <img
               :src="selectedImage.url"
               :alt="altText || 'Image'"
               class="w-48 h-48 object-cover rounded-lg border"
