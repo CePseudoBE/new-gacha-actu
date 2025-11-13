@@ -14,13 +14,16 @@
           <Skeleton v-for="i in 8" :key="i" class="aspect-square" />
         </div>
 
-        <div v-else-if="images.length === 0 && !isUploading" class="text-center py-12">
-          <ImageIcon class="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <p class="text-muted-foreground mb-2">Aucune image dans la galerie</p>
-          <p class="text-sm text-muted-foreground">Uploadez votre première image</p>
-        </div>
+        <div v-else class="space-y-4">
+          <!-- Empty state message (only when no images) -->
+          <div v-if="images.length === 0 && !isUploading" class="text-center py-8">
+            <ImageIcon class="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <p class="text-muted-foreground mb-2">Aucune image dans la galerie</p>
+            <p class="text-sm text-muted-foreground">Uploadez votre première image ci-dessous</p>
+          </div>
 
-        <div v-else class="grid grid-cols-4 gap-4 mb-4">
+          <!-- Images grid -->
+          <div v-if="images.length > 0" class="grid grid-cols-4 gap-4 mb-4">
           <div
             v-for="image in images"
             :key="image.id"
@@ -54,10 +57,11 @@
               </Button>
             </div>
           </div>
+          </div>
 
-          <!-- Upload Card -->
+          <!-- Upload Card (always visible) -->
           <div
-            class="border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer hover:border-primary transition-colors aspect-square"
+            class="border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer hover:border-primary transition-colors aspect-square max-w-xs mx-auto"
             :class="{ 'opacity-50 pointer-events-none': isUploading }"
           >
             <input
@@ -71,7 +75,7 @@
               <Loader2 v-if="isUploading" class="mx-auto mb-2 w-8 h-8 animate-spin text-primary" />
               <Plus v-else class="mx-auto mb-2 w-8 h-8 text-muted-foreground" />
               <p class="text-sm text-muted-foreground">
-                {{ isUploading ? 'Upload...' : 'Upload' }}
+                {{ isUploading ? 'Upload en cours...' : 'Cliquez pour uploader' }}
               </p>
             </div>
           </div>
