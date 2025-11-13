@@ -91,4 +91,13 @@ export default class Article extends BaseModel {
     pivotRelatedForeignKey: 'keyword_id',
   })
   declare seoKeywords: ManyToMany<typeof SeoKeyword>
+
+  @manyToMany(() => Image, {
+    pivotTable: 'article_images',
+    localKey: 'id',
+    pivotForeignKey: 'article_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'image_id',
+  })
+  declare galleryImages: ManyToMany<typeof Image>
 }

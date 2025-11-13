@@ -35,6 +35,7 @@ const GuideTypesController = () => import('#controllers/guide_types_controller')
 const GuidesController = () => import('#controllers/guides_controller')
 const ArticleCategoriesController = () => import('#controllers/article_categories_controller')
 const ArticlesController = () => import('#controllers/articles_controller')
+const ArticleImagesController = () => import('#controllers/article_images_controller')
 const ImagesController = () => import('#controllers/images_controller')
 const GuideSectionsController = () => import('#controllers/guide_sections_controller')
 const MaintenanceSettingsController = () => import('#controllers/maintenance_settings_controller')
@@ -299,6 +300,15 @@ router
         router.post('/', [ArticlesController, 'store'])
         router.put('/:id', [ArticlesController, 'update'])
         router.delete('/:id', [ArticlesController, 'destroy'])
+      })
+      .prefix('articles')
+
+    // Article Images (gallery)
+    router
+      .group(() => {
+        router.get('/:articleId/images', [ArticleImagesController, 'index'])
+        router.post('/:articleId/images', [ArticleImagesController, 'store'])
+        router.delete('/:articleId/images/:imageId', [ArticleImagesController, 'destroy'])
       })
       .prefix('articles')
 
