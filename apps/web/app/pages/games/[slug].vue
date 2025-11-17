@@ -1,5 +1,7 @@
 <template>
   <div v-if="game" class="container mx-auto px-4 py-12">
+    <Breadcrumb :items="breadcrumbItems" />
+
     <div class="mb-8">
       <h1 class="text-4xl font-bold mb-4">{{ game.name }}</h1>
       <p class="text-lg text-muted-foreground">{{ game.description }}</p>
@@ -32,6 +34,7 @@
 
 <script setup lang="ts">
 import ArticleCard from '@/components/ArticleCard.vue'
+import Breadcrumb from '@/components/Breadcrumb.vue'
 import { useDate } from '@/composables/useDate'
 
 const route = useRoute()
@@ -51,6 +54,51 @@ const { data: game } = await useAsyncData(`game-${route.params.slug}`, async () 
 
 // Use articles already preloaded from the game
 const gameArticles = computed(() => game.value?.articles || [])
+
+// Breadcrumb
+const breadcrumbItems = computed(() => [
+  { label: 'Accueil', href: '/' },
+  { label: 'Jeux', href: '/games' },
+  { label: game.value?.name || 'Jeu' }
+])
+
+// SEO Meta tags
+useSeoMeta({
+  title: game.value?.name || 'Jeu non trouvé',
+  description: game.value?.metaDescription || game.value?.description || `Découvrez tous les guides, actualités et tier lists pour ${game.value?.name}. News, événements, builds et stratégies pour maîtriser ce jeu gacha.`,
+  ogTitle: `${game.value?.name} - Guides & Actualités | Gacha Pulse`,
+  ogDescription: game.value?.metaDescription || game.value?.description,
+  ogImage: game.value?.image?.url || '/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: `${game.value?.name} - Guides & Actualités`,
+  twitterDescription: game.value?.metaDescription || game.value?.description,
+  twitterImage: game.value?.image?.url || '/og-image.jpg',
+})
+
+// Structured Data (JSON-LD)
+if (game.value) {
+  useHead({
+    script: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'VideoGame',
+          name: game.value.name,
+          description: game.value.description,
+          image: game.value.image?.url,
+          genre: game.value.genres?.map((g: any) => g.name).join(', '),
+          gamePlatform: game.value.platforms?.map((p: any) => p.name),
+          publisher: {
+            '@type': 'Organization',
+            name: 'Gacha Pulse'
+          }
+        })
+      }
+    ]
+  })
+}
 
 useHead({
   title: game.value ? `${game.value.name} - Gacha Pulse` : 'Jeu non trouvé'

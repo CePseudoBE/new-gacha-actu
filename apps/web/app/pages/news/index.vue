@@ -34,7 +34,39 @@ const { data: articles = [] } = await useAsyncData('all-articles', async () => {
   return response.data?.data || []
 })
 
+// SEO
+useSeoMeta({
+  title: 'Actualités Jeux Gacha - News & Événements',
+  description: 'Toutes les actualités des jeux gacha : nouveaux personnages, événements, bannières, mises à jour et news exclusives sur Genshin Impact, Honkai Star Rail et plus.',
+  ogTitle: 'Actualités & News Jeux Gacha | Gacha Pulse',
+  ogDescription: 'Dernières news, événements et mises à jour des jeux gacha',
+  ogImage: '/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+})
+
+// Structured Data
 useHead({
-  title: 'Actualités - Gacha Pulse'
+  title: 'Actualités - Gacha Pulse',
+  script: [
+    {
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Actualités Jeux Gacha',
+        description: 'Toutes les dernières actualités et news des jeux gacha',
+        url: 'https://gachapulse.com/news',
+        publisher: {
+          '@type': 'Organization',
+          name: 'Gacha Pulse',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://gachapulse.com/logo.png'
+          }
+        }
+      })
+    }
+  ]
 })
 </script>

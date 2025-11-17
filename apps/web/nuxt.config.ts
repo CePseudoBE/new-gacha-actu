@@ -8,9 +8,9 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:3333',
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://gachapulse.com'
-    }
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || "http://localhost:3333",
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || "https://gachapulse.com",
+    },
   },
 
   vite: {
@@ -31,94 +31,131 @@ export default defineNuxtConfig({
 
   components: [
     {
-      path: '~/components',
+      path: "~/components",
       pathPrefix: false,
     },
     {
-      path: '~/components/ui',
-      extensions: ['.vue'],
+      path: "~/components/ui",
+      extensions: [".vue"],
       pathPrefix: false,
-    }
+    },
   ],
 
   app: {
     head: {
-      titleTemplate: '%s | GachaPulse',
-      title: 'GachaPulse - L\'actualité des jeux Gacha par des passionnés',
+      titleTemplate: "%s | GachaPulse",
+      title: "GachaPulse - L'actualité des jeux Gacha par des passionnés",
       htmlAttrs: {
-        lang: 'fr'
+        lang: "fr",
       },
       meta: [
-        { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'GachaPulse est LE site d\'actualités pour les fans de jeux Gacha. Guides experts, tier lists, événements et dernières news sur Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et plus encore !' },
-        { name: 'keywords', content: 'gacha, jeux gacha, genshin impact, honkai star rail, fire emblem heroes, arknights, blue archive, epic seven, actualités gaming, guides jeux, tier list, événements gacha, bannières, pulls, héros' },
-        { name: 'author', content: 'Équipe GachaPulse' },
-        { name: 'robots', content: 'index, follow' },
+        { charset: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        {
+          name: "description",
+          content:
+            "GachaPulse est LE site d'actualités pour les fans de jeux Gacha. Guides experts, tier lists, événements et dernières news sur Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et plus encore !",
+        },
+        {
+          name: "keywords",
+          content:
+            "gacha, jeux gacha, genshin impact, honkai star rail, fire emblem heroes, arknights, blue archive, epic seven, actualités gaming, guides jeux, tier list, événements gacha, bannières, pulls, héros",
+        },
+        { name: "author", content: "Équipe GachaPulse" },
+        { name: "robots", content: "index, follow" },
         // Open Graph
-        { property: 'og:type', content: 'website' },
-        { property: 'og:locale', content: 'fr_FR' },
-        { property: 'og:site_name', content: 'GachaPulse' },
-        { property: 'og:title', content: 'GachaPulse - L\'actualité des jeux Gacha par des passionnés' },
-        { property: 'og:description', content: 'Guides experts, tier lists et actualités sur tous vos jeux Gacha favoris. Par des fans, pour les fans.' },
-        { property: 'og:image', content: '/og-image.jpg' },
-        { property: 'og:image:width', content: '1200' },
-        { property: 'og:image:height', content: '630' },
-        { property: 'og:image:alt', content: 'GachaPulse - Actualités jeux Gacha' },
+        { property: "og:type", content: "website" },
+        { property: "og:locale", content: "fr_FR" },
+        { property: "og:site_name", content: "GachaPulse" },
+        {
+          property: "og:title",
+          content: "GachaPulse - L'actualité des jeux Gacha par des passionnés",
+        },
+        {
+          property: "og:description",
+          content:
+            "Guides experts, tier lists et actualités sur tous vos jeux Gacha favoris. Par des fans, pour les fans.",
+        },
+        { property: "og:image", content: "/og-image.jpg" },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        {
+          property: "og:image:alt",
+          content: "GachaPulse - Actualités jeux Gacha",
+        },
         // Twitter Card
-        { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'GachaPulse - L\'actualité des jeux Gacha' },
-        { name: 'twitter:description', content: 'Guides experts, tier lists et actualités sur tous vos jeux Gacha favoris' },
-        { name: 'twitter:image', content: '/og-image.jpg' },
-        { name: 'twitter:creator', content: '@gachapulse' }
+        { name: "twitter:card", content: "summary_large_image" },
+        {
+          name: "twitter:title",
+          content: "GachaPulse - L'actualité des jeux Gacha",
+        },
+        {
+          name: "twitter:description",
+          content:
+            "Guides experts, tier lists et actualités sur tous vos jeux Gacha favoris",
+        },
+        { name: "twitter:image", content: "/og-image.jpg" },
+        { name: "twitter:creator", content: "@gachapulse" },
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'canonical', href: 'https://gachapulse.com' }
-      ]
-    }
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        // Canonical dynamique géré par plugin ou par page
+      ],
+    },
   },
 
   site: {
-    url: 'https://gachapulse.com',
-    name: 'GachaPulse'
+    url: "https://gachapulse.com",
+    name: "GachaPulse",
   },
 
   sitemap: {
     enabled: true,
     cacheMaxAgeSeconds: 3600, // 1 heure
-    sources: [
-      '/api/__sitemap__/urls'
-    ]
+    // IMPORTANT: Utiliser UNIQUEMENT les sources définies, ne pas auto-générer
+    sources: ["/api/__sitemap__/urls"],
+    // Exclure les pages admin, maintenance et erreurs du crawl automatique
+    exclude: [
+      '/admin',
+      '/admin/**',
+      '/maintenance',
+      '/error',
+    ],
+    autoLastmod: true,
+    // Désactiver la découverte automatique des routes Nuxt
+    discoverImages: false,
   },
 
   image: {
     // Désactiver optimisations d'images en dev si trop lent
-    ...(process.env.NODE_ENV === 'development' && {
-      provider: 'none'
+    ...(process.env.NODE_ENV === "development" && {
+      provider: "none",
     }),
-    domains: ['images.unsplash.com', 'img.youtube.com']
+    domains: ["images.unsplash.com", "img.youtube.com"],
   },
 
   // Optimisation Nitro pour Windows (gain majeur sur temps de build)
   // Ref: https://github.com/nuxt/nuxt/discussions/26739
   nitro: {
     experimental: {
-      legacyExternals: true // Réduit build time de ~60min à ~2min sur Windows
+      legacyExternals: true, // Réduit build time de ~60min à ~2min sur Windows
     },
     minify: true,
-    sourceMap: false // Désactiver source maps en prod pour accélérer
+    sourceMap: false, // Désactiver source maps en prod pour accélérer
   },
 
   experimental: {
     // Améliore les performances de navigation
     payloadExtraction: false,
     renderJsonPayloads: true,
-    typedPages: true
+    typedPages: true,
   },
 
-  modules: [
-    '@nuxt/image',
-    '@nuxtjs/seo'
-  ]
+  modules: ["@nuxt/image", "@nuxtjs/seo"],
+
+  // Configuration robots.txt via @nuxtjs/seo
+  robots: {
+    disallow: ['/admin', '/admin/*', '/maintenance', '/api/*'],
+    allow: ['/', '/games', '/guides', '/news', '/tier-lists', '/upcoming'],
+  },
 });

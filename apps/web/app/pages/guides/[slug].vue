@@ -1,5 +1,7 @@
 <template>
   <div v-if="guide" class="container mx-auto px-4 py-12 max-w-4xl">
+    <Breadcrumb :items="breadcrumbItems" />
+
     <!-- Header -->
     <div class="mb-8">
       <div class="flex flex-wrap items-center gap-2 mb-4">
@@ -121,6 +123,7 @@ import {
   Check as IconCheck,
   List as IconList,
 } from 'lucide-vue-next'
+import Breadcrumb from '@/components/Breadcrumb.vue'
 import { useMarkdown } from '@/composables/useMarkdown'
 import { useDate } from '@/composables/useDate'
 import { Badge } from '@/components/ui/badge'
@@ -140,6 +143,13 @@ const { data: guide } = await useAsyncData(`guide-${route.params.slug}`, async (
 
   return response.data.data
 })
+
+// Breadcrumb
+const breadcrumbItems = computed(() => [
+  { label: 'Accueil', href: '/' },
+  { label: 'Guides', href: '/guides' },
+  { label: guide.value?.title || 'Guide' }
+])
 
 const getDifficultyVariant = (difficulty?: string): 'default' | 'secondary' | 'destructive' => {
   if (!difficulty) return 'default'
@@ -173,6 +183,43 @@ useSeoMeta({
   articleAuthor: guide.value?.author,
   articleTag: guide.value?.tags?.map((tag: { name: string }) => tag.name),
 })
+
+// Structured Data (JSON-LD) - HowTo Schema
+if (guide.value) {
+  useHead({
+    script: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'HowTo',
+          name: guide.value.title,
+          description: guide.value.summary,
+          image: guide.value.image?.url,
+          author: {
+            '@type': 'Person',
+            name: guide.value.author
+          },
+          datePublished: guide.value.publishedAt,
+          dateModified: guide.value.updatedAt,
+          step: guide.value.sections?.map((section: any, index: number) => ({
+            '@type': 'HowToStep',
+            position: index + 1,
+            name: section.title,
+            text: section.content?.substring(0, 200),
+            image: section.image?.url
+          })) || [],
+          totalTime: guide.value.readingTime ? `PT${guide.value.readingTime}M` : undefined,
+          estimatedCost: {
+            '@type': 'MonetaryAmount',
+            currency: 'EUR',
+            value: '0'
+          }
+        })
+      }
+    ]
+  })
+}
 
 useHead({
   title: guide.value ? guide.value.title : 'Guide non trouvé',

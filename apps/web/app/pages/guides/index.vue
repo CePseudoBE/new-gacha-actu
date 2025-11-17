@@ -130,15 +130,37 @@ const { data: guideTypes } = await useAsyncData('guide-types', async () => {
 })
 
 useSeoMeta({
-  title: 'Guides',
-  description:
-    'Découvrez nos guides complets pour maîtriser tous vos jeux Gacha : builds, stratégies, tier lists et astuces par des experts.',
-  ogTitle: 'Guides - Gacha Pulse',
-  ogDescription: 'Guides experts pour tous les jeux Gacha',
+  title: 'Guides Jeux Gacha - Tutoriels & Astuces d\'experts',
+  description: 'Guides complets pour maîtriser vos jeux gacha favoris. Builds, stratégies, tier lists, guides de débutants et astuces avancées pour progresser rapidement.',
+  ogTitle: 'Guides Experts Jeux Gacha | Gacha Pulse',
+  ogDescription: 'Tutoriels, builds et stratégies pour tous les jeux gacha',
+  ogImage: '/og-image.jpg',
   ogType: 'website',
+  twitterCard: 'summary_large_image',
 })
 
+// Structured Data
 useHead({
   title: 'Guides - Gacha Pulse',
+  script: [
+    {
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Guides Jeux Gacha',
+        description: 'Tous les guides pour maîtriser vos jeux gacha favoris',
+        url: 'https://gachapulse.com/guides',
+        publisher: {
+          '@type': 'Organization',
+          name: 'Gacha Pulse',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://gachapulse.com/logo.png'
+          }
+        }
+      })
+    }
+  ]
 })
 </script>

@@ -59,7 +59,40 @@ const { data: games = [] } = await useAsyncData('all-games', async () => {
   return response.data?.data || []
 })
 
+// SEO
+useSeoMeta({
+  title: 'Jeux Gacha - Liste complète des jeux couverts',
+  description: 'Découvrez tous les jeux gacha couverts par Gacha Pulse : guides complets, tier lists, actualités et événements pour Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et plus encore.',
+  ogTitle: 'Liste complète des jeux Gacha | Gacha Pulse',
+  ogDescription: 'Tous les jeux gacha avec guides, tier lists et actualités en français',
+  ogImage: '/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+})
+
+// Structured Data - CollectionPage
 useHead({
-  title: 'Jeux - Gacha Pulse'
+  title: 'Jeux - Gacha Pulse',
+  script: [
+    {
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'Jeux Gacha',
+        description: 'Liste complète des jeux gacha couverts par Gacha Pulse',
+        url: 'https://gachapulse.com/games',
+        publisher: {
+          '@type': 'Organization',
+          name: 'Gacha Pulse',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://gachapulse.com/logo.png'
+          }
+        },
+        numberOfItems: games.value?.length || 0
+      })
+    }
+  ]
 })
 </script>

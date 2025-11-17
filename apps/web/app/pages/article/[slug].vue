@@ -1,5 +1,7 @@
 <template>
   <div v-if="article" class="container mx-auto px-4 py-12 max-w-4xl">
+    <Breadcrumb :items="breadcrumbItems" />
+
     <div class="mb-8">
       <Badge v-if="article.game">{{ article.game.name }}</Badge>
       <h1 class="text-4xl font-bold mt-4 mb-4">{{ article.title }}</h1>
@@ -39,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import Breadcrumb from '@/components/Breadcrumb.vue'
 import { useMarkdown } from '@/composables/useMarkdown'
 import { useDate } from '@/composables/useDate'
 import { useJsonLd } from '@/composables/useJsonLd'
@@ -69,6 +72,13 @@ const { data: article } = await useAsyncData(
 )
 
 const renderedContent = computed(() => parseMarkdown(article.value?.content || ''))
+
+// Breadcrumb
+const breadcrumbItems = computed(() => [
+  { label: 'Accueil', href: '/' },
+  { label: 'Actualités', href: '/news' },
+  { label: article.value?.title || 'Article' }
+])
 
 // Ajouter JSON-LD pour le SEO
 if (article.value) {
