@@ -155,7 +155,13 @@ export default defineNuxtConfig({
 
   // Configuration robots.txt via @nuxtjs/seo
   robots: {
-    disallow: ['/admin', '/admin/*', '/maintenance', '/api/*'],
-    allow: ['/', '/games', '/guides', '/news', '/tier-lists', '/upcoming'],
+    // Bloquer les pages admin et API
+    groups: [
+      {
+        userAgent: '*',
+        disallow: ['/admin', '/maintenance', '/api'],
+        allow: '/',
+      }
+    ],
   },
 });
