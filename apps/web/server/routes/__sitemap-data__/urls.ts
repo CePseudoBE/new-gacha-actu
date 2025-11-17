@@ -6,6 +6,9 @@ export default defineEventHandler(async (event) => {
   const apiUrl = process.env.API_INTERNAL_URL || config.public.apiUrl
 
   const urls: any[] = []
+  const errors: string[] = []
+
+  console.log('[SITEMAP] API URL:', apiUrl)
 
   // Pages statiques
   urls.push(
@@ -18,8 +21,8 @@ export default defineEventHandler(async (event) => {
   )
 
   try {
-    // Récupérer les jeux
-    const gamesRes = await $fetch<any>(`${apiUrl}/api/games?perPage=1000`)
+    // Récupérer les jeux (limité à 100 par page max)
+    const gamesRes = await $fetch<any>(`${apiUrl}/api/games?perPage=100`)
     const games = gamesRes?.data || []
 
     games.forEach((game: any) => {
@@ -32,7 +35,7 @@ export default defineEventHandler(async (event) => {
     })
 
     // Récupérer les guides
-    const guidesRes = await $fetch<any>(`${apiUrl}/api/guides?perPage=1000`)
+    const guidesRes = await $fetch<any>(`${apiUrl}/api/guides?perPage=100`)
     const guides = guidesRes?.data || []
 
     guides.forEach((guide: any) => {
@@ -45,7 +48,7 @@ export default defineEventHandler(async (event) => {
     })
 
     // Récupérer les articles
-    const articlesRes = await $fetch<any>(`${apiUrl}/api/articles?perPage=1000`)
+    const articlesRes = await $fetch<any>(`${apiUrl}/api/articles?perPage=100`)
     const articles = articlesRes?.data || []
 
     articles.forEach((article: any) => {
@@ -57,9 +60,20 @@ export default defineEventHandler(async (event) => {
       })
     })
   } catch (error) {
-    console.error('Error fetching sitemap URLs:', error)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error('[SITEMAP] Error fetching sitemap URLs:', errorMessage)
+    console.error('[SITEMAP] Full error:', error)
+    errors.push(`API Error: ${errorMessage}`)
     // En cas d'erreur, retourner au moins les pages statiques
   }
 
-  return urls
+  // Pour debug : retourner aussi les erreurs
+  return {
+    urls,
+    debug: {
+      apiUrl,
+      urlCount: urls.length,
+      errors: errors.length > 0 ? errors : undefined
+    }
+  }
 })
