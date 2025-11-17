@@ -117,6 +117,8 @@ export default defineNuxtConfig({
       const apiUrl = process.env.NUXT_PUBLIC_API_URL || 'https://gachapulse.com'
       const urls: any[] = []
 
+      console.log('[SITEMAP] API URL:', apiUrl)
+
       // Pages statiques
       urls.push(
         { loc: '/', changefreq: 'daily', priority: 1.0 },
@@ -129,9 +131,15 @@ export default defineNuxtConfig({
 
       try {
         // Récupérer les jeux
+        console.log('[SITEMAP] Fetching games from:', `${apiUrl}/api/games?perPage=1000`)
         const gamesRes = await fetch(`${apiUrl}/api/games?perPage=1000`)
+        console.log('[SITEMAP] Games response status:', gamesRes.status)
+
         const gamesData = await gamesRes.json()
+        console.log('[SITEMAP] Games data:', JSON.stringify(gamesData).substring(0, 200))
+
         const games = gamesData?.data || []
+        console.log('[SITEMAP] Number of games found:', games.length)
         games.forEach((game: any) => {
           urls.push({
             loc: `/games/${game.slug}`,
@@ -167,9 +175,11 @@ export default defineNuxtConfig({
           })
         })
       } catch (error) {
-        console.error('Error fetching sitemap URLs:', error)
+        console.error('[SITEMAP] Error fetching sitemap URLs:', error)
+        console.error('[SITEMAP] Error details:', error instanceof Error ? error.message : error)
       }
 
+      console.log('[SITEMAP] Total URLs generated:', urls.length)
       return urls
     },
     // Exclure les pages admin, maintenance et erreurs du crawl automatique
