@@ -63,17 +63,11 @@ export default defineEventHandler(async (event) => {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error('[SITEMAP] Error fetching sitemap URLs:', errorMessage)
     console.error('[SITEMAP] Full error:', error)
-    errors.push(`API Error: ${errorMessage}`)
     // En cas d'erreur, retourner au moins les pages statiques
   }
 
-  // Pour debug : retourner aussi les erreurs
-  return {
-    urls,
-    debug: {
-      apiUrl,
-      urlCount: urls.length,
-      errors: errors.length > 0 ? errors : undefined
-    }
-  }
+  console.log(`[SITEMAP] Generated ${urls.length} URLs`)
+
+  // Retourner SEULEMENT le tableau d'URLs (pas un objet)
+  return urls
 })
