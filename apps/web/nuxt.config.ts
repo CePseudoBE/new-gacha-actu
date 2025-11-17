@@ -112,8 +112,66 @@ export default defineNuxtConfig({
   sitemap: {
     enabled: true,
     cacheMaxAgeSeconds: 3600, // 1 heure
-    // IMPORTANT: Utiliser UNIQUEMENT les sources définies, ne pas auto-générer
-    sources: ["/api/__sitemap__/urls"],
+    // Définir les URLs directement avec une fonction dynamique
+    urls: async () => {
+      const apiUrl = process.env.NUXT_PUBLIC_API_URL || 'https://gachapulse.com'
+      const urls: any[] = []
+
+      // Pages statiques
+      urls.push(
+        { loc: '/', changefreq: 'daily', priority: 1.0 },
+        { loc: '/news', changefreq: 'daily', priority: 0.9 },
+        { loc: '/games', changefreq: 'weekly', priority: 0.9 },
+        { loc: '/guides', changefreq: 'daily', priority: 0.9 },
+        { loc: '/tier-lists', changefreq: 'weekly', priority: 0.8 },
+        { loc: '/upcoming', changefreq: 'daily', priority: 0.7 }
+      )
+
+      try {
+        // Récupérer les jeux
+        const gamesRes = await fetch(`${apiUrl}/api/games?perPage=1000`)
+        const gamesData = await gamesRes.json()
+        const games = gamesData?.data || []
+        games.forEach((game: any) => {
+          urls.push({
+            loc: `/games/${game.slug}`,
+            lastmod: game.updatedAt,
+            changefreq: 'weekly',
+            priority: 0.8
+          })
+        })
+
+        // Récupérer les guides
+        const guidesRes = await fetch(`${apiUrl}/api/guides?perPage=1000`)
+        const guidesData = await guidesRes.json()
+        const guides = guidesData?.data || []
+        guides.forEach((guide: any) => {
+          urls.push({
+            loc: `/guides/${guide.slug}`,
+            lastmod: guide.updatedAt,
+            changefreq: 'monthly',
+            priority: 0.7
+          })
+        })
+
+        // Récupérer les articles
+        const articlesRes = await fetch(`${apiUrl}/api/articles?perPage=1000`)
+        const articlesData = await articlesRes.json()
+        const articles = articlesData?.data || []
+        articles.forEach((article: any) => {
+          urls.push({
+            loc: `/article/${article.slug}`,
+            lastmod: article.updatedAt,
+            changefreq: 'monthly',
+            priority: 0.6
+          })
+        })
+      } catch (error) {
+        console.error('Error fetching sitemap URLs:', error)
+      }
+
+      return urls
+    },
     // Exclure les pages admin, maintenance et erreurs du crawl automatique
     exclude: [
       '/admin',
