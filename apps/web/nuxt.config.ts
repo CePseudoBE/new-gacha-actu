@@ -113,8 +113,10 @@ export default defineNuxtConfig({
     enabled: true,
     // Cache 1 heure - le sitemap sera régénéré toutes les heures
     cacheMaxAgeSeconds: 3600,
-    // Utiliser un endpoint qui ne commence PAS par /api/ pour éviter Nginx redirect
-    dynamicUrlsApiEndpoint: '/__sitemap-data__/urls',
+    // Sources pour URLs dynamiques (endpoint qui ne commence PAS par /api/ pour éviter Nginx redirect)
+    sources: [
+      '/__sitemap-data__/urls'
+    ],
     // Exclure les pages admin, maintenance et erreurs du crawl automatique
     exclude: [
       '/admin',
