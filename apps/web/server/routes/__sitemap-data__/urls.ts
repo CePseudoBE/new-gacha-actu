@@ -1,28 +1,26 @@
 import { defineEventHandler } from 'h3'
-import type { SitemapUrlInput } from '#sitemap/types'
 
-export default defineEventHandler(async (event): Promise<SitemapUrlInput[]> => {
+export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const apiUrl = config.public.apiUrl
+  // Utiliser l'URL interne si disponible (Docker), sinon l'URL publique
+  const apiUrl = process.env.API_INTERNAL_URL || config.public.apiUrl
 
-  const urls: SitemapUrlInput[] = []
+  const urls: any[] = []
 
   // Pages statiques
-  const staticPages = [
+  urls.push(
     { loc: '/', changefreq: 'daily', priority: 1.0 },
     { loc: '/news', changefreq: 'daily', priority: 0.9 },
     { loc: '/games', changefreq: 'weekly', priority: 0.9 },
     { loc: '/guides', changefreq: 'daily', priority: 0.9 },
     { loc: '/tier-lists', changefreq: 'weekly', priority: 0.8 },
     { loc: '/upcoming', changefreq: 'daily', priority: 0.7 }
-  ]
-
-  urls.push(...staticPages)
+  )
 
   try {
-    // Récupérer tous les jeux
-    const gamesResponse = await $fetch<any>(`${apiUrl}/api/games?perPage=1000`)
-    const games = gamesResponse?.data?.data || []
+    // Récupérer les jeux
+    const gamesRes = await $fetch<any>(`${apiUrl}/api/games?perPage=1000`)
+    const games = gamesRes?.data || []
 
     games.forEach((game: any) => {
       urls.push({
@@ -33,9 +31,9 @@ export default defineEventHandler(async (event): Promise<SitemapUrlInput[]> => {
       })
     })
 
-    // Récupérer tous les guides
-    const guidesResponse = await $fetch<any>(`${apiUrl}/api/guides?perPage=1000`)
-    const guides = guidesResponse?.data?.data || []
+    // Récupérer les guides
+    const guidesRes = await $fetch<any>(`${apiUrl}/api/guides?perPage=1000`)
+    const guides = guidesRes?.data || []
 
     guides.forEach((guide: any) => {
       urls.push({
@@ -46,9 +44,9 @@ export default defineEventHandler(async (event): Promise<SitemapUrlInput[]> => {
       })
     })
 
-    // Récupérer tous les articles
-    const articlesResponse = await $fetch<any>(`${apiUrl}/api/articles?perPage=1000`)
-    const articles = articlesResponse?.data?.data || []
+    // Récupérer les articles
+    const articlesRes = await $fetch<any>(`${apiUrl}/api/articles?perPage=1000`)
+    const articles = articlesRes?.data || []
 
     articles.forEach((article: any) => {
       urls.push({
@@ -60,6 +58,7 @@ export default defineEventHandler(async (event): Promise<SitemapUrlInput[]> => {
     })
   } catch (error) {
     console.error('Error fetching sitemap URLs:', error)
+    // En cas d'erreur, retourner au moins les pages statiques
   }
 
   return urls

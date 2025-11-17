@@ -105,6 +105,8 @@ services:
       # Note: Don't add /api here, Tuyau adds it automatically
       NUXT_PUBLIC_API_URL: https://gachapulse.com
       NUXT_PUBLIC_SITE_URL: https://gachapulse.com
+      # Internal URL for server-side (Docker network) - used for sitemap generation
+      API_INTERNAL_URL: http://api:3333
     ports:
       - "3000:3000"
     networks:

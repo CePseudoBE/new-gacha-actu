@@ -111,77 +111,10 @@ export default defineNuxtConfig({
 
   sitemap: {
     enabled: true,
-    cacheMaxAgeSeconds: 3600, // 1 heure
-    // Définir les URLs directement avec une fonction dynamique
-    urls: async () => {
-      const apiUrl = process.env.NUXT_PUBLIC_API_URL || 'https://gachapulse.com'
-      const urls: any[] = []
-
-      console.log('[SITEMAP] API URL:', apiUrl)
-
-      // Pages statiques
-      urls.push(
-        { loc: '/', changefreq: 'daily', priority: 1.0 },
-        { loc: '/news', changefreq: 'daily', priority: 0.9 },
-        { loc: '/games', changefreq: 'weekly', priority: 0.9 },
-        { loc: '/guides', changefreq: 'daily', priority: 0.9 },
-        { loc: '/tier-lists', changefreq: 'weekly', priority: 0.8 },
-        { loc: '/upcoming', changefreq: 'daily', priority: 0.7 }
-      )
-
-      try {
-        // Récupérer les jeux
-        console.log('[SITEMAP] Fetching games from:', `${apiUrl}/api/games?perPage=1000`)
-        const gamesRes = await fetch(`${apiUrl}/api/games?perPage=1000`)
-        console.log('[SITEMAP] Games response status:', gamesRes.status)
-
-        const gamesData = await gamesRes.json()
-        console.log('[SITEMAP] Games data:', JSON.stringify(gamesData).substring(0, 200))
-
-        const games = gamesData?.data || []
-        console.log('[SITEMAP] Number of games found:', games.length)
-        games.forEach((game: any) => {
-          urls.push({
-            loc: `/games/${game.slug}`,
-            lastmod: game.updatedAt,
-            changefreq: 'weekly',
-            priority: 0.8
-          })
-        })
-
-        // Récupérer les guides
-        const guidesRes = await fetch(`${apiUrl}/api/guides?perPage=1000`)
-        const guidesData = await guidesRes.json()
-        const guides = guidesData?.data || []
-        guides.forEach((guide: any) => {
-          urls.push({
-            loc: `/guides/${guide.slug}`,
-            lastmod: guide.updatedAt,
-            changefreq: 'monthly',
-            priority: 0.7
-          })
-        })
-
-        // Récupérer les articles
-        const articlesRes = await fetch(`${apiUrl}/api/articles?perPage=1000`)
-        const articlesData = await articlesRes.json()
-        const articles = articlesData?.data || []
-        articles.forEach((article: any) => {
-          urls.push({
-            loc: `/article/${article.slug}`,
-            lastmod: article.updatedAt,
-            changefreq: 'monthly',
-            priority: 0.6
-          })
-        })
-      } catch (error) {
-        console.error('[SITEMAP] Error fetching sitemap URLs:', error)
-        console.error('[SITEMAP] Error details:', error instanceof Error ? error.message : error)
-      }
-
-      console.log('[SITEMAP] Total URLs generated:', urls.length)
-      return urls
-    },
+    // Cache 1 heure - le sitemap sera régénéré toutes les heures
+    cacheMaxAgeSeconds: 3600,
+    // Utiliser un endpoint qui ne commence PAS par /api/ pour éviter Nginx redirect
+    dynamicUrlsApiEndpoint: '/__sitemap-data__/urls',
     // Exclure les pages admin, maintenance et erreurs du crawl automatique
     exclude: [
       '/admin',
@@ -190,7 +123,6 @@ export default defineNuxtConfig({
       '/error',
     ],
     autoLastmod: true,
-    // Désactiver la découverte automatique des routes Nuxt
     discoverImages: false,
   },
 
