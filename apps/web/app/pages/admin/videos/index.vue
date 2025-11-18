@@ -328,7 +328,7 @@ const filteredVideos = computed(() => {
 const fetchVideos = async () => {
   isLoading.value = true
   try {
-    const response = await $fetch(`${config.public.apiUrl}/api/youtube-videos`, {
+    const response = await $fetch(`${config.public.apiUrl}/api/admin/youtube-videos`, {
       credentials: 'include',
     })
     videos.value = response.data || []
