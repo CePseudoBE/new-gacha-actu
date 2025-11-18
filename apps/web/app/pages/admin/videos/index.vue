@@ -328,7 +328,7 @@ const filteredVideos = computed(() => {
 const fetchVideos = async () => {
   isLoading.value = true
   try {
-    const response = await $fetch(`${config.public.apiUrl}/api/admin/youtube-videos`, {
+    const response = await $fetch(`${config.public.apiUrl}/api/youtube-videos`, {
       credentials: 'include',
     })
     videos.value = response.data || []
@@ -369,14 +369,14 @@ const saveVideo = async () => {
     }
 
     if (editingVideo.value) {
-      await $fetch(`${config.public.apiUrl}/api/youtube-videos/${editingVideo.value.id}`, {
+      await $fetch(`${config.public.apiUrl}/api/admin/youtube-videos/${editingVideo.value.id}`, {
         method: 'PUT',
         body: payload,
         credentials: 'include',
       })
       toast.success('Vidéo mise à jour avec succès')
     } else {
-      await $fetch(`${config.public.apiUrl}/api/youtube-videos`, {
+      await $fetch(`${config.public.apiUrl}/api/admin/youtube-videos`, {
         method: 'POST',
         body: payload,
         credentials: 'include',
@@ -456,7 +456,7 @@ const confirmDelete = async () => {
   if (!videoToDelete.value) return
 
   try {
-    await $fetch(`${config.public.apiUrl}/api/youtube-videos/${videoToDelete.value.id}`, {
+    await $fetch(`${config.public.apiUrl}/api/admin/youtube-videos/${videoToDelete.value.id}`, {
       method: 'DELETE',
       credentials: 'include',
     })
