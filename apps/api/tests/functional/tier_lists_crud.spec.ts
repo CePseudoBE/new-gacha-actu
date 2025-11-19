@@ -227,7 +227,7 @@ test.group('Tier Lists CRUD', (group) => {
     assert.equal(response.body().data.isPublished, false)
   })
 
-  test('should update tier list', async ({ client, assert }) => {
+  test('should update tier list', async ({ client }) => {
     const updateData = {
       title: 'Updated Tier List Title',
       description: 'Updated description',
