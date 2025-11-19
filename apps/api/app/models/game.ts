@@ -9,6 +9,8 @@ import Tag from '#models/tag'
 import Platform from '#models/platform'
 import YoutubeVideo from '#models/youtube_video'
 import Image from '#models/image'
+import TierList from '#models/tier_list'
+import Character from '#models/character'
 
 export default class Game extends BaseModel {
   @column({ isPrimary: true })
@@ -68,6 +70,16 @@ export default class Game extends BaseModel {
     foreignKey: 'gameId',
   })
   declare youtubeVideos: HasMany<typeof YoutubeVideo>
+
+  @hasMany(() => TierList, {
+    foreignKey: 'gameId',
+  })
+  declare tierLists: HasMany<typeof TierList>
+
+  @hasMany(() => Character, {
+    foreignKey: 'gameId',
+  })
+  declare characters: HasMany<typeof Character>
 
   @manyToMany(() => Genre, {
     pivotTable: 'games_genres',
