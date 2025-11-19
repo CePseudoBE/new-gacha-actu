@@ -254,29 +254,15 @@
         <CardTitle>Image et SEO</CardTitle>
       </CardHeader>
       <CardContent class="space-y-4">
-        <div>
-          <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Image du guide</label>
-          <div v-if="currentImageUrl" class="mt-2 mb-4">
-            <img :src="currentImageUrl" alt="Image actuelle" class="w-48 h-48 object-cover rounded-lg" />
-            <Button
-              v-if="!imageToDelete"
-              type="button"
-              variant="destructive"
-              size="sm"
-              class="mt-2"
-              @click="$emit('deleteImage')"
-            >
-              Supprimer l'image
-            </Button>
-          </div>
-          <Input
-            type="file"
-            accept="image/*"
-            @change="$emit('imageChange', $event)"
-            :disabled="imageToDelete"
-          />
-          <p class="text-sm text-muted-foreground mt-1">Format: JPG, PNG, WEBP. Max: 2MB</p>
-        </div>
+        <ImageUploadField
+          variant="simple"
+          label="Image du guide"
+          description="Format: JPG, PNG, WEBP. Max: 2MB"
+          :current-image-url="currentImageUrl"
+          :image-to-delete="imageToDelete"
+          @change="$emit('imageChange', $event)"
+          @delete="$emit('deleteImage')"
+        />
 
         <FormField v-slot="{ componentField }" name="metaDescription">
           <FormItem>
@@ -292,79 +278,26 @@
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ value, handleChange }" name="tagIds">
-          <FormItem>
-            <div class="space-y-3">
-              <FormLabel>Tags (optionnel)</FormLabel>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg max-h-48 overflow-y-auto">
-                <div
-                  v-for="tag in tags"
-                  :key="tag.id"
-                  class="flex items-center space-x-2"
-                >
-                  <Checkbox
-                    :id="`tag-${tag.id}`"
-                    :model-value="!!(value && Array.isArray(value) && value.includes(tag.id))"
-                    @update:model-value="(checked) => {
-                      const currentArray = Array.isArray(value) ? value : []
-                      const newValue = checked
-                        ? [...currentArray, tag.id]
-                        : currentArray.filter(id => id !== tag.id)
-                      handleChange(newValue)
-                    }"
-                  />
-                  <label
-                    :for="`tag-${tag.id}`"
-                    class="text-sm font-normal cursor-pointer leading-none"
-                  >
-                    {{ tag.name }}
-                  </label>
-                </div>
-              </div>
-              <p v-if="!tags || tags.length === 0" class="text-sm text-muted-foreground">
-                Aucun tag disponible
-              </p>
-            </div>
-            <FormMessage />
-          </FormItem>
-        </FormField>
+        <CheckboxGroup
+          name="tagIds"
+          label="Tags (optionnel)"
+          :items="tags"
+          :show-header="false"
+          max-height="small"
+          :show-empty-message="true"
+          empty-message="Aucun tag disponible"
+        />
 
-        <FormField v-slot="{ value, handleChange }" name="seoKeywordIds">
-          <FormItem>
-            <div class="space-y-3">
-              <FormLabel>Mots-clés SEO (optionnel)</FormLabel>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg max-h-48 overflow-y-auto">
-                <div
-                  v-for="keyword in seoKeywords"
-                  :key="keyword.id"
-                  class="flex items-center space-x-2"
-                >
-                  <Checkbox
-                    :id="`keyword-${keyword.id}`"
-                    :model-value="!!(value && Array.isArray(value) && value.includes(keyword.id))"
-                    @update:model-value="(checked) => {
-                      const currentArray = Array.isArray(value) ? value : []
-                      const newValue = checked
-                        ? [...currentArray, keyword.id]
-                        : currentArray.filter(id => id !== keyword.id)
-                      handleChange(newValue)
-                    }"
-                  />
-                  <label
-                    :for="`keyword-${keyword.id}`"
-                    class="text-sm font-normal cursor-pointer leading-none"
-                  >
-                    {{ keyword.keyword }}
-                  </label>
-                </div>
-              </div>
-              <p v-if="!seoKeywords || seoKeywords.length === 0" class="text-sm text-muted-foreground">
-                Aucun mot-clé disponible
-              </p>
-            </div>
-            <FormMessage />
-          </FormItem>
-        </FormField>
+        <CheckboxGroup
+          name="seoKeywordIds"
+          label="Mots-clés SEO (optionnel)"
+          :items="seoKeywords"
+          display-field="keyword"
+          :show-header="false"
+          max-height="small"
+          :show-empty-message="true"
+          empty-message="Aucun mot-clé disponible"
+        />
       </CardContent>
     </Card>
   </div>
@@ -376,9 +309,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
+import CheckboxGroup from '@/components/shared/CheckboxGroup.vue'
+import ImageUploadField from '@/components/shared/ImageUploadField.vue'
 
 interface Game {
   id: number

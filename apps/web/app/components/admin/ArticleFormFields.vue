@@ -148,124 +148,43 @@
     </FormField>
 
     <!-- Tags -->
-    <FormField v-slot="{ value, handleChange }" name="tagIds">
-      <FormItem>
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <FormLabel>Tags</FormLabel>
-              <p class="text-sm text-muted-foreground">Sélectionnez les tags pertinents</p>
-            </div>
-            <Button type="button" variant="outline" size="sm" @click="$emit('quickAdd', 'tag')">
-              <Plus class="w-4 h-4 mr-2" />
-              Ajouter un tag
-            </Button>
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg max-h-64 overflow-y-auto">
-            <div
-              v-for="tag in tags"
-              :key="tag.id"
-              class="flex items-center space-x-2"
-            >
-              <Checkbox
-                :id="`tag-${tag.id}`"
-                :model-value="!!(value && Array.isArray(value) && value.includes(tag.id))"
-                @update:model-value="(checked) => {
-                  const currentArray = Array.isArray(value) ? value : []
-                  const newValue = checked
-                    ? [...currentArray, tag.id]
-                    : currentArray.filter(id => id !== tag.id)
-                  handleChange(newValue)
-                }"
-              />
-              <label
-                :for="`tag-${tag.id}`"
-                class="text-sm font-normal cursor-pointer leading-none"
-              >
-                {{ tag.name }}
-              </label>
-            </div>
-          </div>
-        </div>
-        <FormMessage />
-      </FormItem>
-    </FormField>
+    <CheckboxGroup
+      name="tagIds"
+      label="Tags"
+      description="Sélectionnez les tags pertinents"
+      :items="tags"
+      :show-header="true"
+      :show-quick-add="true"
+      quick-add-label="Ajouter un tag"
+      max-height="medium"
+      @quick-add="$emit('quickAdd', 'tag')"
+    />
 
     <!-- SEO Keywords -->
-    <FormField v-slot="{ value, handleChange }" name="seoKeywordIds">
-      <FormItem>
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <FormLabel>Mots-clés SEO</FormLabel>
-              <p class="text-sm text-muted-foreground">Optimisez le référencement de l'article</p>
-            </div>
-            <Button type="button" variant="outline" size="sm" @click="$emit('quickAdd', 'seo-keyword')">
-              <Plus class="w-4 h-4 mr-2" />
-              Ajouter un mot-clé
-            </Button>
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border rounded-lg max-h-64 overflow-y-auto">
-            <div
-              v-for="keyword in seoKeywords"
-              :key="keyword.id"
-              class="flex items-center space-x-2"
-            >
-              <Checkbox
-                :id="`keyword-${keyword.id}`"
-                :model-value="!!(value && Array.isArray(value) && value.includes(keyword.id))"
-                @update:model-value="(checked) => {
-                  const currentArray = Array.isArray(value) ? value : []
-                  const newValue = checked
-                    ? [...currentArray, keyword.id]
-                    : currentArray.filter(id => id !== keyword.id)
-                  handleChange(newValue)
-                }"
-              />
-              <label
-                :for="`keyword-${keyword.id}`"
-                class="text-sm font-normal cursor-pointer leading-none"
-              >
-                {{ keyword.keyword }}
-              </label>
-            </div>
-          </div>
-        </div>
-        <FormMessage />
-      </FormItem>
-    </FormField>
+    <CheckboxGroup
+      name="seoKeywordIds"
+      label="Mots-clés SEO"
+      description="Optimisez le référencement de l'article"
+      :items="seoKeywords"
+      display-field="keyword"
+      :show-header="true"
+      :show-quick-add="true"
+      quick-add-label="Ajouter un mot-clé"
+      max-height="medium"
+      @quick-add="$emit('quickAdd', 'seo-keyword')"
+    />
 
     <!-- Image Upload -->
-    <FormField v-slot="{ componentField }" name="image">
-      <FormItem>
-        <FormLabel>Image</FormLabel>
-
-        <!-- Current image preview -->
-        <div v-if="currentImageUrl && !imageToDelete" class="mb-3 relative inline-block">
-          <img :src="currentImageUrl" alt="Image actuelle" class="w-48 h-48 object-cover rounded-lg border" />
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            class="absolute top-2 right-2"
-            @click="$emit('deleteImage')"
-          >
-            <X class="w-4 h-4" />
-          </Button>
-        </div>
-
-        <!-- File input (hidden if image exists) -->
-        <FormControl v-if="!currentImageUrl || imageToDelete">
-          <Input
-            type="file"
-            accept="image/*"
-            @change="$emit('imageChange', $event)"
-          />
-        </FormControl>
-        <FormDescription v-if="!currentImageUrl || imageToDelete">Format: PNG, JPG, WEBP (max 2MB)</FormDescription>
-        <FormMessage />
-      </FormItem>
-    </FormField>
+    <ImageUploadField
+      variant="formfield"
+      name="image"
+      label="Image"
+      description="Format: PNG, JPG, WEBP (max 2MB)"
+      :current-image-url="currentImageUrl"
+      :image-to-delete="imageToDelete"
+      @change="$emit('imageChange', $event)"
+      @delete="$emit('deleteImage')"
+    />
 
     <!-- Meta Description -->
     <FormField v-slot="{ componentField }" name="metaDescription">
@@ -323,7 +242,7 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, X, Image as ImageIcon } from 'lucide-vue-next'
+import { Image as ImageIcon } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import {
   FormControl,
@@ -336,10 +255,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { useMarkdown } from '@/composables/useMarkdown'
+import CheckboxGroup from '@/components/shared/CheckboxGroup.vue'
+import ImageUploadField from '@/components/shared/ImageUploadField.vue'
 
 const { parseMarkdown } = useMarkdown()
 
