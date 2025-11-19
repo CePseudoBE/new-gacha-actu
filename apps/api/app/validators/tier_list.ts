@@ -1,7 +1,6 @@
 import vine from '@vinejs/vine'
 import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-// Tier List Category Schema (nested in tier list creation/update)
 const tierListCategorySchema = vine.object({
   name: vine.string().trim().minLength(2).maxLength(100),
   description: vine.string().trim().maxLength(500).optional().nullable(),
@@ -9,7 +8,6 @@ const tierListCategorySchema = vine.object({
   order: vine.number().min(0).optional(),
 })
 
-// Tier List Entry Schema (nested in tier list creation/update)
 const tierListEntrySchema = vine.object({
   categoryId: vine.number().optional().nullable(),
   characterId: vine.number().exists({ table: 'characters', column: 'id' }),
@@ -18,7 +16,6 @@ const tierListEntrySchema = vine.object({
   order: vine.number().min(0).optional(),
 })
 
-// Create Tier List Validator
 export const createTierListValidator = vine.compile(
   vine.object({
     gameId: vine.number().exists({ table: 'games', column: 'id' }),
@@ -44,7 +41,6 @@ export const createTierListValidator = vine.compile(
   })
 )
 
-// Update Tier List Validator
 const updateTierListValidatorBase = vine.compile(
   vine.object({
     params: vine.object({
@@ -77,7 +73,6 @@ const updateTierListValidatorBase = vine.compile(
 updateTierListValidatorBase.errorReporter = () => new CustomErrorReporter()
 export const updateTierListValidator = updateTierListValidatorBase
 
-// Tier List Params Validator
 const tierListParamsValidatorBase = vine.compile(
   vine.object({
     params: vine.object({
@@ -89,8 +84,7 @@ const tierListParamsValidatorBase = vine.compile(
 tierListParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
 export const tierListParamsValidator = tierListParamsValidatorBase
 
-// Tier List Slug Params Validator
-const tierListSlugParamsValidatorBase = vine.compile(
+const tierListSlugValidatorBase = vine.compile(
   vine.object({
     params: vine.object({
       slug: vine.string().trim().minLength(1),
@@ -98,20 +92,19 @@ const tierListSlugParamsValidatorBase = vine.compile(
   })
 )
 
-tierListSlugParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
-export const tierListSlugParamsValidator = tierListSlugParamsValidatorBase
+tierListSlugValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const tierListSlugValidator = tierListSlugValidatorBase
 
-// Tier List Filters Validator (for query params)
 export const tierListFiltersValidator = vine.compile(
   vine.object({
     gameId: vine.number().optional(),
     isPublished: vine.string().in(['true', 'false']).optional(),
-    limit: vine.number().min(1).max(100).optional(),
+    search: vine.string().trim().minLength(1).optional(),
     page: vine.number().min(1).optional(),
+    perPage: vine.number().min(1).max(100).optional(),
   })
 )
 
-// Publish Tier List Validator
 const publishTierListValidatorBase = vine.compile(
   vine.object({
     params: vine.object({

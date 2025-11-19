@@ -23,6 +23,11 @@ export default class CacheService {
     ARTICLES_BY_GAME: (gameId: number) => `articles:game:${gameId}`,
     YOUTUBE_VIDEOS_ACTIVE: 'youtube_videos:active',
     MAINTENANCE_STATUS: 'maintenance:status',
+    TIERS_ALL: 'tiers:all',
+    CHARACTERS_BY_GAME: (gameId: number, limit: number) => `characters:game:${gameId}:${limit}`,
+    TIER_LISTS_BY_SLUG: (slug: string) => `tier-lists:slug:${slug}`,
+    TIER_LISTS_BY_GAME: (gameId: number, limit: number) => `tier-lists:game:${gameId}:${limit}`,
+    TIER_LISTS_POPULAR: (limit: number) => `tier-lists:popular:${limit}`,
   } as const
 
   // Cache TTL (Time To Live) constants in seconds
@@ -88,6 +93,36 @@ export default class CacheService {
     if (slug) {
       keys.push(this.KEYS.ARTICLES_BY_SLUG(slug))
     }
+
+    await this.invalidateKeys(keys)
+  }
+
+  /**
+   * Invalide tous les caches liés aux personnages
+   */
+  static async invalidateCharacterCaches(gameId: number): Promise<void> {
+    const keys = [
+      this.KEYS.CHARACTERS_BY_GAME(gameId, 50),
+      this.KEYS.CHARACTERS_BY_GAME(gameId, 100),
+      this.KEYS.CHARACTERS_BY_GAME(gameId, 200),
+    ]
+
+    await this.invalidateKeys(keys)
+  }
+
+  /**
+   * Invalide tous les caches liés aux tier lists
+   */
+  static async invalidateTierListCaches(slug: string, gameId: number): Promise<void> {
+    const keys = [
+      this.KEYS.TIER_LISTS_BY_SLUG(slug),
+      this.KEYS.TIER_LISTS_BY_GAME(gameId, 5),
+      this.KEYS.TIER_LISTS_BY_GAME(gameId, 10),
+      this.KEYS.TIER_LISTS_BY_GAME(gameId, 20),
+      this.KEYS.TIER_LISTS_POPULAR(5),
+      this.KEYS.TIER_LISTS_POPULAR(10),
+      this.KEYS.TIER_LISTS_POPULAR(20),
+    ]
 
     await this.invalidateKeys(keys)
   }

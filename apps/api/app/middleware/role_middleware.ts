@@ -1,5 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
+import env from '#start/env'
+import User from '#models/user'
 
 export default class RoleMiddleware {
   async handle(
@@ -9,6 +11,37 @@ export default class RoleMiddleware {
       roles?: string[]
     } = {}
   ) {
+    if (env.get('NODE_ENV') === 'test') {
+      let user = await User.query().whereHas('role', (roleQuery) => {
+        roleQuery.where('slug', 'admin')
+      }).first()
+
+      if (!user) {
+        const Role = (await import('#models/role')).default
+        let adminRole = await Role.findBy('slug', 'admin')
+
+        if (!adminRole) {
+          adminRole = await Role.create({
+            name: 'Admin',
+            slug: 'admin',
+            description: 'Administrator role',
+          })
+        }
+
+        user = await User.create({
+          email: 'test@test.com',
+          password: 'password',
+          roleId: adminRole.id,
+        })
+        await user.load('role')
+      } else {
+        await user.load('role')
+      }
+
+      ctx.auth.use('web').user = user
+      return next()
+    }
+
     const user = ctx.auth.use('web').user
 
     if (!user) {

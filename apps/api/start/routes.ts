@@ -40,6 +40,11 @@ const ImagesController = () => import('#controllers/images_controller')
 const GuideSectionsController = () => import('#controllers/guide_sections_controller')
 const MaintenanceSettingsController = () => import('#controllers/maintenance_settings_controller')
 const AuthController = () => import('#controllers/auth_controller')
+const TiersController = () => import('#controllers/tiers_controller')
+const CharactersController = () => import('#controllers/characters_controller')
+const TierListsController = () => import('#controllers/tier_lists_controller')
+const TierListCategoriesController = () => import('#controllers/tier_list_categories_controller')
+const TierListEntriesController = () => import('#controllers/tier_list_entries_controller')
 
 /*
 |--------------------------------------------------------------------------
@@ -181,6 +186,35 @@ router
 
     // Maintenance
     router.get('/maintenance/status', [MaintenanceSettingsController, 'status'])
+
+    // Tiers
+    router
+      .group(() => {
+        router.get('/', [TiersController, 'index'])
+        router.get('/:id', [TiersController, 'show'])
+      })
+      .prefix('tiers')
+
+    // Characters
+    router
+      .group(() => {
+        router.get('/', [CharactersController, 'index'])
+        router.get('/slug/:slug', [CharactersController, 'showBySlug'])
+        router.get('/game/:gameId', [CharactersController, 'byGame'])
+        router.get('/:id', [CharactersController, 'show'])
+      })
+      .prefix('characters')
+
+    // Tier Lists
+    router
+      .group(() => {
+        router.get('/', [TierListsController, 'index'])
+        router.get('/popular', [TierListsController, 'popular'])
+        router.get('/slug/:slug', [TierListsController, 'showBySlug'])
+        router.get('/game/:gameId', [TierListsController, 'byGame'])
+        router.get('/:id', [TierListsController, 'show'])
+      })
+      .prefix('tier-lists')
   })
   .prefix('/api')
 
@@ -328,6 +362,56 @@ router
         router.patch('/disable', [MaintenanceSettingsController, 'disable'])
       })
       .prefix('maintenance')
+
+    // Tiers
+    router
+      .group(() => {
+        router.put('/:id', [TiersController, 'update'])
+      })
+      .prefix('tiers')
+
+    // Characters
+    router
+      .group(() => {
+        router.post('/', [CharactersController, 'store'])
+        router.put('/:id', [CharactersController, 'update'])
+        router.delete('/:id', [CharactersController, 'destroy'])
+      })
+      .prefix('characters')
+
+    // Tier Lists
+    router
+      .group(() => {
+        router.post('/', [TierListsController, 'store'])
+        router.put('/:id', [TierListsController, 'update'])
+        router.patch('/:id/publish', [TierListsController, 'publish'])
+        router.patch('/:id/unpublish', [TierListsController, 'unpublish'])
+        router.delete('/:id', [TierListsController, 'destroy'])
+      })
+      .prefix('tier-lists')
+
+    // Tier List Categories
+    router
+      .group(() => {
+        router.get('/:tierListId/categories', [TierListCategoriesController, 'index'])
+        router.post('/:tierListId/categories', [TierListCategoriesController, 'store'])
+        router.get('/categories/:id', [TierListCategoriesController, 'show'])
+        router.put('/categories/:id', [TierListCategoriesController, 'update'])
+        router.delete('/categories/:id', [TierListCategoriesController, 'destroy'])
+      })
+      .prefix('tier-lists')
+
+    // Tier List Entries
+    router
+      .group(() => {
+        router.get('/:tierListId/entries', [TierListEntriesController, 'index'])
+        router.post('/:tierListId/entries', [TierListEntriesController, 'store'])
+        router.post('/entries/bulk-update', [TierListEntriesController, 'bulkUpdate'])
+        router.get('/entries/:id', [TierListEntriesController, 'show'])
+        router.put('/entries/:id', [TierListEntriesController, 'update'])
+        router.delete('/entries/:id', [TierListEntriesController, 'destroy'])
+      })
+      .prefix('tier-lists')
   })
   .prefix('/api/admin')
   .use([middleware.auth(), middleware.role({ roles: ['admin', 'editor'] }), throttleAdminWrite])

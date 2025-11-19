@@ -1,7 +1,6 @@
 import vine from '@vinejs/vine'
 import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-// Create Tier List Entry Validator
 export const createTierListEntryValidator = vine.compile(
   vine.object({
     tierListId: vine.number().exists({ table: 'tier_lists', column: 'id' }),
@@ -22,7 +21,6 @@ export const createTierListEntryValidator = vine.compile(
   })
 )
 
-// Update Tier List Entry Validator
 const updateTierListEntryValidatorBase = vine.compile(
   vine.object({
     params: vine.object({
@@ -46,7 +44,6 @@ const updateTierListEntryValidatorBase = vine.compile(
 updateTierListEntryValidatorBase.errorReporter = () => new CustomErrorReporter()
 export const updateTierListEntryValidator = updateTierListEntryValidatorBase
 
-// Tier List Entry Params Validator
 const tierListEntryParamsValidatorBase = vine.compile(
   vine.object({
     params: vine.object({
@@ -58,7 +55,6 @@ const tierListEntryParamsValidatorBase = vine.compile(
 tierListEntryParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
 export const tierListEntryParamsValidator = tierListEntryParamsValidatorBase
 
-// Bulk Update Tier List Entries Validator
 export const bulkUpdateTierListEntriesValidator = vine.compile(
   vine.object({
     entries: vine

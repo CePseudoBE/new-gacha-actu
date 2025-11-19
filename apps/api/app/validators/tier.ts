@@ -1,7 +1,6 @@
 import vine from '@vinejs/vine'
 import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-// Update Tier Validator (admin can update colors/labels)
 const updateTierValidatorBase = vine.compile(
   vine.object({
     params: vine.object({
@@ -10,7 +9,11 @@ const updateTierValidatorBase = vine.compile(
 
     label: vine.string().trim().minLength(2).maxLength(50).optional(),
 
-    color: vine.string().trim().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+    color: vine
+      .string()
+      .trim()
+      .regex(/^#[0-9A-Fa-f]{6}$/)
+      .optional(),
 
     description: vine.string().trim().maxLength(500).optional().nullable(),
   })
@@ -19,7 +22,6 @@ const updateTierValidatorBase = vine.compile(
 updateTierValidatorBase.errorReporter = () => new CustomErrorReporter()
 export const updateTierValidator = updateTierValidatorBase
 
-// Tier Params Validator
 const tierParamsValidatorBase = vine.compile(
   vine.object({
     params: vine.object({

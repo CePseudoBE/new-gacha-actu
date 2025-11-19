@@ -1,7 +1,6 @@
 import vine from '@vinejs/vine'
 import { CustomErrorReporter } from '#validators/custom_error_reporter'
 
-// Create Character Validator
 export const createCharacterValidator = vine.compile(
   vine.object({
     gameId: vine.number().exists({ table: 'games', column: 'id' }),
@@ -29,7 +28,6 @@ export const createCharacterValidator = vine.compile(
   })
 )
 
-// Update Character Validator
 const updateCharacterValidatorBase = vine.compile(
   vine.object({
     params: vine.object({
@@ -64,7 +62,6 @@ const updateCharacterValidatorBase = vine.compile(
 updateCharacterValidatorBase.errorReporter = () => new CustomErrorReporter()
 export const updateCharacterValidator = updateCharacterValidatorBase
 
-// Character Params Validator
 const characterParamsValidatorBase = vine.compile(
   vine.object({
     params: vine.object({
@@ -76,8 +73,7 @@ const characterParamsValidatorBase = vine.compile(
 characterParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
 export const characterParamsValidator = characterParamsValidatorBase
 
-// Character Slug Params Validator
-const characterSlugParamsValidatorBase = vine.compile(
+const characterSlugValidatorBase = vine.compile(
   vine.object({
     params: vine.object({
       slug: vine.string().trim().minLength(1),
@@ -85,10 +81,9 @@ const characterSlugParamsValidatorBase = vine.compile(
   })
 )
 
-characterSlugParamsValidatorBase.errorReporter = () => new CustomErrorReporter()
-export const characterSlugParamsValidator = characterSlugParamsValidatorBase
+characterSlugValidatorBase.errorReporter = () => new CustomErrorReporter()
+export const characterSlugValidator = characterSlugValidatorBase
 
-// Character Filters Validator (for query params)
 export const characterFiltersValidator = vine.compile(
   vine.object({
     gameId: vine.number().optional(),
@@ -96,7 +91,8 @@ export const characterFiltersValidator = vine.compile(
     element: vine.string().trim().optional(),
     role: vine.string().trim().optional(),
     isLimited: vine.string().in(['true', 'false']).optional(),
-    limit: vine.number().min(1).max(100).optional(),
+    search: vine.string().trim().minLength(1).optional(),
     page: vine.number().min(1).optional(),
+    perPage: vine.number().min(1).max(100).optional(),
   })
 )
