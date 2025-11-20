@@ -13,8 +13,8 @@
     <form @submit="onSubmit">
       <GuideFormFields
         :form="form"
-        :sections="values.sections"
-        :prerequisites="values.prerequisites"
+        :sections="values.sections || []"
+        :prerequisites="values.prerequisites || []"
         :games="games || []"
         :guide-types="guideTypes || []"
         :difficulty-levels="difficultyLevels || []"

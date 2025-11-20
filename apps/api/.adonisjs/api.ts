@@ -7,6 +7,30 @@
 import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
 import type { InferInput } from '@vinejs/vine/types'
 
+type HealthGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/health_checks_controller.ts').default['handle'], false>
+}
+type ApiAuthRegisterPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/auth.ts')['registerValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['register'], true>
+}
+type ApiAuthLoginPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/auth.ts')['loginValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['login'], true>
+}
+type ApiAuthLogoutPost = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['logout'], false>
+}
+type ApiAuthMeGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['me'], false>
+}
+type ApiAuthChangepasswordPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/auth.ts')['changePasswordValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['changePassword'], true>
+}
 type ApiGamesGetHead = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/common.ts')['gameFiltersValidator']>>
   response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['index'], true>
@@ -126,6 +150,50 @@ type ApiArticlesIdGetHead = {
 type ApiMaintenanceStatusGetHead = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/maintenance_settings_controller.ts').default['status'], false>
+}
+type ApiTiersGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/tiers_controller.ts').default['index'], false>
+}
+type ApiTiersIdGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier.ts')['tierParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tiers_controller.ts').default['show'], true>
+}
+type ApiCharactersGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/character.ts')['characterFiltersValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/characters_controller.ts').default['index'], true>
+}
+type ApiCharactersSlugIdGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/character.ts')['characterSlugValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/characters_controller.ts').default['showBySlug'], true>
+}
+type ApiCharactersGameIdGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/common.ts')['limitValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/characters_controller.ts').default['byGame'], true>
+}
+type ApiCharactersIdGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/character.ts')['characterParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/characters_controller.ts').default['show'], true>
+}
+type ApiTierlistsGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list.ts')['tierListFiltersValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['index'], true>
+}
+type ApiTierlistsPopularGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/common.ts')['limitValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['popular'], true>
+}
+type ApiTierlistsSlugIdGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list.ts')['tierListSlugValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['showBySlug'], true>
+}
+type ApiTierlistsGameIdGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/common.ts')['limitValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['byGame'], true>
+}
+type ApiTierlistsIdGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list.ts')['tierListParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['show'], true>
 }
 type ApiAdminGamesStatsGetHead = {
   request: unknown
@@ -287,6 +355,18 @@ type ApiAdminArticlesIdDelete = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/article.ts')['articleParamsValidator']>>
   response: MakeTuyauResponse<import('../app/controllers/articles_controller.ts').default['destroy'], true>
 }
+type ApiAdminArticlesIdImagesGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/article_images_controller.ts').default['index'], false>
+}
+type ApiAdminArticlesIdImagesPost = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/article_images_controller.ts').default['store'], false>
+}
+type ApiAdminArticlesIdImagesIdDelete = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/article_images_controller.ts').default['destroy'], false>
+}
 type ApiAdminImagesIdGetHead = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/images_controller.ts').default['show'], false>
@@ -307,8 +387,122 @@ type ApiAdminMaintenanceDisablePatch = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/maintenance_settings_controller.ts').default['disable'], false>
 }
+type ApiAdminTiersIdPut = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier.ts')['updateTierValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tiers_controller.ts').default['update'], true>
+}
+type ApiAdminCharactersPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/character.ts')['createCharacterValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/characters_controller.ts').default['store'], true>
+}
+type ApiAdminCharactersIdPut = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/character.ts')['updateCharacterValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/characters_controller.ts').default['update'], true>
+}
+type ApiAdminCharactersIdDelete = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/character.ts')['characterParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/characters_controller.ts').default['destroy'], true>
+}
+type ApiAdminTierlistsPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list.ts')['createTierListValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['store'], true>
+}
+type ApiAdminTierlistsIdPut = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list.ts')['updateTierListValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['update'], true>
+}
+type ApiAdminTierlistsIdPublishPatch = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list.ts')['tierListParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['publish'], true>
+}
+type ApiAdminTierlistsIdUnpublishPatch = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list.ts')['tierListParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['unpublish'], true>
+}
+type ApiAdminTierlistsIdDelete = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list.ts')['tierListParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_lists_controller.ts').default['destroy'], true>
+}
+type ApiAdminTierlistsIdCategoriesGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_categories_controller.ts').default['index'], false>
+}
+type ApiAdminTierlistsIdCategoriesPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list_category.ts')['createTierListCategoryValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_categories_controller.ts').default['store'], true>
+}
+type ApiAdminTierlistsIdEntriesGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_entries_controller.ts').default['index'], false>
+}
+type ApiAdminTierlistsIdEntriesPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list_entry.ts')['createTierListEntryValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_entries_controller.ts').default['store'], true>
+}
+type ApiAdminTierlistsCategoriesIdGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list_category.ts')['tierListCategoryParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_categories_controller.ts').default['show'], true>
+}
+type ApiAdminTierlistsCategoriesIdPut = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list_category.ts')['updateTierListCategoryValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_categories_controller.ts').default['update'], true>
+}
+type ApiAdminTierlistsCategoriesIdDelete = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list_category.ts')['tierListCategoryParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_categories_controller.ts').default['destroy'], true>
+}
+type ApiAdminTierlistsEntriesBulkupdatePost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list_entry.ts')['bulkUpdateTierListEntriesValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_entries_controller.ts').default['bulkUpdate'], true>
+}
+type ApiAdminTierlistsEntriesIdGetHead = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list_entry.ts')['tierListEntryParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_entries_controller.ts').default['show'], true>
+}
+type ApiAdminTierlistsEntriesIdPut = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list_entry.ts')['updateTierListEntryValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_entries_controller.ts').default['update'], true>
+}
+type ApiAdminTierlistsEntriesIdDelete = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/tier_list_entry.ts')['tierListEntryParamsValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/tier_list_entries_controller.ts').default['destroy'], true>
+}
 export interface ApiDefinition {
+  'health': {
+    '$url': {
+    };
+    '$get': HealthGetHead;
+    '$head': HealthGetHead;
+  };
   'api': {
+    'auth': {
+      'register': {
+        '$url': {
+        };
+        '$post': ApiAuthRegisterPost;
+      };
+      'login': {
+        '$url': {
+        };
+        '$post': ApiAuthLoginPost;
+      };
+      'logout': {
+        '$url': {
+        };
+        '$post': ApiAuthLogoutPost;
+      };
+      'me': {
+        '$url': {
+        };
+        '$get': ApiAuthMeGetHead;
+        '$head': ApiAuthMeGetHead;
+      };
+      'change-password': {
+        '$url': {
+        };
+        '$post': ApiAuthChangepasswordPost;
+      };
+    };
     'games': {
       '$url': {
       };
@@ -497,6 +691,80 @@ export interface ApiDefinition {
         '$head': ApiMaintenanceStatusGetHead;
       };
     };
+    'tiers': {
+      '$url': {
+      };
+      '$get': ApiTiersGetHead;
+      '$head': ApiTiersGetHead;
+      ':id': {
+        '$url': {
+        };
+        '$get': ApiTiersIdGetHead;
+        '$head': ApiTiersIdGetHead;
+      };
+    };
+    'characters': {
+      '$url': {
+      };
+      '$get': ApiCharactersGetHead;
+      '$head': ApiCharactersGetHead;
+      'slug': {
+        ':slug': {
+          '$url': {
+          };
+          '$get': ApiCharactersSlugIdGetHead;
+          '$head': ApiCharactersSlugIdGetHead;
+        };
+      };
+      'game': {
+        ':gameId': {
+          '$url': {
+          };
+          '$get': ApiCharactersGameIdGetHead;
+          '$head': ApiCharactersGameIdGetHead;
+        };
+      };
+      ':id': {
+        '$url': {
+        };
+        '$get': ApiCharactersIdGetHead;
+        '$head': ApiCharactersIdGetHead;
+      };
+    };
+    'tier-lists': {
+      '$url': {
+      };
+      '$get': ApiTierlistsGetHead;
+      '$head': ApiTierlistsGetHead;
+      'popular': {
+        '$url': {
+        };
+        '$get': ApiTierlistsPopularGetHead;
+        '$head': ApiTierlistsPopularGetHead;
+      };
+      'slug': {
+        ':slug': {
+          '$url': {
+          };
+          '$get': ApiTierlistsSlugIdGetHead;
+          '$head': ApiTierlistsSlugIdGetHead;
+        };
+      };
+      'game': {
+        ':gameId': {
+          '$url': {
+          };
+          '$get': ApiTierlistsGameIdGetHead;
+          '$head': ApiTierlistsGameIdGetHead;
+        };
+      };
+      ':id': {
+        '$url': {
+        };
+        '$get': ApiTierlistsIdGetHead;
+        '$head': ApiTierlistsIdGetHead;
+      };
+    };
     'admin': {
       'games': {
         'stats': {
@@ -603,8 +871,6 @@ export interface ApiDefinition {
           };
           '$put': ApiAdminGuidesIdPut;
           '$delete': ApiAdminGuidesIdDelete;
-        };
-        ':guideId': {
           'sections': {
             '$url': {
             };
@@ -644,6 +910,18 @@ export interface ApiDefinition {
           };
           '$put': ApiAdminArticlesIdPut;
           '$delete': ApiAdminArticlesIdDelete;
+          'images': {
+            '$url': {
+            };
+            '$get': ApiAdminArticlesIdImagesGetHead;
+            '$head': ApiAdminArticlesIdImagesGetHead;
+            '$post': ApiAdminArticlesIdImagesPost;
+            ':imageId': {
+              '$url': {
+              };
+              '$delete': ApiAdminArticlesIdImagesIdDelete;
+            };
+          };
         };
       };
       'images': {
@@ -668,6 +946,84 @@ export interface ApiDefinition {
           '$url': {
           };
           '$patch': ApiAdminMaintenanceDisablePatch;
+        };
+      };
+      'tiers': {
+        ':id': {
+          '$url': {
+          };
+          '$put': ApiAdminTiersIdPut;
+        };
+      };
+      'characters': {
+        '$url': {
+        };
+        '$post': ApiAdminCharactersPost;
+        ':id': {
+          '$url': {
+          };
+          '$put': ApiAdminCharactersIdPut;
+          '$delete': ApiAdminCharactersIdDelete;
+        };
+      };
+      'tier-lists': {
+        '$url': {
+        };
+        '$post': ApiAdminTierlistsPost;
+        ':id': {
+          '$url': {
+          };
+          '$put': ApiAdminTierlistsIdPut;
+          'publish': {
+            '$url': {
+            };
+            '$patch': ApiAdminTierlistsIdPublishPatch;
+          };
+          'unpublish': {
+            '$url': {
+            };
+            '$patch': ApiAdminTierlistsIdUnpublishPatch;
+          };
+          '$delete': ApiAdminTierlistsIdDelete;
+          'categories': {
+            '$url': {
+            };
+            '$get': ApiAdminTierlistsIdCategoriesGetHead;
+            '$head': ApiAdminTierlistsIdCategoriesGetHead;
+            '$post': ApiAdminTierlistsIdCategoriesPost;
+          };
+          'entries': {
+            '$url': {
+            };
+            '$get': ApiAdminTierlistsIdEntriesGetHead;
+            '$head': ApiAdminTierlistsIdEntriesGetHead;
+            '$post': ApiAdminTierlistsIdEntriesPost;
+          };
+        };
+        'categories': {
+          ':id': {
+            '$url': {
+            };
+            '$get': ApiAdminTierlistsCategoriesIdGetHead;
+            '$head': ApiAdminTierlistsCategoriesIdGetHead;
+            '$put': ApiAdminTierlistsCategoriesIdPut;
+            '$delete': ApiAdminTierlistsCategoriesIdDelete;
+          };
+        };
+        'entries': {
+          'bulk-update': {
+            '$url': {
+            };
+            '$post': ApiAdminTierlistsEntriesBulkupdatePost;
+          };
+          ':id': {
+            '$url': {
+            };
+            '$get': ApiAdminTierlistsEntriesIdGetHead;
+            '$head': ApiAdminTierlistsEntriesIdGetHead;
+            '$put': ApiAdminTierlistsEntriesIdPut;
+            '$delete': ApiAdminTierlistsEntriesIdDelete;
+          };
         };
       };
     };

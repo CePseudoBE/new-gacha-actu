@@ -25,9 +25,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // Check maintenance status (SSR + client)
   try {
     const api = useApi()
-    const response = await api.api.maintenance.status.$get()
+    const { data } = await api.api.maintenance.status.$get()
 
-    const isEnabled = response.data?.data?.isEnabled || false
+    const isEnabled = data?.data?.isEnabled || false
 
     // Mettre à jour le cache
     maintenanceCache = {

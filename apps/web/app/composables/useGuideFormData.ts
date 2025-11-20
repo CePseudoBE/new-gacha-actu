@@ -7,8 +7,8 @@ export const useGuideFormData = () => {
 
   // Load games
   const { data: games, refresh: refreshGames } = useAsyncData('games-for-guide-form', async () => {
-    const response = await api.api.games.$get()
-    return response.data?.data || []
+    const { data: apiData } = await api.api.games.$get()
+    return apiData?.data || []
   })
 
   // Load difficulty levels
@@ -16,23 +16,23 @@ export const useGuideFormData = () => {
     data: difficultyLevels,
     refresh: refreshDifficultyLevels,
   } = useAsyncData('difficulty-levels', async () => {
-    const response = await api.api['difficulty-levels'].$get()
-    return response.data?.data || []
+    const { data: apiData } = await api.api['difficulty-levels'].$get()
+    return apiData?.data || []
   })
 
   // Load guide types
   const { data: guideTypes, refresh: refreshGuideTypes } = useAsyncData(
     'guide-types',
     async () => {
-      const response = await api.api['guide-types'].$get()
-      return response.data?.data || []
+      const { data: apiData } = await api.api['guide-types'].$get()
+      return apiData?.data || []
     }
   )
 
   // Load tags
   const { data: tags, refresh: refreshTags } = useAsyncData('tags-for-guide-form', async () => {
-    const response = await api.api.tags.$get()
-    return response.data?.data || []
+    const { data: apiData } = await api.api.tags.$get()
+    return apiData?.data || []
   })
 
   // Load seo keywords
@@ -40,8 +40,8 @@ export const useGuideFormData = () => {
     data: seoKeywords,
     refresh: refreshSeoKeywords,
   } = useAsyncData('seo-keywords-for-guide-form', async () => {
-    const response = await api.api['seo-keywords'].$get()
-    return response.data?.data || []
+    const { data: apiData } = await api.api['seo-keywords'].$get()
+    return apiData?.data || []
   })
 
   return {

@@ -20,7 +20,7 @@ export default class TierListEntriesController {
   ) {}
 
   async index(ctx: HttpContext) {
-    const tierListId = ctx.request.param('tierListId')
+    const tierListId = ctx.request.param('id')
 
     if (!tierListId || Number.isNaN(Number(tierListId))) {
       ResponseService.badRequest(ctx, 'ID de la tier list invalide')
@@ -28,7 +28,7 @@ export default class TierListEntriesController {
     }
 
     const entries = await this.tierListEntryRepository.findByTierListId(Number(tierListId))
-    ResponseService.ok(ctx, TierListEntryDto.fromArray(entries))
+    return ResponseService.ok(ctx, TierListEntryDto.fromArray(entries))
   }
 
   async show(ctx: HttpContext) {
@@ -39,14 +39,26 @@ export default class TierListEntriesController {
       throw new NotFoundException('Entrée non trouvée')
     }
 
-    ResponseService.ok(ctx, new TierListEntryDto(entry))
+    return ResponseService.ok(ctx, new TierListEntryDto(entry))
   }
 
   async store(ctx: HttpContext) {
+    const tierListId = ctx.request.param('id')
+
+    if (!tierListId || Number.isNaN(Number(tierListId))) {
+      ResponseService.badRequest(ctx, 'ID de la tier list invalide')
+      return
+    }
+
     const payload = await ctx.request.validateUsing(createTierListEntryValidator)
 
-    const entry = await this.tierListEntryRepository.create(payload)
-    ResponseService.created(ctx, new TierListEntryDto(entry), 'Entrée créée avec succès')
+    const entryData = {
+      ...payload,
+      tierListId: Number(tierListId),
+    }
+
+    const entry = await this.tierListEntryRepository.create(entryData)
+    return ResponseService.created(ctx, new TierListEntryDto(entry), 'Entrée créée avec succès')
   }
 
   async update(ctx: HttpContext) {
@@ -66,14 +78,14 @@ export default class TierListEntriesController {
       throw new NotFoundException('Entrée non trouvée')
     }
 
-    ResponseService.ok(ctx, new TierListEntryDto(entry), 'Entrée mise à jour avec succès')
+    return ResponseService.ok(ctx, new TierListEntryDto(entry), 'Entrée mise à jour avec succès')
   }
 
   async bulkUpdate(ctx: HttpContext) {
     const payload = await ctx.request.validateUsing(bulkUpdateTierListEntriesValidator)
 
     await this.tierListService.bulkUpdateEntries(payload.entries)
-    ResponseService.success(ctx, 'Entrées mises à jour avec succès')
+    return ResponseService.success(ctx, 'Entrées mises à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
@@ -84,6 +96,6 @@ export default class TierListEntriesController {
       throw new NotFoundException('Entrée non trouvée')
     }
 
-    ResponseService.success(ctx, 'Entrée supprimée avec succès')
+    return ResponseService.success(ctx, 'Entrée supprimée avec succès')
   }
 }

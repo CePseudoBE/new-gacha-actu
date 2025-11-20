@@ -28,7 +28,7 @@ export default class TierListsController {
 
     const result = await this.tierListService.getTierLists(tierListFilters, page, perPage)
 
-    ResponseService.okWithPagination(ctx, result.data, ResponseService.adaptPaginationMeta(result.meta))
+    return ResponseService.okWithPagination(ctx, result.data, ResponseService.adaptPaginationMeta(result.meta))
   }
 
   async popular(ctx: HttpContext) {
@@ -36,19 +36,19 @@ export default class TierListsController {
     const limit = query.limit || 10
     const tierLists = await this.tierListService.getPopularTierLists(limit)
 
-    ResponseService.ok(ctx, tierLists)
+    return ResponseService.ok(ctx, tierLists)
   }
 
   async show(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(tierListParamsValidator)
     const tierList = await this.tierListService.getTierListById(validatedParams.id)
-    ResponseService.ok(ctx, tierList)
+    return ResponseService.ok(ctx, tierList)
   }
 
   async showBySlug(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(tierListSlugValidator)
     const tierList = await this.tierListService.getTierListBySlugAndIncrementViews(validatedParams.slug)
-    ResponseService.ok(ctx, tierList)
+    return ResponseService.ok(ctx, tierList)
   }
 
   async byGame(ctx: HttpContext) {
@@ -62,7 +62,7 @@ export default class TierListsController {
     }
 
     const tierLists = await this.tierListService.getTierListsByGameId(Number(gameId), limit)
-    ResponseService.ok(ctx, tierLists)
+    return ResponseService.ok(ctx, tierLists)
   }
 
   async store(ctx: HttpContext) {
@@ -76,7 +76,7 @@ export default class TierListsController {
     }
 
     const tierList = await this.tierListService.createTierList(tierListData, image)
-    ResponseService.created(ctx, tierList, 'Tier list créée avec succès')
+    return ResponseService.created(ctx, tierList, 'Tier list créée avec succès')
   }
 
   async update(ctx: HttpContext) {
@@ -90,24 +90,24 @@ export default class TierListsController {
       restPayload,
       image
     )
-    ResponseService.ok(ctx, tierList, 'Tier list mise à jour avec succès')
+    return ResponseService.ok(ctx, tierList, 'Tier list mise à jour avec succès')
   }
 
   async publish(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(tierListParamsValidator)
     const tierList = await this.tierListService.publishTierList(validatedParams.id)
-    ResponseService.ok(ctx, tierList, 'Tier list publiée avec succès')
+    return ResponseService.ok(ctx, tierList, 'Tier list publiée avec succès')
   }
 
   async unpublish(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(tierListParamsValidator)
     const tierList = await this.tierListService.unpublishTierList(validatedParams.id)
-    ResponseService.ok(ctx, tierList, 'Tier list dépubliée avec succès')
+    return ResponseService.ok(ctx, tierList, 'Tier list dépubliée avec succès')
   }
 
   async destroy(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(tierListParamsValidator)
     await this.tierListService.deleteTierList(validatedParams.id)
-    ResponseService.success(ctx, 'Tier list supprimée avec succès')
+    return ResponseService.success(ctx, 'Tier list supprimée avec succès')
   }
 }

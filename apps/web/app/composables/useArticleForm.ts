@@ -168,7 +168,7 @@ export const useArticleForm = (initialValues?: Partial<ArticleFormValues>) => {
     values: ArticleFormValues,
   ) => {
     const formData = prepareFormData(values);
-    const response = await api.api.admin.articles[articleId].$put(formData);
+    const response = await api.api.admin.articles({ id: articleId }).$put(formData);
 
     if (response?.error || response?.status >= 400) {
       throw response;

@@ -54,7 +54,7 @@ import { Card, CardContent } from '@/components/ui/card'
 const api = useApi()
 
 // Fetch all games from API
-const { data: games = [] } = await useAsyncData('all-games', async () => {
+const { data: games } = await useAsyncData('all-games', async () => {
   const response = await api.api.games.$get()
   return response.data?.data || []
 })
@@ -76,7 +76,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      children: JSON.stringify({
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
         name: 'Jeux Gacha',

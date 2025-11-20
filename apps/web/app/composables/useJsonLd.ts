@@ -105,7 +105,7 @@ export function useJsonLd() {
       script: [
         {
           type: 'application/ld+json',
-          children: JSON.stringify(jsonLdData)
+          innerHTML: JSON.stringify(jsonLdData)
         }
       ]
     })

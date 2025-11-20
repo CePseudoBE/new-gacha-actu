@@ -133,11 +133,18 @@ export const useAuth = () => {
    * Changement de mot de passe
    */
   const changePassword = async (currentPassword: string, newPassword: string, newPasswordConfirmation: string): Promise<{ success: boolean; error?: string }> => {
+    // Vérification côté frontend
+    if (newPassword !== newPasswordConfirmation) {
+      return {
+        success: false,
+        error: 'Les mots de passe ne correspondent pas'
+      }
+    }
+
     try {
       const response: any = await $api.api.auth['change-password'].$post({
         currentPassword,
         newPassword,
-        newPassword_confirmation: newPasswordConfirmation,
       })
 
       if (response?.data?.success) {

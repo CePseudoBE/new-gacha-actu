@@ -10,31 +10,31 @@ export default class TagsController {
 
   async index(ctx: HttpContext) {
     const tags = await this.tagService.getAllTags()
-    ResponseService.ok(ctx, tags)
+    return ResponseService.ok(ctx, tags)
   }
 
   async show(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(tagParamsValidator)
     const tag = await this.tagService.getTagById(validatedParams.id)
-    ResponseService.ok(ctx, tag)
+    return ResponseService.ok(ctx, tag)
   }
 
   async store(ctx: HttpContext) {
     const payload = await ctx.request.validateUsing(createTagValidator)
     const tag = await this.tagService.createTag(payload)
-    ResponseService.created(ctx, tag, 'Tag créé avec succès')
+    return ResponseService.created(ctx, tag, 'Tag créé avec succès')
   }
 
   async update(ctx: HttpContext) {
     const { params: validatedParams, ...payload } =
       await ctx.request.validateUsing(updateTagValidator)
     const tag = await this.tagService.updateTag(validatedParams.id, payload)
-    ResponseService.ok(ctx, tag, 'Tag mis à jour avec succès')
+    return ResponseService.ok(ctx, tag, 'Tag mis à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(tagParamsValidator)
     await this.tagService.deleteTag(validatedParams.id)
-    ResponseService.success(ctx, 'Tag supprimé avec succès')
+    return ResponseService.success(ctx, 'Tag supprimé avec succès')
   }
 }

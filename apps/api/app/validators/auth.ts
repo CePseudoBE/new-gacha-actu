@@ -39,7 +39,7 @@ export const loginValidator = loginValidatorBase
 const changePasswordValidatorBase = vine.compile(
   vine.object({
     currentPassword: vine.string(),
-    newPassword: vine.string().minLength(8).maxLength(255).confirmed(),
+    newPassword: vine.string().minLength(8).maxLength(255),
   })
 )
 

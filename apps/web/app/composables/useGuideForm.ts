@@ -20,10 +20,10 @@ const guideFormSchema = z.object({
   author: z.string().min(2, "L'auteur doit contenir au moins 2 caractères").max(100),
   publishedAt: z.string(),
   readingTime: z.number().min(1).max(120).optional(),
-  difficultyId: z.number({ required_error: 'Sélectionnez un niveau de difficulté' }),
-  guideTypeId: z.number({ required_error: 'Sélectionnez un type de guide' }),
+  difficultyId: z.number({ message: 'Sélectionnez un niveau de difficulté' }),
+  guideTypeId: z.number({ message: 'Sélectionnez un type de guide' }),
   isPopular: z.boolean(),
-  gameId: z.number({ required_error: 'Sélectionnez un jeu' }),
+  gameId: z.number({ message: 'Sélectionnez un jeu' }),
   metaDescription: z.string().min(10).max(160).optional(),
   sections: z.array(guideSectionSchema).min(1, 'Au moins une section est requise').max(20),
   prerequisites: z.array(guidePrerequisiteSchema).max(10).optional(),
@@ -194,7 +194,7 @@ export const useGuideForm = (initialValues?: Partial<GuideFormValues>) => {
 
   const updateGuide = async (guideId: number, values: GuideFormValues) => {
     const formData = prepareFormData(values)
-    const response = await api.api.admin.guides[guideId].$put(formData)
+    const response = await api.api.admin.guides({ id: guideId }).$put(formData)
 
     if (response?.error || response?.status >= 400) {
       throw response

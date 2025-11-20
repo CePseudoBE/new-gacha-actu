@@ -328,10 +328,10 @@ const filteredVideos = computed(() => {
 const fetchVideos = async () => {
   isLoading.value = true
   try {
-    const response = await $fetch(`${config.public.apiUrl}/api/youtube-videos`, {
+    const response = await $fetch<{ data: any[] }>(`${config.public.apiUrl}/api/youtube-videos`, {
       credentials: 'include',
     })
-    videos.value = response.data || []
+    videos.value = response?.data || []
   } catch (error) {
     console.error('Error fetching videos:', error)
     toast.error('Erreur lors du chargement des vidéos')
@@ -354,7 +354,7 @@ const extractVideoId = (input: string): string => {
 
   for (const pattern of patterns) {
     const match = input.match(pattern)
-    if (match) return match[1]
+    if (match && match[1]) return match[1]
   }
 
   return input
@@ -436,7 +436,7 @@ const openEditDialog = (video: any) => {
     description: video.description || '',
     category: video.category || '',
     channelTitle: video.channelTitle || '',
-    publishedAt: video.publishedAt ? new Date(video.publishedAt).toISOString().split('T')[0] : '',
+    publishedAt: video.publishedAt ? (new Date(video.publishedAt).toISOString().split('T')[0] || '') : '',
     isActive: video.isActive,
   }
   isDialogOpen.value = true

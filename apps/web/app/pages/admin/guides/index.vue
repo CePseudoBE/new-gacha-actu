@@ -104,8 +104,8 @@ const { formatDate } = useDate()
 
 // Fetch guides
 const { data: guides, refresh } = await useAsyncData('admin-guides', async () => {
-  const response = await api.api.guides.$get()
-  return response.data?.data || []
+  const { data: apiData } = await api.api.guides.$get()
+  return apiData?.data || []
 })
 
 const getDifficultyVariant = (difficulty?: string) => {
@@ -136,7 +136,7 @@ const confirmDelete = async () => {
   if (!guideToDelete.value) return
 
   try {
-    await api.api.admin.guides[guideToDelete.value.id].$delete()
+    await api.api.admin.guides({ id: guideToDelete.value.id }).$delete()
     toast.success('Guide supprimé avec succès')
 
     // Clear cache and refresh

@@ -17,10 +17,10 @@ export function useMarkdown() {
   const renderer = new marked.Renderer()
   const originalHeading = renderer.heading.bind(renderer)
 
-  renderer.heading = ({ tokens, depth }) => {
+  renderer.heading = (heading) => {
     // Shift all headings by +1 level (# becomes h2, ## becomes h3, etc.)
-    const newDepth = Math.min(depth + 1, 6) as 1 | 2 | 3 | 4 | 5 | 6
-    return originalHeading({ tokens, depth: newDepth })
+    const newDepth = Math.min(heading.depth + 1, 6) as 1 | 2 | 3 | 4 | 5 | 6
+    return originalHeading({ ...heading, depth: newDepth })
   }
 
   // Set marked options
@@ -61,13 +61,14 @@ export function useMarkdown() {
       },
       // Additional security: enforce rel=noopener for external links
       transformTags: {
-        'a': (tagName, attribs) => {
+        'a': (tagName: string, attribs: Record<string, string>) => {
+          const target = attribs.href?.startsWith('http') ? '_blank' : undefined
           return {
             tagName: 'a',
             attribs: {
               ...attribs,
               rel: 'noopener noreferrer',
-              target: attribs.href?.startsWith('http') ? '_blank' : undefined
+              ...(target && { target })
             }
           }
         }

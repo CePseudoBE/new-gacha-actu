@@ -20,7 +20,7 @@ export default class AuthController {
 
     const user = await this.authService.register(data)
 
-    ResponseService.created(ctx, user, 'Compte créé avec succès')
+    return ResponseService.created(ctx, user, 'Compte créé avec succès')
   }
 
   /**
@@ -31,7 +31,7 @@ export default class AuthController {
 
     const user = await this.authService.login(ctx, data)
 
-    ResponseService.ok(ctx, user, 'Connexion réussie')
+    return ResponseService.ok(ctx, user, 'Connexion réussie')
   }
 
   /**
@@ -40,7 +40,7 @@ export default class AuthController {
   async logout(ctx: HttpContext) {
     await this.authService.logout(ctx)
 
-    ResponseService.success(ctx, 'Déconnexion réussie')
+    return ResponseService.success(ctx, 'Déconnexion réussie')
   }
 
   /**
@@ -49,7 +49,7 @@ export default class AuthController {
   async me(ctx: HttpContext) {
     const user = await this.authService.getCurrentUser(ctx)
 
-    ResponseService.ok(ctx, user)
+    return ResponseService.ok(ctx, user)
   }
 
   /**
@@ -60,6 +60,6 @@ export default class AuthController {
 
     await this.authService.changePassword(ctx, data)
 
-    ResponseService.success(ctx, 'Mot de passe modifié avec succès')
+    return ResponseService.success(ctx, 'Mot de passe modifié avec succès')
   }
 }

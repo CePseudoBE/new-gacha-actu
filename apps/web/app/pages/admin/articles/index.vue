@@ -172,20 +172,20 @@ const { handleApiCall } = useApiErrorHandler()
 const { formatDateShort: formatDate } = useDate()
 
 // Fetch all articles from API
-const { data: articles = [], pending, error, refresh } = await useAsyncData('admin-articles', async () => {
-  const response = await api.api.articles.$get()
-  return response.data?.data || []
+const { data: articles, pending, error, refresh } = await useAsyncData('admin-articles', async () => {
+  const { data: apiData } = await api.api.articles.$get()
+  return apiData?.data || []
 })
 
 // Fetch games and categories for filters
-const { data: games = [] } = await useAsyncData('games', async () => {
-  const response = await api.api.games.$get()
-  return response.data?.data || []
+const { data: games } = await useAsyncData('games', async () => {
+  const { data: apiData } = await api.api.games.$get()
+  return apiData?.data || []
 })
 
 const { data: categories = [] } = await useAsyncData('article-categories', async () => {
-  const response = await api.api['article-categories'].$get()
-  return response.data?.data || []
+  const { data: apiData } = await api.api['article-categories'].$get()
+  return apiData?.data || []
 })
 
 const searchQuery = ref('')
@@ -193,8 +193,8 @@ const filterGame = ref('all')
 const filterCategory = ref('all')
 
 const filteredArticles = computed(() => {
-  return (articles.value || []).filter(article => {
-    const matchesSearch = article.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  return (articles.value || []).filter((article) => {
+    const matchesSearch = article.title?.toLowerCase().includes(searchQuery.value.toLowerCase()) ?? true
     const matchesGame = filterGame.value === 'all' || article.game?.id.toString() === filterGame.value
     const matchesCategory = filterCategory.value === 'all' || article.category?.id.toString() === filterCategory.value
     return matchesSearch && matchesGame && matchesCategory
@@ -213,9 +213,9 @@ const getCategoryVariant = (category?: string) => {
 
 // Delete dialog state
 const deleteDialogOpen = ref(false)
-const articleToDelete = ref<Article | null>(null)
+const articleToDelete = ref<{ id: number; title: string } | null>(null)
 
-const openDeleteDialog = (article: Article) => {
+const openDeleteDialog = (article: { id: number; title: string }) => {
   articleToDelete.value = article
   deleteDialogOpen.value = true
 }

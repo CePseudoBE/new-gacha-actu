@@ -343,10 +343,12 @@ interface Section {
   title: string
   content: string
   order: number
+  [key: string]: any  // Allow additional properties from API
 }
 
 interface Prerequisite {
   description: string
+  [key: string]: any  // Allow additional properties from API
 }
 
 interface Props {

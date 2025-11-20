@@ -68,18 +68,18 @@ const api = useApi()
 
 // Fetch all necessary data
 const { data: genres, refresh: refreshGenres } = await useAsyncData('genres', async () => {
-  const response = await api.api.genres.$get()
-  return response.data?.data || []
+  const { data: apiData } = await api.api.genres.$get()
+  return apiData?.data || []
 })
 
 const { data: platforms, refresh: refreshPlatforms } = await useAsyncData('platforms', async () => {
-  const response = await api.api.platforms.$get()
-  return response.data?.data || []
+  const { data: apiData } = await api.api.platforms.$get()
+  return apiData?.data || []
 })
 
 const { data: tags, refresh: refreshTags } = await useAsyncData('tags', async () => {
-  const response = await api.api.tags.$get()
-  return response.data?.data || []
+  const { data: apiData } = await api.api.tags.$get()
+  return apiData?.data || []
 })
 
 // Quick add dialog

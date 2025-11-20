@@ -10,13 +10,13 @@ export default class TiersController {
 
   async index(ctx: HttpContext) {
     const tiers = await this.tierService.getAllTiers()
-    ResponseService.ok(ctx, tiers)
+    return ResponseService.ok(ctx, tiers)
   }
 
   async show(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(tierParamsValidator)
     const tier = await this.tierService.getTierById(validatedParams.id)
-    ResponseService.ok(ctx, tier)
+    return ResponseService.ok(ctx, tier)
   }
 
   async update(ctx: HttpContext) {
@@ -30,6 +30,6 @@ export default class TiersController {
     }
 
     const tier = await this.tierService.updateTier(validatedParams.id, updateData)
-    ResponseService.ok(ctx, tier, 'Tier mis à jour avec succès')
+    return ResponseService.ok(ctx, tier, 'Tier mis à jour avec succès')
   }
 }

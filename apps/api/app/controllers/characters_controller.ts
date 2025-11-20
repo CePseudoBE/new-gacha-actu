@@ -32,19 +32,19 @@ export default class CharactersController {
 
     const result = await this.characterService.getCharacters(characterFilters, page, perPage)
 
-    ResponseService.okWithPagination(ctx, result.data, ResponseService.adaptPaginationMeta(result.meta))
+    return ResponseService.okWithPagination(ctx, result.data, ResponseService.adaptPaginationMeta(result.meta))
   }
 
   async show(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(characterParamsValidator)
     const character = await this.characterService.getCharacterById(validatedParams.id)
-    ResponseService.ok(ctx, character)
+    return ResponseService.ok(ctx, character)
   }
 
   async showBySlug(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(characterSlugValidator)
     const character = await this.characterService.getCharacterBySlug(validatedParams.slug)
-    ResponseService.ok(ctx, character)
+    return ResponseService.ok(ctx, character)
   }
 
   async byGame(ctx: HttpContext) {
@@ -58,7 +58,7 @@ export default class CharactersController {
     }
 
     const characters = await this.characterService.getCharactersByGameId(Number(gameId), limit)
-    ResponseService.ok(ctx, characters)
+    return ResponseService.ok(ctx, characters)
   }
 
   async store(ctx: HttpContext) {
@@ -72,7 +72,7 @@ export default class CharactersController {
     }
 
     const character = await this.characterService.createCharacter(characterData, image)
-    ResponseService.created(ctx, character, 'Personnage créé avec succès')
+    return ResponseService.created(ctx, character, 'Personnage créé avec succès')
   }
 
   async update(ctx: HttpContext) {
@@ -91,12 +91,12 @@ export default class CharactersController {
       updateData,
       image
     )
-    ResponseService.ok(ctx, character, 'Personnage mis à jour avec succès')
+    return ResponseService.ok(ctx, character, 'Personnage mis à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(characterParamsValidator)
     await this.characterService.deleteCharacter(validatedParams.id)
-    ResponseService.success(ctx, 'Personnage supprimé avec succès')
+    return ResponseService.success(ctx, 'Personnage supprimé avec succès')
   }
 }

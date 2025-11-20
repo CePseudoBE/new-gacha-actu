@@ -65,14 +65,14 @@ const breadcrumbItems = computed(() => [
 // SEO Meta tags
 useSeoMeta({
   title: game.value?.name || 'Jeu non trouvé',
-  description: game.value?.metaDescription || game.value?.description || `Découvrez tous les guides, actualités et tier lists pour ${game.value?.name}. News, événements, builds et stratégies pour maîtriser ce jeu gacha.`,
+  description: game.value?.description || `Découvrez tous les guides, actualités et tier lists pour ${game.value?.name}. News, événements, builds et stratégies pour maîtriser ce jeu gacha.`,
   ogTitle: `${game.value?.name} - Guides & Actualités | Gacha Pulse`,
-  ogDescription: game.value?.metaDescription || game.value?.description,
+  ogDescription: game.value?.description,
   ogImage: game.value?.image?.url || '/og-image.jpg',
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: `${game.value?.name} - Guides & Actualités`,
-  twitterDescription: game.value?.metaDescription || game.value?.description,
+  twitterDescription: game.value?.description,
   twitterImage: game.value?.image?.url || '/og-image.jpg',
 })
 
@@ -82,7 +82,7 @@ if (game.value) {
     script: [
       {
         type: 'application/ld+json',
-        children: JSON.stringify({
+        innerHTML: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'VideoGame',
           name: game.value.name,

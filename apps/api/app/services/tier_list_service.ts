@@ -1,13 +1,14 @@
 import { inject } from '@adonisjs/core'
-import TierListRepository, {
+import TierListRepository from '#repositories/tier_list_repository'
+import type {
   TierListCreateData,
   TierListFilters,
   TierListUpdateData,
 } from '#repositories/tier_list_repository'
-import TierListCategoryRepository, {
-  TierListCategoryCreateData,
-} from '#repositories/tier_list_category_repository'
-import TierListEntryRepository, {
+import TierListCategoryRepository from '#repositories/tier_list_category_repository'
+import type { TierListCategoryCreateData } from '#repositories/tier_list_category_repository'
+import TierListEntryRepository from '#repositories/tier_list_entry_repository'
+import type {
   TierListEntryCreateData,
   BulkTierListEntryUpdate,
 } from '#repositories/tier_list_entry_repository'

@@ -256,28 +256,28 @@ const { handleApiCall } = useApiErrorHandler()
 
 // Fetch all reference data
 const { data: genres, refresh: refreshGenres } = await useAsyncData('admin-genres', async () => {
-  const response = await api.api.genres.$get()
-  return response.data?.data || []
+  const { data } = await api.api.genres.$get()
+  return data?.data || []
 })
 
 const { data: platforms, refresh: refreshPlatforms } = await useAsyncData('admin-platforms', async () => {
-  const response = await api.api.platforms.$get()
-  return response.data?.data || []
+  const { data } = await api.api.platforms.$get()
+  return data?.data || []
 })
 
 const { data: tags, refresh: refreshTags } = await useAsyncData('admin-tags', async () => {
-  const response = await api.api.tags.$get()
-  return response.data?.data || []
+  const { data } = await api.api.tags.$get()
+  return data?.data || []
 })
 
 const { data: guideTypes, refresh: refreshGuideTypes } = await useAsyncData('admin-guide-types', async () => {
-  const response = await api.api['guide-types'].$get()
-  return response.data?.data || []
+  const { data } = await api.api['guide-types'].$get()
+  return data?.data || []
 })
 
 const { data: difficultyLevels, refresh: refreshDifficultyLevels } = await useAsyncData('admin-difficulty-levels', async () => {
-  const response = await api.api['difficulty-levels'].$get()
-  return response.data?.data || []
+  const { data } = await api.api['difficulty-levels'].$get()
+  return data?.data || []
 })
 
 // Dialog state

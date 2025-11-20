@@ -305,14 +305,10 @@ router
         router.post('/', [GuidesController, 'store'])
         router.put('/:id', [GuidesController, 'update'])
         router.delete('/:id', [GuidesController, 'destroy'])
-      })
-      .prefix('guides')
 
-    // Guide Sections
-    router
-      .group(() => {
-        router.get('/:guideId/sections', [GuideSectionsController, 'index'])
-        router.post('/:guideId/sections', [GuideSectionsController, 'store'])
+        // Guide Sections
+        router.get('/:id/sections', [GuideSectionsController, 'index'])
+        router.post('/:id/sections', [GuideSectionsController, 'store'])
         router.get('/sections/:id', [GuideSectionsController, 'show'])
         router.put('/sections/:id', [GuideSectionsController, 'update'])
         router.delete('/sections/:id', [GuideSectionsController, 'destroy'])
@@ -334,15 +330,11 @@ router
         router.post('/', [ArticlesController, 'store'])
         router.put('/:id', [ArticlesController, 'update'])
         router.delete('/:id', [ArticlesController, 'destroy'])
-      })
-      .prefix('articles')
 
-    // Article Images (gallery)
-    router
-      .group(() => {
-        router.get('/:articleId/images', [ArticleImagesController, 'index'])
-        router.post('/:articleId/images', [ArticleImagesController, 'store'])
-        router.delete('/:articleId/images/:imageId', [ArticleImagesController, 'destroy'])
+        // Article Images (gallery)
+        router.get('/:id/images', [ArticleImagesController, 'index'])
+        router.post('/:id/images', [ArticleImagesController, 'store'])
+        router.delete('/:id/images/:imageId', [ArticleImagesController, 'destroy'])
       })
       .prefix('articles')
 
@@ -387,31 +379,33 @@ router
         router.patch('/:id/publish', [TierListsController, 'publish'])
         router.patch('/:id/unpublish', [TierListsController, 'unpublish'])
         router.delete('/:id', [TierListsController, 'destroy'])
+
+        // Nested categories and entries
+        router.get('/:id/categories', [TierListCategoriesController, 'index'])
+        router.post('/:id/categories', [TierListCategoriesController, 'store'])
+        router.get('/:id/entries', [TierListEntriesController, 'index'])
+        router.post('/:id/entries', [TierListEntriesController, 'store'])
       })
       .prefix('tier-lists')
 
-    // Tier List Categories
+    // Tier List Categories (standalone)
     router
       .group(() => {
-        router.get('/:tierListId/categories', [TierListCategoriesController, 'index'])
-        router.post('/:tierListId/categories', [TierListCategoriesController, 'store'])
-        router.get('/categories/:id', [TierListCategoriesController, 'show'])
-        router.put('/categories/:id', [TierListCategoriesController, 'update'])
-        router.delete('/categories/:id', [TierListCategoriesController, 'destroy'])
+        router.get('/:id', [TierListCategoriesController, 'show'])
+        router.put('/:id', [TierListCategoriesController, 'update'])
+        router.delete('/:id', [TierListCategoriesController, 'destroy'])
       })
-      .prefix('tier-lists')
+      .prefix('tier-lists/categories')
 
-    // Tier List Entries
+    // Tier List Entries (standalone)
     router
       .group(() => {
-        router.get('/:tierListId/entries', [TierListEntriesController, 'index'])
-        router.post('/:tierListId/entries', [TierListEntriesController, 'store'])
-        router.post('/entries/bulk-update', [TierListEntriesController, 'bulkUpdate'])
-        router.get('/entries/:id', [TierListEntriesController, 'show'])
-        router.put('/entries/:id', [TierListEntriesController, 'update'])
-        router.delete('/entries/:id', [TierListEntriesController, 'destroy'])
+        router.post('/bulk-update', [TierListEntriesController, 'bulkUpdate'])
+        router.get('/:id', [TierListEntriesController, 'show'])
+        router.put('/:id', [TierListEntriesController, 'update'])
+        router.delete('/:id', [TierListEntriesController, 'destroy'])
       })
-      .prefix('tier-lists')
+      .prefix('tier-lists/entries')
   })
   .prefix('/api/admin')
   .use([middleware.auth(), middleware.role({ roles: ['admin', 'editor'] }), throttleAdminWrite])

@@ -55,7 +55,7 @@
                   {{ game.isPopular ? 'Oui' : 'Non' }}
                 </Badge>
               </TableCell>
-              <TableCell>{{ formatDate(game.releaseDate) }}</TableCell>
+              <TableCell>{{ game.releaseDate ? formatDate(game.releaseDate) : 'N/A' }}</TableCell>
               <TableCell class="text-right">
                 <div class="flex justify-end gap-2">
                   <Button variant="ghost" size="sm" @click="editGame(game)">
@@ -122,14 +122,14 @@ const openCreateDialog = () => {
   navigateTo('/admin/games/new')
 }
 
-const editGame = (game: Game) => {
+const editGame = (game: { id: number }) => {
   navigateTo(`/admin/games/edit/${game.id}`)
 }
 
 const deleteDialogOpen = ref(false)
-const gameToDelete = ref<Game | null>(null)
+const gameToDelete = ref<{ id: number; name: string } | null>(null)
 
-const openDeleteDialog = (game: Game) => {
+const openDeleteDialog = (game: { id: number; name: string }) => {
   gameToDelete.value = game
   deleteDialogOpen.value = true
 }

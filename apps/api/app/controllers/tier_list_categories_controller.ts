@@ -15,7 +15,7 @@ export default class TierListCategoriesController {
   constructor(private tierListCategoryRepository: TierListCategoryRepository) {}
 
   async index(ctx: HttpContext) {
-    const tierListId = ctx.request.param('tierListId')
+    const tierListId = ctx.request.param('id')
 
     if (!tierListId || Number.isNaN(Number(tierListId))) {
       ResponseService.badRequest(ctx, 'ID de la tier list invalide')
@@ -23,7 +23,7 @@ export default class TierListCategoriesController {
     }
 
     const categories = await this.tierListCategoryRepository.findByTierListId(Number(tierListId))
-    ResponseService.ok(ctx, TierListCategoryDto.fromArray(categories))
+    return ResponseService.ok(ctx, TierListCategoryDto.fromArray(categories))
   }
 
   async show(ctx: HttpContext) {
@@ -34,14 +34,26 @@ export default class TierListCategoriesController {
       throw new NotFoundException('Catégorie non trouvée')
     }
 
-    ResponseService.ok(ctx, new TierListCategoryDto(category))
+    return ResponseService.ok(ctx, new TierListCategoryDto(category))
   }
 
   async store(ctx: HttpContext) {
+    const tierListId = ctx.request.param('id')
+
+    if (!tierListId || Number.isNaN(Number(tierListId))) {
+      ResponseService.badRequest(ctx, 'ID de la tier list invalide')
+      return
+    }
+
     const payload = await ctx.request.validateUsing(createTierListCategoryValidator)
 
-    const category = await this.tierListCategoryRepository.create(payload)
-    ResponseService.created(ctx, new TierListCategoryDto(category), 'Catégorie créée avec succès')
+    const categoryData = {
+      ...payload,
+      tierListId: Number(tierListId),
+    }
+
+    const category = await this.tierListCategoryRepository.create(categoryData)
+    return ResponseService.created(ctx, new TierListCategoryDto(category), 'Catégorie créée avec succès')
   }
 
   async update(ctx: HttpContext) {
@@ -61,7 +73,7 @@ export default class TierListCategoriesController {
       throw new NotFoundException('Catégorie non trouvée')
     }
 
-    ResponseService.ok(ctx, new TierListCategoryDto(category), 'Catégorie mise à jour avec succès')
+    return ResponseService.ok(ctx, new TierListCategoryDto(category), 'Catégorie mise à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
@@ -72,6 +84,6 @@ export default class TierListCategoriesController {
       throw new NotFoundException('Catégorie non trouvée')
     }
 
-    ResponseService.success(ctx, 'Catégorie supprimée avec succès')
+    return ResponseService.success(ctx, 'Catégorie supprimée avec succès')
   }
 }

@@ -80,8 +80,8 @@ const formFieldsRef = ref<InstanceType<typeof ArticleFormFields>>()
 
 // Fetch article data
 const { data: article } = await useAsyncData(`article-${articleId}`, async () => {
-  const response = await api.api.articles[articleId].$get()
-  return response.data.data
+  const response = await api.api.articles({ id: articleId }).$get()
+  return response.data?.data
 })
 
 if (!article.value) {

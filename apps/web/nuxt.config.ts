@@ -153,6 +153,15 @@ export default defineNuxtConfig({
     typedPages: true,
   },
 
+  typescript: {
+    typeCheck: true,
+    tsConfig: {
+      compilerOptions: {
+        skipLibCheck: true,
+      },
+    },
+  },
+
   modules: ["@nuxt/image", "@nuxtjs/seo"],
 
   // Configuration robots.txt via @nuxtjs/seo

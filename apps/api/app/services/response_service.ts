@@ -20,12 +20,14 @@ export default class ResponseService {
       hasPrevPage: lucidMeta.hasPrevPage || false,
     }
   }
-  static ok<T>(ctx: HttpContext, data: T, message?: string): void {
-    ctx.response.ok({
+  static ok<T>(ctx: HttpContext, data: T, message?: string) {
+    const response = {
       success: true,
       data,
       ...(message && { message }),
-    })
+    }
+    ctx.response.ok(response)
+    return response
   }
 
   static okWithPagination<T>(
@@ -33,28 +35,34 @@ export default class ResponseService {
     data: T,
     pagination: PaginationMeta,
     message?: string
-  ): void {
-    ctx.response.ok({
+  ) {
+    const response = {
       success: true,
       data,
       meta: { pagination },
       ...(message && { message }),
-    })
+    }
+    ctx.response.ok(response)
+    return response
   }
 
-  static created<T>(ctx: HttpContext, data: T, message?: string): void {
-    ctx.response.created({
+  static created<T>(ctx: HttpContext, data: T, message?: string) {
+    const response = {
       success: true,
       data,
       message: message || 'Ressource créée avec succès',
-    })
+    }
+    ctx.response.created(response)
+    return response
   }
 
-  static success(ctx: HttpContext, message: string): void {
-    ctx.response.ok({
+  static success(ctx: HttpContext, message: string) {
+    const response = {
       success: true,
       message,
-    })
+    }
+    ctx.response.ok(response)
+    return response
   }
 
   static notFound(ctx: HttpContext, message: string = 'Ressource non trouvée'): void {

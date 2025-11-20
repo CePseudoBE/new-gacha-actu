@@ -81,8 +81,8 @@ const gameId = Number(route.params.id)
 
 // Fetch game data
 const { data: game } = await useAsyncData(`game-${gameId}`, async () => {
-  const response = await api.api.admin.games({ id: gameId }).$get()
-  return response.data.data
+  const { data: apiData } = await api.api.admin.games({ id: gameId }).$get()
+  return apiData?.data
 })
 
 if (!game.value) {
@@ -91,18 +91,18 @@ if (!game.value) {
 
 // Fetch all necessary data
 const { data: genres, refresh: refreshGenres } = await useAsyncData('genres', async () => {
-  const response = await api.api.genres.$get()
-  return response.data?.data || []
+  const { data: apiData } = await api.api.genres.$get()
+  return apiData?.data || []
 })
 
 const { data: platforms, refresh: refreshPlatforms } = await useAsyncData('platforms', async () => {
-  const response = await api.api.platforms.$get()
-  return response.data?.data || []
+  const { data: apiData } = await api.api.platforms.$get()
+  return apiData?.data || []
 })
 
 const { data: tags, refresh: refreshTags } = await useAsyncData('tags', async () => {
-  const response = await api.api.tags.$get()
-  return response.data?.data || []
+  const { data: apiData } = await api.api.tags.$get()
+  return apiData?.data || []
 })
 
 // Quick add dialog
@@ -166,9 +166,9 @@ const confirmDeleteImage = async () => {
   const response = await api.api.admin.images({ id: game.value.image.id }).$delete()
 
   if (response?.error || response?.status >= 400) {
-    const errorData = response?.error?.value
+    const errorData = response?.error?.value as { errors?: Array<{ message?: string }>; message?: string } | undefined
     if (errorData?.errors && Array.isArray(errorData.errors)) {
-      errorData.errors.forEach((err: any) => {
+      errorData.errors.forEach((err) => {
         toast.error(err.message || 'Erreur de validation')
       })
     } else {

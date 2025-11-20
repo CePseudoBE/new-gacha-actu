@@ -44,6 +44,7 @@
     "@types/sanitize-html": "^2.16.0",
     "eslint": "^9.34.0",
     "shadcn-nuxt": "^2.2.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vue-tsc": "^3.1.4"
   }
 }

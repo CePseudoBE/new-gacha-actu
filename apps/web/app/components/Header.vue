@@ -43,19 +43,6 @@ const { data: navigationConfig } = await useAsyncData(
   {
     // Garde en cache et déduplique les requêtes
     dedupe: 'defer',
-    // Cache pendant 5 minutes pour éviter les requêtes répétées
-    getCachedData: (key) => {
-      const data = useNuxtData(key)
-      if (!data.data.value) return
-
-      // Cache valide pendant 5 minutes
-      const expirationDate = new Date(data._fetchedAt || 0)
-      expirationDate.setTime(expirationDate.getTime() + 5 * 60 * 1000) // 5 minutes
-      const isExpired = expirationDate.getTime() < Date.now()
-
-      if (isExpired) return
-      return data.data.value
-    }
   }
 )
 

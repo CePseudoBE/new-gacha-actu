@@ -35,7 +35,7 @@ export const useImageManagement = () => {
    */
   const deleteImage = async (imageId: number, refreshCallback?: () => Promise<void>) => {
     await handleApiCall(
-      () => api.api.admin.images[imageId].$delete(),
+      () => api.api.admin.images({ id: imageId }).$delete(),
       {
         successMessage: 'Image supprimée avec succès',
         errorMessage: "Erreur lors de la suppression de l'image",

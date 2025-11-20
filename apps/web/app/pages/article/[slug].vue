@@ -61,12 +61,10 @@ const { data: article } = await useAsyncData(
     const response = await api.api.articles.slug({ slug: route.params.slug as string }).$get()
 
     // L'API retourne { data: { success: true, data: {...} } }
-    // @ts-expect-error - Tuyau types issue
     if (!response.data?.data) {
       throw createError({ statusCode: 404, statusMessage: 'Article non trouvé' })
     }
 
-    // @ts-expect-error - Tuyau types issue
     return response.data.data
   }
 )
@@ -82,7 +80,7 @@ const breadcrumbItems = computed(() => [
 
 // Ajouter JSON-LD pour le SEO
 if (article.value) {
-  const jsonLd = generateArticleJsonLd(article.value)
+  const jsonLd = generateArticleJsonLd(article.value as any)
   setJsonLd(jsonLd)
 }
 
@@ -99,7 +97,7 @@ useSeoMeta({
   twitterImage: article.value?.image?.url,
   articlePublishedTime: article.value?.publishedAt,
   articleModifiedTime: article.value?.updatedAt,
-  articleAuthor: article.value?.author,
+  articleAuthor: article.value?.author ? [article.value.author] : undefined,
   articleTag: article.value?.tags?.map((tag: { name: string }) => tag.name)
 })
 

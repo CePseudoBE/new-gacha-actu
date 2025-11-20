@@ -23,7 +23,7 @@ export const articleSchema = z.object({
   readingTime: z.number().int().positive().optional(),
   categoryId: z.number().optional(),
   isPopular: z.boolean().default(false),
-  gameId: z.number({ required_error: 'Sélectionnez un jeu' }),
+  gameId: z.number({ message: 'Sélectionnez un jeu' }),
   tagIds: z.array(z.number()).optional(),
   seoKeywordIds: z.array(z.number()).optional(),
 })
@@ -40,7 +40,7 @@ export const guideSchema = z.object({
   metaDescription: z.string().optional(),
   viewCount: z.number().int().nonnegative().default(0),
   isPopular: z.boolean().default(false),
-  gameId: z.number({ required_error: 'Sélectionnez un jeu' }),
+  gameId: z.number({ message: 'Sélectionnez un jeu' }),
   guideTypeId: z.number().optional(),
   difficultyId: z.number().optional(),
   tagIds: z.array(z.number()).optional(),

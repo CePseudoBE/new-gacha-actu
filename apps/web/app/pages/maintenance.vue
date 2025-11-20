@@ -111,9 +111,9 @@ const maintenanceMessage = ref<string>()
 // Load maintenance message
 const loadMaintenanceMessage = async () => {
   try {
-    const response = await api.api.maintenance.status.$get()
-    if (response.data?.data?.message) {
-      maintenanceMessage.value = response.data.data.message
+    const { data } = await api.api.maintenance.status.$get()
+    if (data?.data?.message) {
+      maintenanceMessage.value = data.data.message
     }
   } catch (error) {
     console.error('Error loading maintenance message:', error)
@@ -124,8 +124,8 @@ const loadMaintenanceMessage = async () => {
 const checkStatus = async () => {
   isChecking.value = true
   try {
-    const response = await api.api.maintenance.status.$get()
-    if (!response.data?.data?.isEnabled) {
+    const { data } = await api.api.maintenance.status.$get()
+    if (!data?.data?.isEnabled) {
       // Maintenance terminée, redirection
       window.location.href = '/'
     }

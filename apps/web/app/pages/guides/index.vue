@@ -105,8 +105,8 @@ const {
 } = await useAsyncData(
   'guides-list',
   async () => {
-    const response = await api.api.guides.$get({ query: queryParams.value })
-    return response.data?.data || []
+    const { data } = await api.api.guides.$get({ query: queryParams.value })
+    return data?.data || []
   },
   {
     watch: [queryParams],
@@ -115,18 +115,18 @@ const {
 
 // Fetch filter data
 const { data: games } = await useAsyncData('games-list', async () => {
-  const response = await api.api.games.$get()
-  return response.data?.data || []
+  const { data } = await api.api.games.$get()
+  return data?.data || []
 })
 
 const { data: difficultyLevels } = await useAsyncData('difficulty-levels', async () => {
-  const response = await api.api['difficulty-levels'].$get()
-  return response.data?.data || []
+  const { data } = await api.api['difficulty-levels'].$get()
+  return data?.data || []
 })
 
 const { data: guideTypes } = await useAsyncData('guide-types', async () => {
-  const response = await api.api['guide-types'].$get()
-  return response.data?.data || []
+  const { data } = await api.api['guide-types'].$get()
+  return data?.data || []
 })
 
 useSeoMeta({
@@ -145,7 +145,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      children: JSON.stringify({
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
         name: 'Guides Jeux Gacha',

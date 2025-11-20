@@ -13,8 +13,8 @@
     <form v-if="guide" @submit="onSubmit" class="space-y-6">
       <GuideFormFields
         :form="form"
-        :sections="values.sections"
-        :prerequisites="values.prerequisites"
+        :sections="values.sections || []"
+        :prerequisites="values.prerequisites || []"
         :games="games || []"
         :guide-types="guideTypes || []"
         :difficulty-levels="difficultyLevels || []"
@@ -69,8 +69,8 @@ const { games, difficultyLevels, guideTypes, tags, seoKeywords } = useGuideFormD
 
 // Fetch guide
 const { data: guide, refresh } = await useAsyncData(`admin-guide-${guideId}`, async () => {
-  const response = await api.api.guides({ id: guideId }).$get()
-  return response.data?.data
+  const { data: apiData } = await api.api.guides({ id: guideId }).$get()
+  return apiData?.data
 })
 
 // Image management
@@ -86,16 +86,23 @@ const initialValues = computed(() => {
     summary: guide.value.summary,
     author: guide.value.author,
     publishedAt: new Date(guide.value.publishedAt).toISOString().slice(0, 16),
-    readingTime: guide.value.readingTime,
+    readingTime: guide.value.readingTime ?? undefined,
     difficultyId: guide.value.difficultyId,
     guideTypeId: guide.value.guideTypeId,
     isPopular: guide.value.isPopular,
     gameId: guide.value.gameId,
-    metaDescription: guide.value.metaDescription || '',
-    sections: guide.value.sections || [{ title: '', content: '', order: 0 }],
-    prerequisites: guide.value.prerequisites || [],
+    metaDescription: guide.value.metaDescription || undefined,
+    sections: (guide.value.sections || [{ title: '', content: '', order: 0 }]).map((s: any) => ({
+      title: s.title,
+      content: s.content,
+      order: s.order
+    })),
+    prerequisites: (guide.value.prerequisites || []).map((p: any) => ({
+      description: p.description
+    })),
     tagIds: guide.value.tags?.map((t: any) => t.id) || [],
     seoKeywordIds: guide.value.seoKeywords?.map((k: any) => k.id) || [],
+    image: undefined,
   }
 })
 
@@ -108,7 +115,7 @@ watch(
   () => guide.value,
   (newGuide) => {
     if (newGuide && initialValues.value) {
-      setValues(initialValues.value as any)
+      setValues(initialValues.value)
     }
   },
   { immediate: true }
@@ -118,7 +125,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     // Delete old image if requested
     if (imageToDelete.value && guide.value?.image?.id) {
-      await api.api.admin.images[guide.value.image.id].$delete()
+      await api.api.admin.images({ id: guide.value.image.id }).$delete()
     }
 
     await updateGuide(guideId, values)

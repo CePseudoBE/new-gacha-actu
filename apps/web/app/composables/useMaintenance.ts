@@ -64,7 +64,7 @@ export const useMaintenance = () => {
         }
 
         if (shouldEnable) {
-          return await api.api.admin.maintenance.enable.$patch({ body })
+          return await api.api.admin.maintenance.enable.$patch(body)
         } else {
           return await api.api.admin.maintenance.disable.$patch()
         }

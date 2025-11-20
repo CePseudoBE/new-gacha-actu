@@ -19,12 +19,12 @@ export default class ImagesController {
   async show(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(imageParamsValidator)
     const image = await this.imageService.getImageById(validatedParams.id)
-    ResponseService.ok(ctx, image)
+    return ResponseService.ok(ctx, image)
   }
 
   async destroy(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(imageParamsValidator)
     await this.imageService.deleteImage(validatedParams.id)
-    ResponseService.success(ctx, 'Image supprimée avec succès')
+    return ResponseService.success(ctx, 'Image supprimée avec succès')
   }
 }

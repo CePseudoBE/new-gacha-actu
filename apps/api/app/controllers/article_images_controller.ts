@@ -9,7 +9,7 @@ import vine from '@vinejs/vine'
 const articleIdValidator = vine.compile(
   vine.object({
     params: vine.object({
-      articleId: vine.number().exists({ table: 'articles', column: 'id' }),
+      id: vine.number().exists({ table: 'articles', column: 'id' }),
     }),
   })
 )
@@ -17,7 +17,7 @@ const articleIdValidator = vine.compile(
 const imageIdValidator = vine.compile(
   vine.object({
     params: vine.object({
-      articleId: vine.number().exists({ table: 'articles', column: 'id' }),
+      id: vine.number().exists({ table: 'articles', column: 'id' }),
       imageId: vine.number().exists({ table: 'images', column: 'id' }),
     }),
   })
@@ -26,7 +26,7 @@ const imageIdValidator = vine.compile(
 const uploadImageValidator = vine.compile(
   vine.object({
     params: vine.object({
-      articleId: vine.number().exists({ table: 'articles', column: 'id' }),
+      id: vine.number().exists({ table: 'articles', column: 'id' }),
     }),
     image: vine.file({
       size: '2mb',
@@ -40,30 +40,30 @@ export default class ArticleImagesController {
   constructor(private imageService: ImageService) {}
 
   /**
-   * GET /api/admin/articles/:articleId/images
+   * GET /api/admin/articles/:id/images
    * Liste toutes les images d'un article
    */
   async index(ctx: HttpContext) {
     const { params } = await ctx.request.validateUsing(articleIdValidator)
 
     const article = await Article.query()
-      .where('id', params.articleId)
+      .where('id', params.id)
       .preload('galleryImages')
       .firstOrFail()
 
     const images = article.galleryImages.map((image) => new ImageDto(image))
 
-    ResponseService.ok(ctx, images)
+    return ResponseService.ok(ctx, images)
   }
 
   /**
-   * POST /api/admin/articles/:articleId/images
+   * POST /api/admin/articles/:id/images
    * Upload et attache une nouvelle image à l'article
    */
   async store(ctx: HttpContext) {
     const { params, image } = await ctx.request.validateUsing(uploadImageValidator)
 
-    const article = await Article.findOrFail(params.articleId)
+    const article = await Article.findOrFail(params.id)
 
     // Upload l'image via ImageService (retourne déjà un ImageDto)
     const uploadedImage = await this.imageService.uploadImage(image)
@@ -71,17 +71,17 @@ export default class ArticleImagesController {
     // Attache l'image à l'article via la table pivot
     await article.related('galleryImages').attach([uploadedImage.id])
 
-    ResponseService.created(ctx, uploadedImage, 'Image ajoutée avec succès')
+    return ResponseService.created(ctx, uploadedImage, 'Image ajoutée avec succès')
   }
 
   /**
-   * DELETE /api/admin/articles/:articleId/images/:imageId
+   * DELETE /api/admin/articles/:id/images/:imageId
    * Détache une image de l'article (et la supprime si elle n'est plus utilisée)
    */
   async destroy(ctx: HttpContext) {
     const { params } = await ctx.request.validateUsing(imageIdValidator)
 
-    const article = await Article.findOrFail(params.articleId)
+    const article = await Article.findOrFail(params.id)
 
     // Détache l'image de l'article
     await article.related('galleryImages').detach([params.imageId])
@@ -89,6 +89,6 @@ export default class ArticleImagesController {
     // TODO: Vérifier si l'image est encore utilisée ailleurs avant de la supprimer physiquement
     // Pour l'instant on la détache simplement de la galerie
 
-    ResponseService.success(ctx, 'Image retirée de la galerie')
+    return ResponseService.success(ctx, 'Image retirée de la galerie')
   }
 }

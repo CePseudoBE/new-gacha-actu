@@ -135,13 +135,13 @@ const { formatDate } = useDate()
 
 // Fetch guide from API
 const { data: guide } = await useAsyncData(`guide-${route.params.slug}`, async () => {
-  const response = await api.api.guides.slug({ slug: route.params.slug as string }).$get()
+  const { data } = await api.api.guides.slug({ slug: route.params.slug as string }).$get()
 
-  if (!response.data?.data) {
+  if (!data?.data) {
     throw createError({ statusCode: 404, statusMessage: 'Guide non trouvé' })
   }
 
-  return response.data.data
+  return data.data
 })
 
 // Breadcrumb
@@ -180,7 +180,7 @@ useSeoMeta({
   twitterImage: guide.value?.image?.url,
   articlePublishedTime: guide.value?.publishedAt,
   articleModifiedTime: guide.value?.updatedAt,
-  articleAuthor: guide.value?.author,
+  articleAuthor: guide.value?.author ? [guide.value.author] : undefined,
   articleTag: guide.value?.tags?.map((tag: { name: string }) => tag.name),
 })
 
@@ -190,7 +190,7 @@ if (guide.value) {
     script: [
       {
         type: 'application/ld+json',
-        children: JSON.stringify({
+        innerHTML: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'HowTo',
           name: guide.value.title,

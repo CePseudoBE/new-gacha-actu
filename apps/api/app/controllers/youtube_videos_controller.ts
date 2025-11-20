@@ -16,20 +16,20 @@ export default class YoutubeVideosController {
 
   async index(ctx: HttpContext) {
     const videos = await this.youtubeVideoService.getAllVideos()
-    ResponseService.ok(ctx, videos)
+    return ResponseService.ok(ctx, videos)
   }
 
   async active(ctx: HttpContext) {
     const query = await ctx.request.validateUsing(limitValidator)
     const limit = query.limit || 10
     const videos = await this.youtubeVideoService.getActiveVideos(limit)
-    ResponseService.ok(ctx, videos)
+    return ResponseService.ok(ctx, videos)
   }
 
   async show(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(youtubeVideoParamsValidator)
     const video = await this.youtubeVideoService.getVideoById(validatedParams.id)
-    ResponseService.ok(ctx, video)
+    return ResponseService.ok(ctx, video)
   }
 
   async store(ctx: HttpContext) {
@@ -41,7 +41,7 @@ export default class YoutubeVideosController {
     }
 
     const video = await this.youtubeVideoService.createVideo(videoData)
-    ResponseService.created(ctx, video, 'Vidéo créée avec succès')
+    return ResponseService.created(ctx, video, 'Vidéo créée avec succès')
   }
 
   async update(ctx: HttpContext) {
@@ -55,12 +55,12 @@ export default class YoutubeVideosController {
     }
 
     const video = await this.youtubeVideoService.updateVideo(validatedParams.id, videoData)
-    ResponseService.ok(ctx, video, 'Vidéo mise à jour avec succès')
+    return ResponseService.ok(ctx, video, 'Vidéo mise à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(youtubeVideoParamsValidator)
     await this.youtubeVideoService.deleteVideo(validatedParams.id)
-    ResponseService.success(ctx, 'Vidéo supprimée avec succès')
+    return ResponseService.success(ctx, 'Vidéo supprimée avec succès')
   }
 }

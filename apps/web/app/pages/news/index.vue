@@ -30,8 +30,8 @@ const { formatDate } = useDate()
 
 // Fetch all articles from API
 const { data: articles = [] } = await useAsyncData('all-articles', async () => {
-  const response = await api.api.articles.$get()
-  return response.data?.data || []
+  const { data: apiData } = await api.api.articles.$get()
+  return apiData?.data || []
 })
 
 // SEO
@@ -51,7 +51,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      children: JSON.stringify({
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'CollectionPage',
         name: 'Actualités Jeux Gacha',

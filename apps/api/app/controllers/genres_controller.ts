@@ -10,31 +10,31 @@ export default class GenresController {
 
   async index(ctx: HttpContext) {
     const genres = await this.genreService.getAllGenres()
-    ResponseService.ok(ctx, genres)
+    return ResponseService.ok(ctx, genres)
   }
 
   async show(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(genreParamsValidator)
     const genre = await this.genreService.getGenreById(validatedParams.id)
-    ResponseService.ok(ctx, genre)
+    return ResponseService.ok(ctx, genre)
   }
 
   async store(ctx: HttpContext) {
     const payload = await ctx.request.validateUsing(createGenreValidator)
     const genre = await this.genreService.createGenre(payload)
-    ResponseService.created(ctx, genre, 'Genre créé avec succès')
+    return ResponseService.created(ctx, genre, 'Genre créé avec succès')
   }
 
   async update(ctx: HttpContext) {
     const { params: validatedParams, ...payload } =
       await ctx.request.validateUsing(updateGenreValidator)
     const genre = await this.genreService.updateGenre(validatedParams.id, payload)
-    ResponseService.ok(ctx, genre, 'Genre mis à jour avec succès')
+    return ResponseService.ok(ctx, genre, 'Genre mis à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(genreParamsValidator)
     await this.genreService.deleteGenre(validatedParams.id)
-    ResponseService.success(ctx, 'Genre supprimé avec succès')
+    return ResponseService.success(ctx, 'Genre supprimé avec succès')
   }
 }
