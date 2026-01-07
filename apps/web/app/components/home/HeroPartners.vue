@@ -1,40 +1,6 @@
 <template>
-  <div class="mt-6 flex flex-col gap-4">
-    <!-- Featured Partner - Pleine largeur -->
-    <div v-if="featuredPartner">
-      <!-- Mobile -->
-      <NuxtLink
-        :to="featuredPartner.href"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="lg:hidden inline-block opacity-70 hover:opacity-100 transition-opacity duration-300"
-      >
-        <img
-          :src="featuredPartner.logo.mobile"
-          :alt="featuredPartner.alt"
-          :width="featuredPartner.dimensions.mobile.width"
-          :height="featuredPartner.dimensions.mobile.height"
-          loading="lazy"
-        />
-      </NuxtLink>
-      <!-- Desktop -->
-      <NuxtLink
-        :to="featuredPartner.href"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hidden lg:inline-block hover:scale-105 transition-transform duration-300"
-      >
-        <img
-          :src="featuredPartner.logo.desktop"
-          :alt="featuredPartner.alt"
-          :width="featuredPartner.dimensions.desktop.width"
-          :height="featuredPartner.dimensions.desktop.height"
-          loading="lazy"
-        />
-      </NuxtLink>
-    </div>
-
-    <!-- Other Partners - Côte à côte -->
+  <div class="mt-6 flex flex-col gap-3">
+    <!-- Partners - Côte à côte -->
     <div>
       <!-- Mobile - Icônes côte à côte -->
       <div class="lg:hidden flex gap-4 items-center">
@@ -75,6 +41,25 @@
           />
         </NuxtLink>
       </div>
+    </div>
+
+    <!-- Featured Partner - En dessous -->
+    <div v-if="featuredPartner">
+      <NuxtLink
+        :to="featuredPartner.href"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block opacity-80 hover:opacity-100 transition-opacity duration-300"
+      >
+        <img
+          :src="featuredPartner.logo.desktop"
+          :alt="featuredPartner.alt"
+          :width="featuredPartner.dimensions.desktop.width"
+          :height="featuredPartner.dimensions.desktop.height"
+          loading="lazy"
+          class="max-h-8 w-auto"
+        />
+      </NuxtLink>
     </div>
   </div>
 </template>

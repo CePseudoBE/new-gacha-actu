@@ -26,8 +26,8 @@ export const heroConfig = {
     },
     alt: "LDShop - Boutique Gaming",
     dimensions: {
-      desktop: { width: 412, height: 60 },
-      mobile: { width: 200, height: 30 },
+      desktop: { width: 200, height: 32 },
+      mobile: { width: 150, height: 24 },
     },
   },
   partners: [
