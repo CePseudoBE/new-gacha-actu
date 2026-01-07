@@ -19,7 +19,7 @@ export const heroConfig = {
   featuredPartner: {
     id: "ldshop",
     name: "LDShop",
-    href: "https://ldshop.fr",
+    href: "https://chain.ldshop.gg/T4F0Ghnlq",
     logo: {
       desktop: "/icons/ldshop.png",
       mobile: "/icons/ldshop.png",
