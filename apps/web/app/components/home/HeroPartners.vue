@@ -57,7 +57,7 @@
           :width="featuredPartner.dimensions.desktop.width"
           :height="featuredPartner.dimensions.desktop.height"
           loading="lazy"
-          class="max-h-8 w-auto"
+          class="max-h-14 w-auto"
         />
       </NuxtLink>
     </div>
