@@ -83,7 +83,7 @@
               rel="noopener noreferrer"
               class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              <NuxtImg src="/icons/ldplayer.svg" alt="LDPlayer" width="20" height="20" />
+              <img src="/icons/ldplayer.svg" alt="LDPlayer" width="20" height="20" />
               LDPlayer
             </NuxtLink>
             <NuxtLink
