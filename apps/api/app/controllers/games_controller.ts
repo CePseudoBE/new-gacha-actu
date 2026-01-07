@@ -28,7 +28,7 @@ export default class GamesController {
 
     const result = await this.gameService.getGames(gameFilters, page, perPage)
 
-    ResponseService.okWithPagination(ctx, result.data, ResponseService.adaptPaginationMeta(result.meta))
+    return ResponseService.okWithPagination(ctx, result.data, ResponseService.adaptPaginationMeta(result.meta))
   }
 
   async popular(ctx: HttpContext) {
@@ -36,7 +36,7 @@ export default class GamesController {
     const limit = query.limit || 10
     const games = await this.gameService.getPopularGames(limit)
 
-    ResponseService.ok(ctx, games)
+    return ResponseService.ok(ctx, games)
   }
 
   async show(ctx: HttpContext) {
@@ -80,7 +80,7 @@ export default class GamesController {
     }
 
     const game = await this.gameService.createGame(gameData, image)
-    ResponseService.created(ctx, game, 'Jeu créé avec succès')
+    return ResponseService.created(ctx, game, 'Jeu créé avec succès')
   }
 
   async update(ctx: HttpContext) {
@@ -113,17 +113,17 @@ export default class GamesController {
     }
 
     const game = await this.gameService.updateGame(validatedParams.id, gameData, image)
-    ResponseService.ok(ctx, game, 'Jeu mis à jour avec succès')
+    return ResponseService.ok(ctx, game, 'Jeu mis à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(gameParamsValidator)
     await this.gameService.deleteGame(validatedParams.id)
-    ResponseService.success(ctx, 'Jeu supprimé avec succès')
+    return ResponseService.success(ctx, 'Jeu supprimé avec succès')
   }
 
   async stats(ctx: HttpContext) {
     const stats = await this.gameService.getGameStats()
-    ResponseService.ok(ctx, stats)
+    return ResponseService.ok(ctx, stats)
   }
 }

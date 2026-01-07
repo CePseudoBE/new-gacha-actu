@@ -7,6 +7,30 @@
 import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
 import type { InferInput } from '@vinejs/vine/types'
 
+type HealthGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/health_checks_controller.ts').default['handle'], false>
+}
+type ApiAuthRegisterPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/auth.ts')['registerValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['register'], true>
+}
+type ApiAuthLoginPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/auth.ts')['loginValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['login'], true>
+}
+type ApiAuthLogoutPost = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['logout'], false>
+}
+type ApiAuthMeGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['me'], false>
+}
+type ApiAuthChangepasswordPost = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/auth.ts')['changePasswordValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/auth_controller.ts').default['changePassword'], true>
+}
 type ApiGamesGetHead = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/common.ts')['gameFiltersValidator']>>
   response: MakeTuyauResponse<import('../app/controllers/games_controller.ts').default['index'], true>
@@ -287,6 +311,18 @@ type ApiAdminArticlesIdDelete = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/article.ts')['articleParamsValidator']>>
   response: MakeTuyauResponse<import('../app/controllers/articles_controller.ts').default['destroy'], true>
 }
+type ApiAdminArticlesIdImagesGetHead = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/article_images_controller.ts').default['index'], false>
+}
+type ApiAdminArticlesIdImagesPost = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/article_images_controller.ts').default['store'], false>
+}
+type ApiAdminArticlesIdImagesIdDelete = {
+  request: unknown
+  response: MakeTuyauResponse<import('../app/controllers/article_images_controller.ts').default['destroy'], false>
+}
 type ApiAdminImagesIdGetHead = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/images_controller.ts').default['show'], false>
@@ -308,7 +344,41 @@ type ApiAdminMaintenanceDisablePatch = {
   response: MakeTuyauResponse<import('../app/controllers/maintenance_settings_controller.ts').default['disable'], false>
 }
 export interface ApiDefinition {
+  'health': {
+    '$url': {
+    };
+    '$get': HealthGetHead;
+    '$head': HealthGetHead;
+  };
   'api': {
+    'auth': {
+      'register': {
+        '$url': {
+        };
+        '$post': ApiAuthRegisterPost;
+      };
+      'login': {
+        '$url': {
+        };
+        '$post': ApiAuthLoginPost;
+      };
+      'logout': {
+        '$url': {
+        };
+        '$post': ApiAuthLogoutPost;
+      };
+      'me': {
+        '$url': {
+        };
+        '$get': ApiAuthMeGetHead;
+        '$head': ApiAuthMeGetHead;
+      };
+      'change-password': {
+        '$url': {
+        };
+        '$post': ApiAuthChangepasswordPost;
+      };
+    };
     'games': {
       '$url': {
       };
@@ -644,6 +714,20 @@ export interface ApiDefinition {
           };
           '$put': ApiAdminArticlesIdPut;
           '$delete': ApiAdminArticlesIdDelete;
+        };
+        ':articleId': {
+          'images': {
+            '$url': {
+            };
+            '$get': ApiAdminArticlesIdImagesGetHead;
+            '$head': ApiAdminArticlesIdImagesGetHead;
+            '$post': ApiAdminArticlesIdImagesPost;
+            ':imageId': {
+              '$url': {
+              };
+              '$delete': ApiAdminArticlesIdImagesIdDelete;
+            };
+          };
         };
       };
       'images': {

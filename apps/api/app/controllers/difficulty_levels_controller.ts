@@ -14,7 +14,7 @@ export default class DifficultyLevelsController {
 
   async index(ctx: HttpContext) {
     const difficultyLevels = await this.difficultyLevelService.getDifficultyLevels()
-    ResponseService.ok(ctx, difficultyLevels)
+    return ResponseService.ok(ctx, difficultyLevels)
   }
 
   async show(ctx: HttpContext) {
@@ -24,13 +24,13 @@ export default class DifficultyLevelsController {
     const difficultyLevel = await this.difficultyLevelService.getDifficultyLevelById(
       validatedParams.id
     )
-    ResponseService.ok(ctx, difficultyLevel)
+    return ResponseService.ok(ctx, difficultyLevel)
   }
 
   async store(ctx: HttpContext) {
     const payload = await ctx.request.validateUsing(createDifficultyLevelValidator)
     const difficultyLevel = await this.difficultyLevelService.createDifficultyLevel(payload)
-    ResponseService.created(ctx, difficultyLevel, 'Niveau de difficulté créé avec succès')
+    return ResponseService.created(ctx, difficultyLevel, 'Niveau de difficulté créé avec succès')
   }
 
   async update(ctx: HttpContext) {
@@ -41,7 +41,7 @@ export default class DifficultyLevelsController {
       validatedParams.id,
       payload
     )
-    ResponseService.ok(ctx, difficultyLevel, 'Niveau de difficulté mis à jour avec succès')
+    return ResponseService.ok(ctx, difficultyLevel, 'Niveau de difficulté mis à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
@@ -49,6 +49,6 @@ export default class DifficultyLevelsController {
       difficultyLevelParamsValidator
     )
     await this.difficultyLevelService.deleteDifficultyLevel(validatedParams.id)
-    ResponseService.success(ctx, 'Niveau de difficulté supprimé avec succès')
+    return ResponseService.success(ctx, 'Niveau de difficulté supprimé avec succès')
   }
 }

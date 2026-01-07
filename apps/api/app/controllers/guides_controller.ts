@@ -28,9 +28,9 @@ export default class GuidesController {
     })
 
     if (result.pagination) {
-      ResponseService.okWithPagination(ctx, result.guides, ResponseService.adaptPaginationMeta(result.pagination))
+      return ResponseService.okWithPagination(ctx, result.guides, ResponseService.adaptPaginationMeta(result.pagination))
     } else {
-      ResponseService.ok(ctx, result.guides)
+      return ResponseService.ok(ctx, result.guides)
     }
   }
 
@@ -43,19 +43,19 @@ export default class GuidesController {
       limit,
     })
 
-    ResponseService.ok(ctx, result.guides)
+    return ResponseService.ok(ctx, result.guides)
   }
 
   async show(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(guideParamsValidator)
     const guide = await this.guideService.getGuideById(validatedParams.id)
-    ResponseService.ok(ctx, guide)
+    return ResponseService.ok(ctx, guide)
   }
 
   async showBySlug(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(guideSlugParamsValidator)
     const guide = await this.guideService.getGuideBySlugAndIncrementViews(validatedParams.slug)
-    ResponseService.ok(ctx, guide)
+    return ResponseService.ok(ctx, guide)
   }
 
   async store(ctx: HttpContext) {
@@ -81,7 +81,7 @@ export default class GuidesController {
     }
 
     const guide = await this.guideService.createGuide(guideData, payload.image)
-    ResponseService.created(ctx, guide, 'Guide créé avec succès')
+    return ResponseService.created(ctx, guide, 'Guide créé avec succès')
   }
 
   async update(ctx: HttpContext) {
@@ -108,13 +108,13 @@ export default class GuidesController {
     }
 
     const guide = await this.guideService.updateGuide(validatedParams.id, updateData, payload.image)
-    ResponseService.ok(ctx, guide, 'Guide mis à jour avec succès')
+    return ResponseService.ok(ctx, guide, 'Guide mis à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
     const { params: validatedParams } = await ctx.request.validateUsing(guideParamsValidator)
     await this.guideService.deleteGuide(validatedParams.id)
-    ResponseService.success(ctx, 'Guide supprimé avec succès')
+    return ResponseService.success(ctx, 'Guide supprimé avec succès')
   }
 
   // Utility endpoint to get guides by game
@@ -127,6 +127,6 @@ export default class GuidesController {
     }
 
     const guides = await this.guideService.getGuidesByGame(Number(gameId))
-    ResponseService.ok(ctx, guides)
+    return ResponseService.ok(ctx, guides)
   }
 }

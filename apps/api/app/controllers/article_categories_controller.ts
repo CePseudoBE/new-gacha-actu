@@ -14,7 +14,7 @@ export default class ArticleCategoriesController {
 
   async index(ctx: HttpContext) {
     const categories = await this.articleCategoryService.getArticleCategories()
-    ResponseService.ok(ctx, categories)
+    return ResponseService.ok(ctx, categories)
   }
 
   async show(ctx: HttpContext) {
@@ -22,13 +22,13 @@ export default class ArticleCategoriesController {
       articleCategoryParamsValidator
     )
     const category = await this.articleCategoryService.getArticleCategoryById(validatedParams.id)
-    ResponseService.ok(ctx, category)
+    return ResponseService.ok(ctx, category)
   }
 
   async store(ctx: HttpContext) {
     const payload = await ctx.request.validateUsing(createArticleCategoryValidator)
     const category = await this.articleCategoryService.createArticleCategory(payload)
-    ResponseService.created(ctx, category, "Catégorie d'article créée avec succès")
+    return ResponseService.created(ctx, category, "Catégorie d'article créée avec succès")
   }
 
   async update(ctx: HttpContext) {
@@ -39,7 +39,7 @@ export default class ArticleCategoriesController {
       validatedParams.id,
       payload
     )
-    ResponseService.ok(ctx, category, "Catégorie d'article mise à jour avec succès")
+    return ResponseService.ok(ctx, category, "Catégorie d'article mise à jour avec succès")
   }
 
   async destroy(ctx: HttpContext) {
@@ -47,6 +47,6 @@ export default class ArticleCategoriesController {
       articleCategoryParamsValidator
     )
     await this.articleCategoryService.deleteArticleCategory(validatedParams.id)
-    ResponseService.success(ctx, "Catégorie d'article supprimée avec succès")
+    return ResponseService.success(ctx, "Catégorie d'article supprimée avec succès")
   }
 }

@@ -14,7 +14,7 @@ export default class MaintenanceSettingsController {
 
   async status(ctx: HttpContext) {
     const maintenanceSetting = await this.maintenanceSettingService.getCurrentStatus()
-    ResponseService.ok(ctx, maintenanceSetting)
+    return ResponseService.ok(ctx, maintenanceSetting)
   }
 
   async update(ctx: HttpContext) {
@@ -28,7 +28,7 @@ export default class MaintenanceSettingsController {
     }
 
     const maintenanceSetting = await this.maintenanceSettingService.updateMaintenance(updateData)
-    ResponseService.ok(
+    return ResponseService.ok(
       ctx,
       maintenanceSetting,
       'Configuration de maintenance mise à jour avec succès'
@@ -40,11 +40,11 @@ export default class MaintenanceSettingsController {
     const maintenanceSetting = await this.maintenanceSettingService.enableMaintenance(
       payload.message
     )
-    ResponseService.ok(ctx, maintenanceSetting, 'Maintenance activée avec succès')
+    return ResponseService.ok(ctx, maintenanceSetting, 'Maintenance activée avec succès')
   }
 
   async disable(ctx: HttpContext) {
     const maintenanceSetting = await this.maintenanceSettingService.disableMaintenance()
-    ResponseService.ok(ctx, maintenanceSetting, 'Maintenance désactivée avec succès')
+    return ResponseService.ok(ctx, maintenanceSetting, 'Maintenance désactivée avec succès')
   }
 }

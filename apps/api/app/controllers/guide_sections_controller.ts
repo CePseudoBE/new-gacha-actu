@@ -20,7 +20,7 @@ export default class GuideSectionsController {
   ) {}
 
   async index(ctx: HttpContext) {
-    const guideId = ctx.request.param('guideId')
+    const guideId = ctx.request.param('id')
 
     if (!guideId || Number.isNaN(Number(guideId))) {
       ResponseService.badRequest(ctx, 'ID du guide invalide')
@@ -36,7 +36,7 @@ export default class GuideSectionsController {
       .orderBy('order', 'asc')
 
     const sectionDtos = sections.map((section) => new GuideSectionDto(section))
-    ResponseService.ok(ctx, sectionDtos)
+    return ResponseService.ok(ctx, sectionDtos)
   }
 
   async show(ctx: HttpContext) {
@@ -51,11 +51,11 @@ export default class GuideSectionsController {
       throw new NotFoundException('Section non trouvée')
     }
 
-    ResponseService.ok(ctx, new GuideSectionDto(section))
+    return ResponseService.ok(ctx, new GuideSectionDto(section))
   }
 
   async store(ctx: HttpContext) {
-    const guideId = ctx.request.param('guideId')
+    const guideId = ctx.request.param('id')
 
     if (!guideId || Number.isNaN(Number(guideId))) {
       ResponseService.badRequest(ctx, 'ID du guide invalide')
@@ -84,7 +84,7 @@ export default class GuideSectionsController {
 
     await section.load('image')
 
-    ResponseService.created(ctx, new GuideSectionDto(section), 'Section créée avec succès')
+    return ResponseService.created(ctx, new GuideSectionDto(section), 'Section créée avec succès')
   }
 
   async update(ctx: HttpContext) {
@@ -117,7 +117,7 @@ export default class GuideSectionsController {
     await section.save()
     await section.load('image')
 
-    ResponseService.ok(ctx, new GuideSectionDto(section), 'Section mise à jour avec succès')
+    return ResponseService.ok(ctx, new GuideSectionDto(section), 'Section mise à jour avec succès')
   }
 
   async destroy(ctx: HttpContext) {
@@ -129,6 +129,6 @@ export default class GuideSectionsController {
     }
 
     await section.delete()
-    ResponseService.success(ctx, 'Section supprimée avec succès')
+    return ResponseService.success(ctx, 'Section supprimée avec succès')
   }
 }
