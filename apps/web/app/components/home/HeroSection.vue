@@ -29,7 +29,7 @@
           />
 
           <!-- Partenaires -->
-          <HeroPartners :partners="heroConfig.partners" />
+          <HeroPartners :featured-partner="heroConfig.featuredPartner" :partners="heroConfig.partners" />
         </div>
 
         <!-- Desktop images -->

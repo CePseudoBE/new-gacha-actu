@@ -16,6 +16,20 @@ export const heroConfig = {
       variant: "outline" as const,
     },
   ],
+  featuredPartner: {
+    id: "ldshop",
+    name: "LDShop",
+    href: "https://ldshop.fr",
+    logo: {
+      desktop: "/icons/ldshop.png",
+      mobile: "/icons/ldshop.png",
+    },
+    alt: "LDShop - Boutique Gaming",
+    dimensions: {
+      desktop: { width: 412, height: 60 },
+      mobile: { width: 200, height: 30 },
+    },
+  },
   partners: [
     {
       id: "ldplayer",
