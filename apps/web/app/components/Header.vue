@@ -8,19 +8,24 @@
         <!-- Logo -->
         <Logo :text="navigationConfig.logo.text" :href="navigationConfig.logo.href" />
 
-        <!-- Menu mobile -->
-        <MobileNavigation
-          :config="navigationConfig"
-          :is-open="isMobileMenuOpen"
-          @toggle="toggleMobileMenu"
-        />
+        <!-- Menu mobile + Theme toggle mobile -->
+        <div class="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <MobileNavigation
+            :config="navigationConfig"
+            :is-open="isMobileMenuOpen"
+            @toggle="toggleMobileMenu"
+          />
+        </div>
 
         <!-- Navigation centrée -->
         <DesktopNavigation :config="navigationConfig" />
 
-        <!-- Réseaux sociaux -->
-        <div class="hidden md:flex md:flex-1 md:justify-end">
+        <!-- Réseaux sociaux + Theme toggle -->
+        <div class="hidden md:flex md:flex-1 md:items-center md:justify-end md:gap-4">
           <SocialLinks :links="navigationConfig.socialLinks" variant="desktop" />
+          <div class="h-6 w-px bg-border" />
+          <ThemeToggle />
         </div>
       </div>
     </div>

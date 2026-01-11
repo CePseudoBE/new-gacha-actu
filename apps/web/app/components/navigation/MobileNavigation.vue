@@ -56,6 +56,16 @@
             </NuxtLink>
           </div>
         </div>
+
+        <Separator class="my-6" />
+
+        <div class="space-y-2">
+          <h3 class="text-sm font-semibold">Apparence</h3>
+          <div class="flex items-center gap-2">
+            <ThemeToggle />
+            <span class="text-sm text-muted-foreground">{{ isDark ? 'Mode sombre' : 'Mode clair' }}</span>
+          </div>
+        </div>
       </SheetContent>
     </Sheet>
   </div>
@@ -72,6 +82,8 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
+
+const { isDark } = useColorMode()
 
 interface Props {
   config: {
