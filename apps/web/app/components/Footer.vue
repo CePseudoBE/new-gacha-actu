@@ -101,7 +101,7 @@
             <h4 class="font-medium mb-3">Communauté</h4>
             <div class="flex items-center gap-3">
               <NuxtLink
-                to="https://discord.gg/t2tFyNzVRv"
+                to="https://discord.gg/p3QpuGbuW4"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-muted-foreground hover:text-foreground transition-colors"
@@ -110,7 +110,7 @@
                 <IconDiscord class="h-5 w-5" />
               </NuxtLink>
               <NuxtLink
-                to="https://x.com/BLEACH_SR_FR"
+                to="https://x.com/Gacha_Pulse"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-muted-foreground hover:text-foreground transition-colors"

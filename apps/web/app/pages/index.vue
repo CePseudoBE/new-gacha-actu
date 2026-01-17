@@ -15,8 +15,8 @@
       <div class="container mx-auto px-4">
         <div class="max-w-md mx-auto">
           <SocialSection
-            twitter-username="BLEACH_SR_FR"
-            discord-invite="https://discord.gg/t2tFyNzVRv"
+            twitter-username="Gacha_Pulse"
+            discord-invite="https://discord.gg/p3QpuGbuW4"
             custom-message="Rejoignez notre communauté de passionnés de jeux Gacha !"
           />
         </div>

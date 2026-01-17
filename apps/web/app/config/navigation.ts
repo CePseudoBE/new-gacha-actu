@@ -59,13 +59,13 @@ export const getNavigationConfig = async () => {
       {
         id: 'discord',
         name: 'Discord',
-        href: 'https://discord.gg/t2tFyNzVRv',
+        href: 'https://discord.gg/p3QpuGbuW4',
         ariaLabel: 'Rejoignez notre Discord'
       },
       {
         id: 'twitter',
         name: 'Twitter',
-        href: 'https://x.com/BLEACH_SR_FR',
+        href: 'https://x.com/Gacha_Pulse',
         ariaLabel: 'Suivez-nous sur Twitter'
       },
       {
